@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="tulingmall-member" />
+        <module name="tulingmall-portal" />
+        <module name="tulingmall-seckill" />
+        <module name="tulingmall-admin" />
+        <module name="tulingmall-promotion" />
+        <module name="tulingmall-cart" />
+        <module name="tulingmall-security" />
+        <module name="tulingmall-order-sharding" />
+        <module name="tulingmall-authcenter" />
+        <module name="tulingmall-order-async" />
+        <module name="tulingmall-common" />
+        <module name="tulingmall-canal" />
+        <module name="tulingmall-gateway" />
+        <module name="tulingmall-product" />
+        <module name="tulingmall-search" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="tlmallV5" target="1.8" />
+      <module name="tulingmall-admin" target="1.8" />
+      <module name="tulingmall-api" target="1.8" />
+      <module name="tulingmall-authcenter" target="1.8" />
+      <module name="tulingmall-canal" target="1.8" />
+      <module name="tulingmall-cart" target="1.8" />
+      <module name="tulingmall-common" target="1.8" />
+      <module name="tulingmall-gateway" target="1.8" />
+      <module name="tulingmall-mbg" target="1.8" />
+      <module name="tulingmall-member" target="1.8" />
+      <module name="tulingmall-order" target="1.8" />
+      <module name="tulingmall-order-async" target="1.8" />
+      <module name="tulingmall-order-sharding" target="1.8" />
+      <module name="tulingmall-portal" target="1.8" />
+      <module name="tulingmall-product" target="1.8" />
+      <module name="tulingmall-promotion" target="1.8" />
+      <module name="tulingmall-search" target="1.8" />
+      <module name="tulingmall-seckill" target="1.8" />
+      <module name="tulingmall-security" target="1.8" />
+      <module name="wrapper" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="tulingmall-admin" options="-parameters" />
+      <module name="tulingmall-api" options="-parameters" />
+      <module name="tulingmall-authcenter" options="-parameters" />
+      <module name="tulingmall-canal" options="-parameters" />
+      <module name="tulingmall-cart" options="-parameters" />
+      <module name="tulingmall-common" options="-parameters" />
+      <module name="tulingmall-gateway" options="-parameters" />
+      <module name="tulingmall-mbg" options="-parameters" />
+      <module name="tulingmall-member" options="-parameters" />
+      <module name="tulingmall-order" options="" />
+      <module name="tulingmall-order-async" options="-parameters" />
+      <module name="tulingmall-order-sharding" options="-parameters" />
+      <module name="tulingmall-portal" options="-parameters" />
+      <module name="tulingmall-product" options="-parameters" />
+      <module name="tulingmall-promotion" options="-parameters" />
+      <module name="tulingmall-search" options="-parameters" />
+      <module name="tulingmall-seckill" options="-parameters" />
+      <module name="tulingmall-security" options="-parameters" />
+    </option>
+  </component>
+</project>

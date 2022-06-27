@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/tlmallV5.iml" filepath="$PROJECT_DIR$/tlmallV5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-admin/tulingmall-admin.iml" filepath="$PROJECT_DIR$/tulingmall-admin/tulingmall-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-authcenter/tulingmall-authcenter.iml" filepath="$PROJECT_DIR$/tulingmall-authcenter/tulingmall-authcenter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-canal/tulingmall-canal.iml" filepath="$PROJECT_DIR$/tulingmall-canal/tulingmall-canal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-cart/tulingmall-cart.iml" filepath="$PROJECT_DIR$/tulingmall-cart/tulingmall-cart.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-common/tulingmall-common.iml" filepath="$PROJECT_DIR$/tulingmall-common/tulingmall-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-gateway/tulingmall-gateway.iml" filepath="$PROJECT_DIR$/tulingmall-gateway/tulingmall-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-member/tulingmall-member.iml" filepath="$PROJECT_DIR$/tulingmall-member/tulingmall-member.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-order/tulingmall-order.iml" filepath="$PROJECT_DIR$/tulingmall-order/tulingmall-order.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-order/tulingmall-order-async/tulingmall-order-async.iml" filepath="$PROJECT_DIR$/tulingmall-order/tulingmall-order-async/tulingmall-order-async.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-order/tulingmall-order-sharding/tulingmall-order-sharding.iml" filepath="$PROJECT_DIR$/tulingmall-order/tulingmall-order-sharding/tulingmall-order-sharding.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-portal/tulingmall-portal.iml" filepath="$PROJECT_DIR$/tulingmall-portal/tulingmall-portal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-product/tulingmall-product.iml" filepath="$PROJECT_DIR$/tulingmall-product/tulingmall-product.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-promotion/tulingmall-promotion.iml" filepath="$PROJECT_DIR$/tulingmall-promotion/tulingmall-promotion.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-search/tulingmall-search.iml" filepath="$PROJECT_DIR$/tulingmall-search/tulingmall-search.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-order/tulingmall-seckill/tulingmall-seckill.iml" filepath="$PROJECT_DIR$/tulingmall-order/tulingmall-seckill/tulingmall-seckill.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tulingmall-security/tulingmall-security.iml" filepath="$PROJECT_DIR$/tulingmall-security/tulingmall-security.iml" />
+    </modules>
+  </component>
+</project>
