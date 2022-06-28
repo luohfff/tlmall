@@ -17,7 +17,7 @@
 
 	<modules>
 		<module>tulingmall-common</module>
-		<module>tulingmall-cart</module>
+		<module>tulingmall-admin</module>
 		<module>tulingmall-security</module>
 		<module>tulingmall-search</module>
 		<module>tulingmall-product</module>
@@ -28,8 +28,7 @@
 		<module>tulingmall-canal</module>
 		<module>tulingmall-authcenter</module>
 		<module>tulingmall-portal</module>
-		<module>tulingmall-admin</module>
-
+		<module>tulingmall-cart</module>
 	</modules>
 
 	<properties>
@@ -172,15 +171,13 @@
 				<version>${admin-starter-server.version}</version>
 			</dependency>
 
-			
-
 		</dependencies>
 	</dependencyManagement>
 
 	<repositories>
 		<repository>
-			<id>spring</id>
-			<url>https://maven.aliyun.com/repository/spring</url>
+			<id>maven-public</id>
+			<url>http://192.168.65.203:8081/repository/maven-public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>

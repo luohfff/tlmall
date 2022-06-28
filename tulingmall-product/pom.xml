@@ -7,7 +7,6 @@
         <artifactId>tuling-mall</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>com.tuling</groupId>
     <artifactId>tulingmall-product</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>tulingmall-product</name>
@@ -28,6 +27,15 @@
             <artifactId>tulingmall-mbg</artifactId>
         </dependency>-->
 
+        <dependency>
+            <groupId>com.tuling</groupId>
+            <artifactId>tulingmall-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.macro.mall</groupId>
+            <artifactId>tulingmall-admin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -112,7 +120,14 @@
             <artifactId>seata-spring-boot-starter</artifactId>
             <version>1.0.0</version>
         </dependency>-->
-
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
