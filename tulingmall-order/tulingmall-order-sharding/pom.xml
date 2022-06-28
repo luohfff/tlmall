@@ -5,12 +5,10 @@
 	<parent>
 		<groupId>com.tuling</groupId>
 		<artifactId>tulingmall-order</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.5</version>
 	</parent>
-	<groupId>com.tuling</groupId>
 	<artifactId>tulingmall-order-sharding</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>tulingmall-order</name>
+	<name>tulingmall-order-sharding</name>
 	<description>订单微服务</description>
 
 	<properties>
@@ -18,6 +16,15 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.tuling</groupId>
+			<artifactId>tulingmall-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.tuling</groupId>
+			<artifactId>tulingmall-admin</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>

@@ -5,11 +5,9 @@
 	<parent>
 		<groupId>com.tuling</groupId>
 		<artifactId>tuling-mall</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.5</version>
 	</parent>
-	<groupId>com.tuling</groupId>
 	<artifactId>tulingmall-order</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>tulingmall-order</name>
 	<packaging>pom</packaging>
 	<description>订单微服务</description>

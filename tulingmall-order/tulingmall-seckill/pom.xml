@@ -5,11 +5,9 @@
 	<parent>
 		<groupId>com.tuling</groupId>
 		<artifactId>tulingmall-order</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.5</version>
 	</parent>
-	<groupId>com.tuling</groupId>
 	<artifactId>tulingmall-seckill</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>tulingmall-seckill</name>
 	<description>秒杀微服务</description>
 
@@ -18,6 +16,14 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.tuling</groupId>
+			<artifactId>tulingmall-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.tuling</groupId>
+			<artifactId>tulingmall-admin</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>

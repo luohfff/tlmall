@@ -5,11 +5,9 @@
 	<parent>
 		<groupId>com.tuling</groupId>
 		<artifactId>tuling-mall</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.5</version>
 	</parent>
-	<groupId>com.tuling</groupId>
 	<artifactId>tulingmall-authcenter</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>tulingmall-authcenter</name>
 	<description>认证中心,专门给网关授权认证的</description>
 
@@ -18,6 +16,14 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.tuling</groupId>
+			<artifactId>tulingmall-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.tuling</groupId>
+			<artifactId>tulingmall-admin</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
