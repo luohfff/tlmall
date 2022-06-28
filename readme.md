@@ -1,3 +1,19 @@
+### 模块说明
+tulingmall-admin 后台管理程序
+tulingmall-authcenter 认证中心程序
+tulingmall-canal 数据同步程序
+tulingmall-cart 购物车程序
+tulingmall-common 通用模块，被其他程序以jar包形式使用
+tulingmall-gateway 网关程序
+tulingmall-member 用户程序
+tulingmall-order 订单程序
+tulingmall-portal 商城首页入口程序
+tulingmall-product 商品管理程序
+tulingmall-promotion 促销程序
+tulingmall-search 商品搜索程序
+tulingmall-security 安全模块，被其他程序以jar包形式使用
+
+
 ### 项目启动
 项目启动需要使用Nacos导入document/nacos-config/nacos_config_export.zip压缩包，不需要解压，直接导入即可，本压缩包注意及时更新最新版本，可能会随着课程进行内容变更
 
