@@ -1,9 +1,9 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.SmsCouponHistoryMapper;
 import com.tuling.tulingmall.model.SmsCouponHistory;
-import com.tuling.tulingmall.model.SmsCouponHistoryExample;
 import com.tuling.tulingmall.service.SmsCouponHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,17 +22,17 @@ public class SmsCouponHistoryServiceImpl implements SmsCouponHistoryService {
     @Override
     public List<SmsCouponHistory> list(Long couponId, Integer useStatus, String orderSn, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum,pageSize);
-        SmsCouponHistoryExample example = new SmsCouponHistoryExample();
-        SmsCouponHistoryExample.Criteria criteria = example.createCriteria();
+
+        QueryWrapper<SmsCouponHistory> wrapper = new QueryWrapper<>();
         if(couponId!=null){
-            criteria.andCouponIdEqualTo(couponId);
+            wrapper.eq("coupon_id",couponId);
         }
         if(useStatus!=null){
-            criteria.andUseStatusEqualTo(useStatus);
+            wrapper.eq("user_status",useStatus);
         }
         if(!StringUtils.isEmpty(orderSn)){
-            criteria.andOrderSnEqualTo(orderSn);
+            wrapper.eq("order_sn",orderSn);
         }
-        return historyMapper.selectByExample(example);
+        return historyMapper.selectList(wrapper);
     }
 }

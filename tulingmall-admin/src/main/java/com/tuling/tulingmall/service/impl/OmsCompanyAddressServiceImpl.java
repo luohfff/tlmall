@@ -2,7 +2,6 @@ package com.tuling.tulingmall.service.impl;
 
 import com.tuling.tulingmall.mapper.OmsCompanyAddressMapper;
 import com.tuling.tulingmall.model.OmsCompanyAddress;
-import com.tuling.tulingmall.model.OmsCompanyAddressExample;
 import com.tuling.tulingmall.service.OmsCompanyAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,6 @@ public class OmsCompanyAddressServiceImpl implements OmsCompanyAddressService {
     private OmsCompanyAddressMapper companyAddressMapper;
     @Override
     public List<OmsCompanyAddress> list() {
-        return companyAddressMapper.selectByExample(new OmsCompanyAddressExample());
+        return companyAddressMapper.selectList(null);
     }
 }

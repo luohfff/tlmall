@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.model;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -8,6 +9,7 @@ import java.util.Date;
 
 public class OmsOrder implements Serializable {
     @ApiModelProperty(value = "订单id")
+    @TableId
     private Long id;
 
     private Long memberId;

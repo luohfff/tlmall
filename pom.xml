@@ -24,6 +24,7 @@
         <module>tulingmall-portal</module>
         <module>tulingmall-order</module>
         <module>tulingmall-cart</module>
+        <module>tulingmall-core</module>
     </modules>
 
     <properties>
@@ -41,7 +42,9 @@
         <hutool.version>4.5.7</hutool.version>
         <swagger2.version>2.7.0</swagger2.version>
         <mybatis-generator.version>1.3.7</mybatis-generator.version>
-        <mybatis.version>3.4.6</mybatis.version>
+        <mybatis.version>3.5.3</mybatis.version>
+        <mybatis-plus.version>3.3.2</mybatis-plus.version>
+        <dynamic-datasource.version>3.3.2</dynamic-datasource.version>
         <mysql-connector.version>8.0.15</mysql-connector.version>
         <jjwt.version>0.9.0</jjwt.version>
         <aliyun-oss.version>2.5.0</aliyun-oss.version>
@@ -49,6 +52,7 @@
         <tulingmall-common.version>${project.version}</tulingmall-common.version>
         <tulingmall-admin.version>${project.version}</tulingmall-admin.version>
         <tulingmall-security.version>${project.version}</tulingmall-security.version>
+        <tulingmall-core.version>${project.version}</tulingmall-core.version>
 
         <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
@@ -101,6 +105,11 @@
                 <artifactId>tulingmall-admin</artifactId>
                 <version>${tulingmall-admin.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.tuling</groupId>
+                <artifactId>tulingmall-core</artifactId>
+                <version>${tulingmall-core.version}</version>
+            </dependency>
             <!--MyBatis分页插件starter-->
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
@@ -147,6 +156,16 @@
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+                <version>${dynamic-datasource.version}</version>
             </dependency>
             <!--Mysql数据库驱动-->
             <dependency>

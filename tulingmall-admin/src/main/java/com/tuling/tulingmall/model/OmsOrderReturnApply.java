@@ -1,12 +1,16 @@
 package com.tuling.tulingmall.model;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@TableName("oms_order_return_apply")
 public class OmsOrderReturnApply implements Serializable {
+    @TableId
     private Long id;
 
     @ApiModelProperty(value = "订单id")

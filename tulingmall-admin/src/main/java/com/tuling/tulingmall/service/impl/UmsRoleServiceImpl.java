@@ -1,12 +1,15 @@
 package com.tuling.tulingmall.service.impl;
 
-import com.tuling.tulingmall.dao.UmsRolePermissionRelationDao;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.tuling.tulingmall.mapper.UmsRoleMapper;
 import com.tuling.tulingmall.mapper.UmsRolePermissionRelationMapper;
-import com.tuling.tulingmall.model.*;
+import com.tuling.tulingmall.model.UmsPermission;
+import com.tuling.tulingmall.model.UmsRole;
+import com.tuling.tulingmall.model.UmsRolePermissionRelation;
 import com.tuling.tulingmall.service.UmsRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,8 +24,6 @@ public class UmsRoleServiceImpl implements UmsRoleService {
     private UmsRoleMapper roleMapper;
     @Autowired
     private UmsRolePermissionRelationMapper rolePermissionRelationMapper;
-    @Autowired
-    private UmsRolePermissionRelationDao rolePermissionRelationDao;
     @Override
     public int create(UmsRole role) {
         role.setCreateTime(new Date());
@@ -35,27 +36,25 @@ public class UmsRoleServiceImpl implements UmsRoleService {
     @Override
     public int update(Long id, UmsRole role) {
         role.setId(id);
-        return roleMapper.updateByPrimaryKey(role);
+        return roleMapper.updateById(role);
     }
 
     @Override
     public int delete(List<Long> ids) {
-        UmsRoleExample example = new UmsRoleExample();
-        example.createCriteria().andIdIn(ids);
-        return roleMapper.deleteByExample(example);
+        return roleMapper.deleteBatchIds(ids);
     }
 
     @Override
     public List<UmsPermission> getPermissionList(Long roleId) {
-        return rolePermissionRelationDao.getPermissionList(roleId);
+        return rolePermissionRelationMapper.getPermissionList(roleId);
     }
 
     @Override
     public int updatePermission(Long roleId, List<Long> permissionIds) {
         //先删除原有关系
-        UmsRolePermissionRelationExample example=new UmsRolePermissionRelationExample();
-        example.createCriteria().andRoleIdEqualTo(roleId);
-        rolePermissionRelationMapper.deleteByExample(example);
+        UpdateWrapper<UmsRolePermissionRelation> wrapper = new UpdateWrapper<>();
+        wrapper.eq("role_id",roleId);
+        rolePermissionRelationMapper.delete(wrapper);
         //批量插入新关系
         List<UmsRolePermissionRelation> relationList = new ArrayList<>();
         for (Long permissionId : permissionIds) {
@@ -64,11 +63,11 @@ public class UmsRoleServiceImpl implements UmsRoleService {
             relation.setPermissionId(permissionId);
             relationList.add(relation);
         }
-        return rolePermissionRelationDao.insertList(relationList);
+        return rolePermissionRelationMapper.insertRolePermission(relationList);
     }
 
     @Override
     public List<UmsRole> list() {
-        return roleMapper.selectByExample(new UmsRoleExample());
+        return roleMapper.selectList(null);
     }
 }

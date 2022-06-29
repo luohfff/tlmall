@@ -28,7 +28,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public String toStatic(Long id) {
         //查询商品信息
-        PmsProduct pmsProduct = productMapper.selectByPrimaryKey(id);
+        PmsProduct pmsProduct = productMapper.selectById(id);
         if (pmsProduct == null) {
             return null;
         }

@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.CmsSubjectMapper;
 import com.tuling.tulingmall.model.CmsSubject;
@@ -22,17 +23,17 @@ public class CmsSubjectServiceImpl implements CmsSubjectService {
 
     @Override
     public List<CmsSubject> listAll() {
-        return subjectMapper.selectByExample(new CmsSubjectExample());
+        return subjectMapper.selectList(null);
     }
 
     @Override
     public List<CmsSubject> list(String keyword, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        CmsSubjectExample example = new CmsSubjectExample();
-        CmsSubjectExample.Criteria criteria = example.createCriteria();
+        QueryWrapper<CmsSubject> queryWrapper = new QueryWrapper<>();
         if (!StringUtils.isEmpty(keyword)) {
-            criteria.andTitleLike("%" + keyword + "%");
+            queryWrapper.like("keyword","%" + keyword + "%");
+
         }
-        return subjectMapper.selectByExample(example);
+        return subjectMapper.selectList(queryWrapper);
     }
 }

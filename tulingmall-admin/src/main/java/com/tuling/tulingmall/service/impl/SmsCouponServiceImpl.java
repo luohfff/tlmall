@@ -1,5 +1,7 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.dao.SmsCouponDao;
 import com.tuling.tulingmall.dao.SmsCouponProductCategoryRelationDao;
@@ -60,7 +62,7 @@ public class SmsCouponServiceImpl implements SmsCouponService {
     @Override
     public int delete(Long id) {
         //删除优惠券
-        int count = couponMapper.deleteByPrimaryKey(id);
+        int count = couponMapper.deleteById(id);
         //删除商品关联
         deleteProductRelation(id);
         //删除商品分类关联
@@ -69,21 +71,21 @@ public class SmsCouponServiceImpl implements SmsCouponService {
     }
 
     private void deleteProductCategoryRelation(Long id) {
-        SmsCouponProductCategoryRelationExample productCategoryRelationExample = new SmsCouponProductCategoryRelationExample();
-        productCategoryRelationExample.createCriteria().andCouponIdEqualTo(id);
-        productCategoryRelationMapper.deleteByExample(productCategoryRelationExample);
+        UpdateWrapper<SmsCouponProductCategoryRelation> wrapper = new UpdateWrapper<>();
+        wrapper.eq("coupon_id",id);
+        productCategoryRelationMapper.delete(wrapper);
     }
 
     private void deleteProductRelation(Long id) {
-        SmsCouponProductRelationExample productRelationExample = new SmsCouponProductRelationExample();
-        productRelationExample.createCriteria().andCouponIdEqualTo(id);
-        productRelationMapper.deleteByExample(productRelationExample);
+        UpdateWrapper<SmsCouponProductRelation> wrapper = new UpdateWrapper<>();
+        wrapper.eq("coupon_id",id);
+        productRelationMapper.delete(wrapper);
     }
 
     @Override
     public int update(Long id, SmsCouponParam couponParam) {
         couponParam.setId(id);
-        int count =couponMapper.updateByPrimaryKey(couponParam);
+        int count =couponMapper.deleteById(couponParam);
         //删除后插入优惠券和商品关系表
         if(couponParam.getUseType().equals(2)){
             for(SmsCouponProductRelation productRelation:couponParam.getProductRelationList()){
@@ -105,16 +107,15 @@ public class SmsCouponServiceImpl implements SmsCouponService {
 
     @Override
     public List<SmsCoupon> list(String name, Integer type, Integer pageSize, Integer pageNum) {
-        SmsCouponExample example = new SmsCouponExample();
-        SmsCouponExample.Criteria criteria = example.createCriteria();
+        QueryWrapper<SmsCoupon> wrapper = new QueryWrapper<>();
         if(!StringUtils.isEmpty(name)){
-            criteria.andNameLike("%"+name+"%");
+            wrapper.like("name","%"+name+"%");
         }
         if(type!=null){
-            criteria.andTypeEqualTo(type);
+            wrapper.like("type",type);
         }
         PageHelper.startPage(pageNum,pageSize);
-        return couponMapper.selectByExample(example);
+        return couponMapper.selectList(wrapper);
     }
 
     @Override

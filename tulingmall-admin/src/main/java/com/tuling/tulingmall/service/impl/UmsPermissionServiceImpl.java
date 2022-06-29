@@ -3,7 +3,6 @@ package com.tuling.tulingmall.service.impl;
 import com.tuling.tulingmall.dto.UmsPermissionNode;
 import com.tuling.tulingmall.mapper.UmsPermissionMapper;
 import com.tuling.tulingmall.model.UmsPermission;
-import com.tuling.tulingmall.model.UmsPermissionExample;
 import com.tuling.tulingmall.service.UmsPermissionService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,28 +32,25 @@ public class UmsPermissionServiceImpl implements UmsPermissionService {
     @Override
     public int update(Long id, UmsPermission permission) {
         permission.setId(id);
-        return permissionMapper.updateByPrimaryKey(permission);
+        return permissionMapper.updateById(permission);
     }
 
     @Override
     public int delete(List<Long> ids) {
-        UmsPermissionExample example = new UmsPermissionExample();
-        example.createCriteria().andIdIn(ids);
-        return permissionMapper.deleteByExample(example);
+        return permissionMapper.deleteBatchIds(ids);
     }
 
     @Override
     public List<UmsPermissionNode> treeList() {
-        List<UmsPermission> permissionList = permissionMapper.selectByExample(new UmsPermissionExample());
-        List<UmsPermissionNode> result = permissionList.stream()
+        List<UmsPermission> permissionList = permissionMapper.selectList(null);
+        return permissionList.stream()
                 .filter(permission -> permission.getPid().equals(0L))
                 .map(permission -> covert(permission,permissionList)).collect(Collectors.toList());
-        return result;
     }
 
     @Override
     public List<UmsPermission> list() {
-        return permissionMapper.selectByExample(new UmsPermissionExample());
+        return permissionMapper.selectList(null);
     }
 
     /**

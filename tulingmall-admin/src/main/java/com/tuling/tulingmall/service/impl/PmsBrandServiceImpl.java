@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.dto.PmsBrandParam;
 import com.tuling.tulingmall.mapper.PmsBrandMapper;
 import com.tuling.tulingmall.mapper.PmsProductMapper;
 import com.tuling.tulingmall.model.PmsBrand;
-import com.tuling.tulingmall.model.PmsBrandExample;
 import com.tuling.tulingmall.model.PmsProduct;
 import com.tuling.tulingmall.model.PmsProductExample;
 import com.tuling.tulingmall.service.PmsBrandService;
@@ -29,7 +30,7 @@ public class PmsBrandServiceImpl implements PmsBrandService {
 
     @Override
     public List<PmsBrand> listAllBrand() {
-        return brandMapper.selectByExample(new PmsBrandExample());
+        return brandMapper.selectList(null);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class PmsBrandServiceImpl implements PmsBrandService {
         if (StringUtils.isEmpty(pmsBrand.getFirstLetter())) {
             pmsBrand.setFirstLetter(pmsBrand.getName().substring(0, 1));
         }
-        return brandMapper.insertSelective(pmsBrand);
+        return brandMapper.insert(pmsBrand);
     }
 
     @Override
@@ -57,54 +58,55 @@ public class PmsBrandServiceImpl implements PmsBrandService {
         product.setBrandName(pmsBrand.getName());
         PmsProductExample example = new PmsProductExample();
         example.createCriteria().andBrandIdEqualTo(id);
-        productMapper.updateByExampleSelective(product,example);
-        return brandMapper.updateByPrimaryKeySelective(pmsBrand);
+        UpdateWrapper<PmsProduct> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("brand_id",id);
+        productMapper.update(product,updateWrapper);
+        return brandMapper.updateById(pmsBrand);
     }
 
     @Override
     public int deleteBrand(Long id) {
-        return brandMapper.deleteByPrimaryKey(id);
+        return brandMapper.deleteById(id);
     }
 
     @Override
     public int deleteBrand(List<Long> ids) {
-        PmsBrandExample pmsBrandExample = new PmsBrandExample();
-        pmsBrandExample.createCriteria().andIdIn(ids);
-        return brandMapper.deleteByExample(pmsBrandExample);
+        return brandMapper.deleteBatchIds(ids);
     }
 
     @Override
     public List<PmsBrand> listBrand(String keyword, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        PmsBrandExample pmsBrandExample = new PmsBrandExample();
-        pmsBrandExample.setOrderByClause("sort desc");
-        PmsBrandExample.Criteria criteria = pmsBrandExample.createCriteria();
+        QueryWrapper<PmsBrand> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("sort");
         if (!StringUtils.isEmpty(keyword)) {
-            criteria.andNameLike("%" + keyword + "%");
+            wrapper.and(cond->cond.like("name","%" + keyword + "%"));
         }
-        return brandMapper.selectByExample(pmsBrandExample);
+        return brandMapper.selectList(wrapper);
     }
 
     @Override
     public PmsBrand getBrand(Long id) {
-        return brandMapper.selectByPrimaryKey(id);
+        return brandMapper.selectById(id);
     }
 
     @Override
     public int updateShowStatus(List<Long> ids, Integer showStatus) {
         PmsBrand pmsBrand = new PmsBrand();
         pmsBrand.setShowStatus(showStatus);
-        PmsBrandExample pmsBrandExample = new PmsBrandExample();
-        pmsBrandExample.createCriteria().andIdIn(ids);
-        return brandMapper.updateByExampleSelective(pmsBrand, pmsBrandExample);
+
+        UpdateWrapper<PmsBrand> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in("id",ids);
+        return brandMapper.update(pmsBrand, updateWrapper);
     }
 
     @Override
     public int updateFactoryStatus(List<Long> ids, Integer factoryStatus) {
         PmsBrand pmsBrand = new PmsBrand();
         pmsBrand.setFactoryStatus(factoryStatus);
-        PmsBrandExample pmsBrandExample = new PmsBrandExample();
-        pmsBrandExample.createCriteria().andIdIn(ids);
-        return brandMapper.updateByExampleSelective(pmsBrand, pmsBrandExample);
+
+        UpdateWrapper<PmsBrand> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in("id",ids);
+        return brandMapper.update(pmsBrand, updateWrapper);
     }
 }
