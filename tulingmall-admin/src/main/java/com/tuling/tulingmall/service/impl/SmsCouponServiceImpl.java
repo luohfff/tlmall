@@ -3,18 +3,20 @@ package com.tuling.tulingmall.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
-import com.tuling.tulingmall.dao.SmsCouponDao;
 import com.tuling.tulingmall.dao.SmsCouponProductCategoryRelationDao;
 import com.tuling.tulingmall.dao.SmsCouponProductRelationDao;
 import com.tuling.tulingmall.dto.SmsCouponParam;
 import com.tuling.tulingmall.mapper.SmsCouponMapper;
 import com.tuling.tulingmall.mapper.SmsCouponProductCategoryRelationMapper;
 import com.tuling.tulingmall.mapper.SmsCouponProductRelationMapper;
+import com.tuling.tulingmall.model.SmsCoupon;
+import com.tuling.tulingmall.model.SmsCouponProductCategoryRelation;
+import com.tuling.tulingmall.model.SmsCouponProductRelation;
 import com.tuling.tulingmall.service.SmsCouponService;
-import com.tuling.tulingmall.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.util.List;
 
 /**
@@ -33,8 +35,6 @@ public class SmsCouponServiceImpl implements SmsCouponService {
     private SmsCouponProductRelationDao productRelationDao;
     @Autowired
     private SmsCouponProductCategoryRelationDao productCategoryRelationDao;
-    @Autowired
-    private SmsCouponDao couponDao;
     @Override
     public int create(SmsCouponParam couponParam) {
         couponParam.setCount(couponParam.getPublishCount());
@@ -120,6 +120,6 @@ public class SmsCouponServiceImpl implements SmsCouponService {
 
     @Override
     public SmsCouponParam getItem(Long id) {
-        return couponDao.getItem(id);
+        return couponMapper.getItem(id);
     }
 }

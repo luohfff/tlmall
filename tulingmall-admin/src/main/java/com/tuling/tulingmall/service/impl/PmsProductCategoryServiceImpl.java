@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.dao.PmsProductCategoryAttributeRelationDao;
-import com.tuling.tulingmall.dao.PmsProductCategoryDao;
 import com.tuling.tulingmall.dto.PmsProductCategoryParam;
 import com.tuling.tulingmall.dto.PmsProductCategoryWithChildrenItem;
 import com.tuling.tulingmall.mapper.PmsProductCategoryAttributeRelationMapper;
@@ -36,8 +35,6 @@ public class PmsProductCategoryServiceImpl implements PmsProductCategoryService 
     private PmsProductCategoryAttributeRelationDao productCategoryAttributeRelationDao;
     @Autowired
     private PmsProductCategoryAttributeRelationMapper productCategoryAttributeRelationMapper;
-    @Autowired
-    private PmsProductCategoryDao productCategoryDao;
     @Override
     public int create(PmsProductCategoryParam pmsProductCategoryParam) {
         PmsProductCategory productCategory = new PmsProductCategory();
@@ -137,7 +134,7 @@ public class PmsProductCategoryServiceImpl implements PmsProductCategoryService 
 
     @Override
     public List<PmsProductCategoryWithChildrenItem> listWithChildren() {
-        return productCategoryDao.listWithChildren();
+        return productCategoryMapper.listWithChildren();
     }
 
     /**

@@ -61,8 +61,6 @@ public class PmsProductServiceImpl implements PmsProductService {
     @Autowired
     private CmsPrefrenceAreaProductRelationMapper prefrenceAreaProductRelationMapper;
     @Autowired
-    private PmsProductDao productDao;
-    @Autowired
     private PmsProductVertifyRecordDao productVertifyRecordDao;
 
     @Override
@@ -116,7 +114,7 @@ public class PmsProductServiceImpl implements PmsProductService {
 
     @Override
     public PmsProductResult getUpdateInfo(Long id) {
-        return productDao.getUpdateInfo(id);
+        return productMapper.getUpdateInfo(id);
     }
 
     @Override

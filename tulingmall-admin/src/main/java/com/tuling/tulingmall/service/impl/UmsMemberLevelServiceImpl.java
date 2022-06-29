@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tuling.tulingmall.mapper.UmsMemberLevelMapper;
 import com.tuling.tulingmall.model.UmsMemberLevel;
 import com.tuling.tulingmall.model.UmsMemberLevelExample;
@@ -19,8 +20,8 @@ public class UmsMemberLevelServiceImpl implements UmsMemberLevelService{
     private UmsMemberLevelMapper memberLevelMapper;
     @Override
     public List<UmsMemberLevel> list(Integer defaultStatus) {
-        UmsMemberLevelExample example = new UmsMemberLevelExample();
-        example.createCriteria().andDefaultStatusEqualTo(defaultStatus);
-        return memberLevelMapper.selectByExample(example);
+        QueryWrapper<UmsMemberLevel> wrapper = new QueryWrapper<>();
+        wrapper.eq("default_status",defaultStatus);
+        return memberLevelMapper.selectList(wrapper);
     }
 }

@@ -1,7 +1,8 @@
-package com.tuling.tulingmall.service;
+package com.tuling.tulingmall.service.impl;
 
 import com.tuling.tulingmall.mapper.PmsProductMapper;
 import com.tuling.tulingmall.model.PmsProduct;
+import com.tuling.tulingmall.service.ItemService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

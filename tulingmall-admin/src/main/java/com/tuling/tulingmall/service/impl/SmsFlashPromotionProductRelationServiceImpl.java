@@ -1,11 +1,10 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
-import com.tuling.tulingmall.dao.SmsFlashPromotionProductRelationDao;
 import com.tuling.tulingmall.dto.SmsFlashPromotionProduct;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionProductRelationMapper;
 import com.tuling.tulingmall.model.SmsFlashPromotionProductRelation;
-import com.tuling.tulingmall.model.SmsFlashPromotionProductRelationExample;
 import com.tuling.tulingmall.service.SmsFlashPromotionProductRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,6 @@ import java.util.List;
 public class SmsFlashPromotionProductRelationServiceImpl implements SmsFlashPromotionProductRelationService {
     @Autowired
     private SmsFlashPromotionProductRelationMapper relationMapper;
-    @Autowired
-    private SmsFlashPromotionProductRelationDao relationDao;
     @Override
     public int create(List<SmsFlashPromotionProductRelation> relationList) {
         for (SmsFlashPromotionProductRelation relation : relationList) {
@@ -33,31 +30,30 @@ public class SmsFlashPromotionProductRelationServiceImpl implements SmsFlashProm
     @Override
     public int update(Long id, SmsFlashPromotionProductRelation relation) {
         relation.setId(id);
-        return relationMapper.updateByPrimaryKey(relation);
+        return relationMapper.updateById(relation);
     }
 
     @Override
     public int delete(Long id) {
-        return relationMapper.deleteByPrimaryKey(id);
+        return relationMapper.deleteById(id);
     }
 
     @Override
     public SmsFlashPromotionProductRelation getItem(Long id) {
-        return relationMapper.selectByPrimaryKey(id);
+        return relationMapper.selectById(id);
     }
 
     @Override
     public List<SmsFlashPromotionProduct> list(Long flashPromotionId, Long flashPromotionSessionId, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum,pageSize);
-        return relationDao.getList(flashPromotionId,flashPromotionSessionId);
+        return relationMapper.getList(flashPromotionId,flashPromotionSessionId);
     }
 
     @Override
     public long getCount(Long flashPromotionId, Long flashPromotionSessionId) {
-        SmsFlashPromotionProductRelationExample example = new SmsFlashPromotionProductRelationExample();
-        example.createCriteria()
-                .andFlashPromotionIdEqualTo(flashPromotionId)
-                .andFlashPromotionSessionIdEqualTo(flashPromotionSessionId);
-        return relationMapper.countByExample(example);
+        QueryWrapper<SmsFlashPromotionProductRelation> wrapper = new QueryWrapper<>();
+        wrapper.eq("flash_promotion_id",flashPromotionId);
+        wrapper.eq("flash_promotion_session_id",flashPromotionSessionId);
+        return relationMapper.selectCount(wrapper);
     }
 }
