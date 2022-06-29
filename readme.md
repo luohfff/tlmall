@@ -12,6 +12,7 @@ tulingmall-product 商品管理程序
 tulingmall-promotion 促销程序  
 tulingmall-search 商品搜索程序  
 tulingmall-security 安全模块，被其他程序以jar包形式使用  
+tulingmall-unqid 分布式ID生成程序  
 
 
 ### 项目启动
