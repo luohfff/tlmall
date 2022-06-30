@@ -1,14 +1,17 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.dao.PmsProductCategoryAttributeRelationDao;
-import com.tuling.tulingmall.dao.PmsProductCategoryDao;
 import com.tuling.tulingmall.dto.PmsProductCategoryParam;
 import com.tuling.tulingmall.dto.PmsProductCategoryWithChildrenItem;
 import com.tuling.tulingmall.mapper.PmsProductCategoryAttributeRelationMapper;
 import com.tuling.tulingmall.mapper.PmsProductCategoryMapper;
 import com.tuling.tulingmall.mapper.PmsProductMapper;
-import com.tuling.tulingmall.model.*;
+import com.tuling.tulingmall.model.PmsProduct;
+import com.tuling.tulingmall.model.PmsProductCategory;
+import com.tuling.tulingmall.model.PmsProductCategoryAttributeRelation;
 import com.tuling.tulingmall.service.PmsProductCategoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -32,8 +35,6 @@ public class PmsProductCategoryServiceImpl implements PmsProductCategoryService 
     private PmsProductCategoryAttributeRelationDao productCategoryAttributeRelationDao;
     @Autowired
     private PmsProductCategoryAttributeRelationMapper productCategoryAttributeRelationMapper;
-    @Autowired
-    private PmsProductCategoryDao productCategoryDao;
     @Override
     public int create(PmsProductCategoryParam pmsProductCategoryParam) {
         PmsProductCategory productCategory = new PmsProductCategory();
@@ -41,7 +42,7 @@ public class PmsProductCategoryServiceImpl implements PmsProductCategoryService 
         BeanUtils.copyProperties(pmsProductCategoryParam, productCategory);
         //没有父分类时为一级分类
         setCategoryLevel(productCategory);
-        int count = productCategoryMapper.insertSelective(productCategory);
+        int count = productCategoryMapper.insert(productCategory);
         //创建筛选属性关联
         List<Long> productAttributeIdList = pmsProductCategoryParam.getProductAttributeIdList();
         if(!CollectionUtils.isEmpty(productAttributeIdList)){
@@ -75,63 +76,65 @@ public class PmsProductCategoryServiceImpl implements PmsProductCategoryService 
         //更新商品分类时要更新商品中的名称
         PmsProduct product = new PmsProduct();
         product.setProductCategoryName(productCategory.getName());
-        PmsProductExample example = new PmsProductExample();
-        example.createCriteria().andProductCategoryIdEqualTo(id);
-        productMapper.updateByExampleSelective(product,example);
+        UpdateWrapper<PmsProduct> wrapper = new UpdateWrapper<>();
+        wrapper.eq("product_category_id",id);
+        productMapper.update(product,wrapper);
         //同时更新筛选属性的信息
         if(!CollectionUtils.isEmpty(pmsProductCategoryParam.getProductAttributeIdList())){
-            PmsProductCategoryAttributeRelationExample relationExample = new PmsProductCategoryAttributeRelationExample();
-            relationExample.createCriteria().andProductCategoryIdEqualTo(id);
-            productCategoryAttributeRelationMapper.deleteByExample(relationExample);
+            UpdateWrapper<PmsProductCategoryAttributeRelation> rWrapper = new UpdateWrapper<>();
+            rWrapper.eq("product_category_id",id);
+            productCategoryAttributeRelationMapper.delete(rWrapper);
             insertRelationList(id,pmsProductCategoryParam.getProductAttributeIdList());
         }else{
-            PmsProductCategoryAttributeRelationExample relationExample = new PmsProductCategoryAttributeRelationExample();
-            relationExample.createCriteria().andProductCategoryIdEqualTo(id);
-            productCategoryAttributeRelationMapper.deleteByExample(relationExample);
+            UpdateWrapper<PmsProductCategoryAttributeRelation> rWrapper = new UpdateWrapper<>();
+            rWrapper.eq("product_category_id",id);
+            productCategoryAttributeRelationMapper.delete(rWrapper);
         }
-        return productCategoryMapper.updateByPrimaryKeySelective(productCategory);
+        return productCategoryMapper.updateById(productCategory);
     }
 
     @Override
     public List<PmsProductCategory> getList(Long parentId, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
-        PmsProductCategoryExample example = new PmsProductCategoryExample();
-        example.setOrderByClause("sort desc");
-        example.createCriteria().andParentIdEqualTo(parentId);
-        return productCategoryMapper.selectByExample(example);
+
+        QueryWrapper<PmsProductCategory> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("sort");
+        wrapper.eq("parent_id",parentId);
+        return productCategoryMapper.selectList(wrapper);
     }
 
     @Override
     public int delete(Long id) {
-        return productCategoryMapper.deleteByPrimaryKey(id);
+        return productCategoryMapper.deleteById(id);
     }
 
     @Override
     public PmsProductCategory getItem(Long id) {
-        return productCategoryMapper.selectByPrimaryKey(id);
+        return productCategoryMapper.selectById(id);
     }
 
     @Override
     public int updateNavStatus(List<Long> ids, Integer navStatus) {
         PmsProductCategory productCategory = new PmsProductCategory();
         productCategory.setNavStatus(navStatus);
-        PmsProductCategoryExample example = new PmsProductCategoryExample();
-        example.createCriteria().andIdIn(ids);
-        return productCategoryMapper.updateByExampleSelective(productCategory, example);
+        UpdateWrapper<PmsProductCategory> wrapper = new UpdateWrapper<>();
+        wrapper.in("id",ids);
+        return productCategoryMapper.update(productCategory, wrapper);
     }
 
     @Override
     public int updateShowStatus(List<Long> ids, Integer showStatus) {
         PmsProductCategory productCategory = new PmsProductCategory();
         productCategory.setShowStatus(showStatus);
-        PmsProductCategoryExample example = new PmsProductCategoryExample();
-        example.createCriteria().andIdIn(ids);
-        return productCategoryMapper.updateByExampleSelective(productCategory, example);
+
+        UpdateWrapper<PmsProductCategory> wrapper = new UpdateWrapper<>();
+        wrapper.in("id",ids);
+        return productCategoryMapper.update(productCategory, wrapper);
     }
 
     @Override
     public List<PmsProductCategoryWithChildrenItem> listWithChildren() {
-        return productCategoryDao.listWithChildren();
+        return productCategoryMapper.listWithChildren();
     }
 
     /**
@@ -143,7 +146,7 @@ public class PmsProductCategoryServiceImpl implements PmsProductCategoryService 
             productCategory.setLevel(0);
         } else {
             //有父分类时选择根据父分类level设置
-            PmsProductCategory parentCategory = productCategoryMapper.selectByPrimaryKey(productCategory.getParentId());
+            PmsProductCategory parentCategory = productCategoryMapper.selectById(productCategory.getParentId());
             if (parentCategory != null) {
                 productCategory.setLevel(parentCategory.getLevel() + 1);
             } else {

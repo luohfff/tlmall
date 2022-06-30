@@ -1,31 +1,22 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.tuling.tulingmall.dto.PmsProductAttributeCategoryItem;
 import com.tuling.tulingmall.model.PmsProductAttributeCategory;
-import com.tuling.tulingmall.model.PmsProductAttributeCategoryExample;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-public interface PmsProductAttributeCategoryMapper {
-    long countByExample(PmsProductAttributeCategoryExample example);
+public interface PmsProductAttributeCategoryMapper extends BaseMapper<PmsProductAttributeCategory> {
 
-    int deleteByExample(PmsProductAttributeCategoryExample example);
-
-    int deleteByPrimaryKey(Long id);
-
-    int insert(PmsProductAttributeCategory record);
-
-    int insertSelective(PmsProductAttributeCategory record);
-
-    List<PmsProductAttributeCategory> selectByExample(PmsProductAttributeCategoryExample example);
-
-    PmsProductAttributeCategory selectByPrimaryKey(Long id);
-
-    int updateByExampleSelective(@Param("record") PmsProductAttributeCategory record, @Param("example") PmsProductAttributeCategoryExample example);
-
-    int updateByExample(@Param("record") PmsProductAttributeCategory record, @Param("example") PmsProductAttributeCategoryExample example);
-
-    int updateByPrimaryKeySelective(PmsProductAttributeCategory record);
-
-    int updateByPrimaryKey(PmsProductAttributeCategory record);
+    @Select("SELECT\n" +
+            "            pac.id,\n" +
+            "            pac.name,\n" +
+            "            pa.id attr_id,\n" +
+            "            pa.name attr_name\n" +
+            "        FROM\n" +
+            "            pms_product_attribute_category pac\n" +
+            "            LEFT JOIN pms_product_attribute pa ON pac.id = pa.product_attribute_category_id\n" +
+            "        AND pa.type=1;")
+    List<PmsProductAttributeCategoryItem> getListWithAttr();
 }

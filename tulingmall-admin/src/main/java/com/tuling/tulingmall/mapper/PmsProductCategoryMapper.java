@@ -1,37 +1,20 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.tuling.tulingmall.dto.PmsProductCategoryWithChildrenItem;
 import com.tuling.tulingmall.model.PmsProductCategory;
-import com.tuling.tulingmall.model.PmsProductCategoryExample;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-public interface PmsProductCategoryMapper {
-    long countByExample(PmsProductCategoryExample example);
+public interface PmsProductCategoryMapper extends BaseMapper<PmsProductCategory> {
 
-    int deleteByExample(PmsProductCategoryExample example);
-
-    int deleteByPrimaryKey(Long id);
-
-    int insert(PmsProductCategory record);
-
-    int insertSelective(PmsProductCategory record);
-
-    List<PmsProductCategory> selectByExampleWithBLOBs(PmsProductCategoryExample example);
-
-    List<PmsProductCategory> selectByExample(PmsProductCategoryExample example);
-
-    PmsProductCategory selectByPrimaryKey(Long id);
-
-    int updateByExampleSelective(@Param("record") PmsProductCategory record, @Param("example") PmsProductCategoryExample example);
-
-    int updateByExampleWithBLOBs(@Param("record") PmsProductCategory record, @Param("example") PmsProductCategoryExample example);
-
-    int updateByExample(@Param("record") PmsProductCategory record, @Param("example") PmsProductCategoryExample example);
-
-    int updateByPrimaryKeySelective(PmsProductCategory record);
-
-    int updateByPrimaryKeyWithBLOBs(PmsProductCategory record);
-
-    int updateByPrimaryKey(PmsProductCategory record);
+    @Select("select" +
+            "            c1.id," +
+            "            c1.name," +
+            "            c2.id   child_id," +
+            "            c2.name child_name" +
+            "        from pms_product_category c1 left join pms_product_category c2 on c1.id = c2.parent_id" +
+            "        where c1.parent_id = 0")
+    List<PmsProductCategoryWithChildrenItem> listWithChildren();
 }

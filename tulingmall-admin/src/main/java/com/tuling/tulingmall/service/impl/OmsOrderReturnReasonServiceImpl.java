@@ -1,9 +1,10 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.OmsOrderReturnReasonMapper;
 import com.tuling.tulingmall.model.OmsOrderReturnReason;
-import com.tuling.tulingmall.model.OmsOrderReturnReasonExample;
 import com.tuling.tulingmall.service.OmsOrderReturnReasonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,22 +29,20 @@ public class OmsOrderReturnReasonServiceImpl implements OmsOrderReturnReasonServ
     @Override
     public int update(Long id, OmsOrderReturnReason returnReason) {
         returnReason.setId(id);
-        return returnReasonMapper.updateByPrimaryKey(returnReason);
+        return returnReasonMapper.updateById(returnReason);
     }
 
     @Override
     public int delete(List<Long> ids) {
-        OmsOrderReturnReasonExample example = new OmsOrderReturnReasonExample();
-        example.createCriteria().andIdIn(ids);
-        return returnReasonMapper.deleteByExample(example);
+        return returnReasonMapper.deleteBatchIds(ids);
     }
 
     @Override
     public List<OmsOrderReturnReason> list(Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum,pageSize);
-        OmsOrderReturnReasonExample example = new OmsOrderReturnReasonExample();
-        example.setOrderByClause("sort desc");
-        return returnReasonMapper.selectByExample(example);
+        QueryWrapper<OmsOrderReturnReason> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("create_time");
+        return returnReasonMapper.selectList(queryWrapper);
     }
 
     @Override
@@ -53,13 +52,13 @@ public class OmsOrderReturnReasonServiceImpl implements OmsOrderReturnReasonServ
         }
         OmsOrderReturnReason record = new OmsOrderReturnReason();
         record.setStatus(status);
-        OmsOrderReturnReasonExample example = new OmsOrderReturnReasonExample();
-        example.createCriteria().andIdIn(ids);
-        return returnReasonMapper.updateByExampleSelective(record,example);
+        UpdateWrapper<OmsOrderReturnReason> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in("id",ids);
+        return returnReasonMapper.update(record,updateWrapper);
     }
 
     @Override
     public OmsOrderReturnReason getItem(Long id) {
-        return returnReasonMapper.selectByPrimaryKey(id);
+        return returnReasonMapper.selectById(id);
     }
 }

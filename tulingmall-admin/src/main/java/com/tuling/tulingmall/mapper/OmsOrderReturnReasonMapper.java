@@ -1,31 +1,30 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.tuling.tulingmall.dto.OmsOrderDeliveryParam;
+import com.tuling.tulingmall.dto.OmsOrderDetail;
+import com.tuling.tulingmall.dto.OmsOrderQueryParam;
+import com.tuling.tulingmall.model.OmsOrder;
 import com.tuling.tulingmall.model.OmsOrderReturnReason;
 import com.tuling.tulingmall.model.OmsOrderReturnReasonExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface OmsOrderReturnReasonMapper {
-    long countByExample(OmsOrderReturnReasonExample example);
+public interface OmsOrderReturnReasonMapper extends BaseMapper<OmsOrderReturnReason> {
 
-    int deleteByExample(OmsOrderReturnReasonExample example);
+    /**
+     * 条件查询订单
+     */
+    List<OmsOrder> getList(@Param("queryParam") OmsOrderQueryParam queryParam);
 
-    int deleteByPrimaryKey(Long id);
+    /**
+     * 批量发货
+     */
+    int delivery(@Param("list") List<OmsOrderDeliveryParam> deliveryParamList);
 
-    int insert(OmsOrderReturnReason record);
-
-    int insertSelective(OmsOrderReturnReason record);
-
-    List<OmsOrderReturnReason> selectByExample(OmsOrderReturnReasonExample example);
-
-    OmsOrderReturnReason selectByPrimaryKey(Long id);
-
-    int updateByExampleSelective(@Param("record") OmsOrderReturnReason record, @Param("example") OmsOrderReturnReasonExample example);
-
-    int updateByExample(@Param("record") OmsOrderReturnReason record, @Param("example") OmsOrderReturnReasonExample example);
-
-    int updateByPrimaryKeySelective(OmsOrderReturnReason record);
-
-    int updateByPrimaryKey(OmsOrderReturnReason record);
+    /**
+     * 获取订单详情
+     */
+    OmsOrderDetail getDetail(@Param("id") Long id);
 }

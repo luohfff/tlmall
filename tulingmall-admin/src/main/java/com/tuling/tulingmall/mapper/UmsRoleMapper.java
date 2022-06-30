@@ -1,31 +1,19 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tuling.tulingmall.model.UmsRole;
 import com.tuling.tulingmall.model.UmsRoleExample;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-public interface UmsRoleMapper {
-    long countByExample(UmsRoleExample example);
-
-    int deleteByExample(UmsRoleExample example);
-
-    int deleteByPrimaryKey(Long id);
-
-    int insert(UmsRole record);
-
-    int insertSelective(UmsRole record);
-
-    List<UmsRole> selectByExample(UmsRoleExample example);
-
-    UmsRole selectByPrimaryKey(Long id);
-
-    int updateByExampleSelective(@Param("record") UmsRole record, @Param("example") UmsRoleExample example);
-
-    int updateByExample(@Param("record") UmsRole record, @Param("example") UmsRoleExample example);
-
-    int updateByPrimaryKeySelective(UmsRole record);
-
-    int updateByPrimaryKey(UmsRole record);
+public interface UmsRoleMapper extends BaseMapper<UmsRole> {
+    /**
+     * 获取用于所有角色
+     */
+    @Select("select r.*" +
+            "        from ums_admin_role_relation ar left join ums_role r on ar.role_id = r.id" +
+            "        where ar.admin_id = #{adminId}")
+    List<UmsRole> getRoleList(@Param("adminId") Long adminId);
 }

@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tuling.tulingmall.dao.PmsSkuStockDao;
 import com.tuling.tulingmall.mapper.PmsSkuStockMapper;
 import com.tuling.tulingmall.model.PmsSkuStock;
@@ -24,12 +25,12 @@ public class PmsSkuStockServiceImpl implements PmsSkuStockService {
 
     @Override
     public List<PmsSkuStock> getList(Long pid, String keyword) {
-        PmsSkuStockExample example = new PmsSkuStockExample();
-        PmsSkuStockExample.Criteria criteria = example.createCriteria().andProductIdEqualTo(pid);
+        QueryWrapper<PmsSkuStock> wrapper = new QueryWrapper<>();
+        wrapper.eq("product_id",pid);
         if (!StringUtils.isEmpty(keyword)) {
-            criteria.andSkuCodeLike("%" + keyword + "%");
+            wrapper.like("sku_code","%" + keyword + "%");
         }
-        return skuStockMapper.selectByExample(example);
+        return skuStockMapper.selectList(wrapper);
     }
 
     @Override

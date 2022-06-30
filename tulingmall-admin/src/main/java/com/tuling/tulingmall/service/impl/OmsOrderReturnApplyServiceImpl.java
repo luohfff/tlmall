@@ -1,7 +1,7 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
-import com.tuling.tulingmall.dao.OmsOrderReturnApplyDao;
 import com.tuling.tulingmall.dto.OmsOrderReturnApplyResult;
 import com.tuling.tulingmall.dto.OmsReturnApplyQueryParam;
 import com.tuling.tulingmall.dto.OmsUpdateStatusParam;
@@ -22,20 +22,20 @@ import java.util.List;
 @Service
 public class OmsOrderReturnApplyServiceImpl implements OmsOrderReturnApplyService {
     @Autowired
-    private OmsOrderReturnApplyDao returnApplyDao;
-    @Autowired
     private OmsOrderReturnApplyMapper returnApplyMapper;
     @Override
     public List<OmsOrderReturnApply> list(OmsReturnApplyQueryParam queryParam, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum,pageSize);
-        return returnApplyDao.getList(queryParam);
+        return returnApplyMapper.getList(queryParam);
     }
 
     @Override
     public int delete(List<Long> ids) {
         OmsOrderReturnApplyExample example = new OmsOrderReturnApplyExample();
         example.createCriteria().andIdIn(ids).andStatusEqualTo(3);
-        return returnApplyMapper.deleteByExample(example);
+        UpdateWrapper<OmsOrderReturnApply> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("status",3).and(wrapper->wrapper.in("id",ids));
+        return returnApplyMapper.delete(updateWrapper);
     }
 
     @Override
@@ -68,11 +68,11 @@ public class OmsOrderReturnApplyServiceImpl implements OmsOrderReturnApplyServic
         }else{
             return 0;
         }
-        return returnApplyMapper.updateByPrimaryKeySelective(returnApply);
+        return returnApplyMapper.updateById(returnApply);
     }
 
     @Override
     public OmsOrderReturnApplyResult getItem(Long id) {
-        return returnApplyDao.getDetail(id);
+        return returnApplyMapper.getDetail(id);
     }
 }

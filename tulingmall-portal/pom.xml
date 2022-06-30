@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>com.tuling</groupId>
-            <artifactId>tulingmall-admin</artifactId>
+            <artifactId>tulingmall-core</artifactId>
         </dependency>
         <!--spring-mvc的依赖-->
         <dependency>

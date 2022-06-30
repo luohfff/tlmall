@@ -1,9 +1,10 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.SmsHomeAdvertiseMapper;
 import com.tuling.tulingmall.model.SmsHomeAdvertise;
-import com.tuling.tulingmall.model.SmsHomeAdvertiseExample;
 import com.tuling.tulingmall.service.SmsHomeAdvertiseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,9 +33,9 @@ public class SmsHomeAdvertiseServiceImpl implements SmsHomeAdvertiseService {
 
     @Override
     public int delete(List<Long> ids) {
-        SmsHomeAdvertiseExample example = new SmsHomeAdvertiseExample();
-        example.createCriteria().andIdIn(ids);
-        return advertiseMapper.deleteByExample(example);
+        UpdateWrapper<SmsHomeAdvertise> wrapper = new UpdateWrapper<>();
+        wrapper.in("id",ids);
+        return advertiseMapper.delete(wrapper);
     }
 
     @Override
@@ -42,30 +43,29 @@ public class SmsHomeAdvertiseServiceImpl implements SmsHomeAdvertiseService {
         SmsHomeAdvertise record = new SmsHomeAdvertise();
         record.setId(id);
         record.setStatus(status);
-        return advertiseMapper.updateByPrimaryKeySelective(record);
+        return advertiseMapper.updateById(record);
     }
 
     @Override
     public SmsHomeAdvertise getItem(Long id) {
-        return advertiseMapper.selectByPrimaryKey(id);
+        return advertiseMapper.selectById(id);
     }
 
     @Override
     public int update(Long id, SmsHomeAdvertise advertise) {
         advertise.setId(id);
-        return advertiseMapper.updateByPrimaryKeySelective(advertise);
+        return advertiseMapper.updateById(advertise);
     }
 
     @Override
     public List<SmsHomeAdvertise> list(String name, Integer type, String endTime, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
-        SmsHomeAdvertiseExample example = new SmsHomeAdvertiseExample();
-        SmsHomeAdvertiseExample.Criteria criteria = example.createCriteria();
+        QueryWrapper<SmsHomeAdvertise> wrapper = new QueryWrapper<>();
         if (!StringUtils.isEmpty(name)) {
-            criteria.andNameLike("%" + name + "%");
+            wrapper.like("name","%" + name + "%");
         }
         if (type != null) {
-            criteria.andTypeEqualTo(type);
+            wrapper.eq("type",type);
         }
         if (!StringUtils.isEmpty(endTime)) {
             String startStr = endTime + " 00:00:00";
@@ -84,10 +84,10 @@ public class SmsHomeAdvertiseServiceImpl implements SmsHomeAdvertiseService {
                 e.printStackTrace();
             }
             if (start != null && end != null) {
-                criteria.andEndTimeBetween(start, end);
+                wrapper.between("end_time",start,end);
             }
         }
-        example.setOrderByClause("sort desc");
-        return advertiseMapper.selectByExample(example);
+        wrapper.orderByDesc("sort");
+        return advertiseMapper.selectList(wrapper);
     }
 }

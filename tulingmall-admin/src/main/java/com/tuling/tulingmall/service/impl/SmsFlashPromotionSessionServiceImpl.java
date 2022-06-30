@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tuling.tulingmall.dto.SmsFlashPromotionSessionDetail;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionSessionMapper;
 import com.tuling.tulingmall.model.SmsFlashPromotionSession;
@@ -34,7 +35,7 @@ public class SmsFlashPromotionSessionServiceImpl implements SmsFlashPromotionSes
     @Override
     public int update(Long id, SmsFlashPromotionSession promotionSession) {
         promotionSession.setId(id);
-        return promotionSessionMapper.updateByPrimaryKey(promotionSession);
+        return promotionSessionMapper.updateById(promotionSession);
     }
 
     @Override
@@ -42,31 +43,30 @@ public class SmsFlashPromotionSessionServiceImpl implements SmsFlashPromotionSes
         SmsFlashPromotionSession promotionSession = new SmsFlashPromotionSession();
         promotionSession.setId(id);
         promotionSession.setStatus(status);
-        return promotionSessionMapper.updateByPrimaryKeySelective(promotionSession);
+        return promotionSessionMapper.updateById(promotionSession);
     }
 
     @Override
     public int delete(Long id) {
-        return promotionSessionMapper.deleteByPrimaryKey(id);
+        return promotionSessionMapper.deleteById(id);
     }
 
     @Override
     public SmsFlashPromotionSession getItem(Long id) {
-        return promotionSessionMapper.selectByPrimaryKey(id);
+        return promotionSessionMapper.selectById(id);
     }
 
     @Override
     public List<SmsFlashPromotionSession> list() {
-        SmsFlashPromotionSessionExample example = new SmsFlashPromotionSessionExample();
-        return promotionSessionMapper.selectByExample(example);
+        return promotionSessionMapper.selectList(null);
     }
 
     @Override
     public List<SmsFlashPromotionSessionDetail> selectList(Long flashPromotionId) {
         List<SmsFlashPromotionSessionDetail> result = new ArrayList<>();
-        SmsFlashPromotionSessionExample example = new SmsFlashPromotionSessionExample();
-        example.createCriteria().andStatusEqualTo(1);
-        List<SmsFlashPromotionSession> list = promotionSessionMapper.selectByExample(example);
+        QueryWrapper<SmsFlashPromotionSession> wrapper = new QueryWrapper<>();
+        wrapper.eq("status",1);
+        List<SmsFlashPromotionSession> list = promotionSessionMapper.selectList(wrapper);
         for (SmsFlashPromotionSession promotionSession : list) {
             SmsFlashPromotionSessionDetail detail = new SmsFlashPromotionSessionDetail();
             BeanUtils.copyProperties(promotionSession, detail);

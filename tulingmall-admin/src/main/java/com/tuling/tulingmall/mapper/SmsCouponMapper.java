@@ -1,31 +1,28 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.tuling.tulingmall.dto.SmsCouponParam;
 import com.tuling.tulingmall.model.SmsCoupon;
-import com.tuling.tulingmall.model.SmsCouponExample;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
+public interface SmsCouponMapper extends BaseMapper<SmsCoupon> {
 
-public interface SmsCouponMapper {
-    long countByExample(SmsCouponExample example);
-
-    int deleteByExample(SmsCouponExample example);
-
-    int deleteByPrimaryKey(Long id);
-
-    int insert(SmsCoupon record);
-
-    int insertSelective(SmsCoupon record);
-
-    List<SmsCoupon> selectByExample(SmsCouponExample example);
-
-    SmsCoupon selectByPrimaryKey(Long id);
-
-    int updateByExampleSelective(@Param("record") SmsCoupon record, @Param("example") SmsCouponExample example);
-
-    int updateByExample(@Param("record") SmsCoupon record, @Param("example") SmsCouponExample example);
-
-    int updateByPrimaryKeySelective(SmsCoupon record);
-
-    int updateByPrimaryKey(SmsCoupon record);
+    @Select("SELECT" +
+            "            c.*," +
+            "            cpr.id                   cpr_id," +
+            "            cpr.product_id           cpr_product_id," +
+            "            cpr.product_name         cpr_product_name," +
+            "            cpr.product_sn           cpr_product_sn," +
+            "            cpcr.id                  cpcr_id," +
+            "            cpcr.product_category_id cpcr_product_category_id," +
+            "            cpcr.product_category_name cpcr_product_category_name," +
+            "            cpcr.parent_category_name cpcr_parent_category_name" +
+            "        FROM" +
+            "            sms_coupon c" +
+            "            LEFT JOIN sms_coupon_product_relation cpr ON c.id = cpr.coupon_id" +
+            "            LEFT JOIN sms_coupon_product_category_relation cpcr ON c.id = cpcr.coupon_id" +
+            "        WHERE" +
+            "            c.id = #{id}")
+    SmsCouponParam getItem(@Param("id") Long id);
 }

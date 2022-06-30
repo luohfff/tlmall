@@ -1,11 +1,9 @@
 package com.tuling.tulingmall.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.tuling.tulingmall.dao.PmsProductAttributeCategoryDao;
 import com.tuling.tulingmall.dto.PmsProductAttributeCategoryItem;
 import com.tuling.tulingmall.mapper.PmsProductAttributeCategoryMapper;
 import com.tuling.tulingmall.model.PmsProductAttributeCategory;
-import com.tuling.tulingmall.model.PmsProductAttributeCategoryExample;
 import com.tuling.tulingmall.service.PmsProductAttributeCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,14 +18,12 @@ import java.util.List;
 public class PmsProductAttributeCategoryServiceImpl implements PmsProductAttributeCategoryService {
     @Autowired
     private PmsProductAttributeCategoryMapper productAttributeCategoryMapper;
-    @Autowired
-    private PmsProductAttributeCategoryDao productAttributeCategoryDao;
 
     @Override
     public int create(String name) {
         PmsProductAttributeCategory productAttributeCategory = new PmsProductAttributeCategory();
         productAttributeCategory.setName(name);
-        return productAttributeCategoryMapper.insertSelective(productAttributeCategory);
+        return productAttributeCategoryMapper.insert(productAttributeCategory);
     }
 
     @Override
@@ -35,27 +31,27 @@ public class PmsProductAttributeCategoryServiceImpl implements PmsProductAttribu
         PmsProductAttributeCategory productAttributeCategory = new PmsProductAttributeCategory();
         productAttributeCategory.setName(name);
         productAttributeCategory.setId(id);
-        return productAttributeCategoryMapper.updateByPrimaryKeySelective(productAttributeCategory);
+        return productAttributeCategoryMapper.updateById(productAttributeCategory);
     }
 
     @Override
     public int delete(Long id) {
-        return productAttributeCategoryMapper.deleteByPrimaryKey(id);
+        return productAttributeCategoryMapper.deleteById(id);
     }
 
     @Override
     public PmsProductAttributeCategory getItem(Long id) {
-        return productAttributeCategoryMapper.selectByPrimaryKey(id);
+        return productAttributeCategoryMapper.selectById(id);
     }
 
     @Override
     public List<PmsProductAttributeCategory> getList(Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum,pageSize);
-        return productAttributeCategoryMapper.selectByExample(new PmsProductAttributeCategoryExample());
+        return productAttributeCategoryMapper.selectList(null);
     }
 
     @Override
     public List<PmsProductAttributeCategoryItem> getListWithAttr() {
-        return productAttributeCategoryDao.getListWithAttr();
+        return productAttributeCategoryMapper.getListWithAttr();
     }
 }

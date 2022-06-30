@@ -32,7 +32,7 @@
         </dependency>
         <dependency>
             <groupId>com.tuling</groupId>
-            <artifactId>tulingmall-admin</artifactId>
+            <artifactId>tulingmall-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

@@ -1,14 +1,12 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.bo.AdminUserDetails;
 import com.tuling.tulingmall.dao.UmsAdminPermissionRelationDao;
-import com.tuling.tulingmall.dao.UmsAdminRoleRelationDao;
 import com.tuling.tulingmall.dto.UmsAdminParam;
-import com.tuling.tulingmall.mapper.UmsAdminLoginLogMapper;
-import com.tuling.tulingmall.mapper.UmsAdminMapper;
-import com.tuling.tulingmall.mapper.UmsAdminPermissionRelationMapper;
-import com.tuling.tulingmall.mapper.UmsAdminRoleRelationMapper;
+import com.tuling.tulingmall.mapper.*;
 import com.tuling.tulingmall.model.*;
 import com.tuling.tulingmall.security.util.JwtTokenUtil;
 import com.tuling.tulingmall.service.UmsAdminService;
@@ -28,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,9 +47,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     @Autowired
     private UmsAdminMapper adminMapper;
     @Autowired
-    private UmsAdminRoleRelationMapper adminRoleRelationMapper;
+    private UmsRoleMapper roleMapper;
     @Autowired
-    private UmsAdminRoleRelationDao adminRoleRelationDao;
+    private UmsAdminRoleRelationMapper adminRoleRelationMapper;
     @Autowired
     private UmsAdminPermissionRelationMapper adminPermissionRelationMapper;
     @Autowired
@@ -60,9 +59,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Override
     public UmsAdmin getAdminByUsername(String username) {
-        UmsAdminExample example = new UmsAdminExample();
-        example.createCriteria().andUsernameEqualTo(username);
-        List<UmsAdmin> adminList = adminMapper.selectByExample(example);
+        QueryWrapper<UmsAdmin> wrapper = new QueryWrapper();
+        wrapper.eq("username",username);
+        List<UmsAdmin> adminList = adminMapper.selectList(wrapper);
         if (adminList != null && adminList.size() > 0) {
             return adminList.get(0);
         }
@@ -76,9 +75,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         umsAdmin.setCreateTime(new Date());
         umsAdmin.setStatus(1);
         //查询是否有相同用户名的用户
-        UmsAdminExample example = new UmsAdminExample();
-        example.createCriteria().andUsernameEqualTo(umsAdmin.getUsername());
-        List<UmsAdmin> umsAdminList = adminMapper.selectByExample(example);
+        QueryWrapper<UmsAdmin> wrapper = new QueryWrapper();
+        wrapper.eq("username",umsAdmin.getUsername());
+        List<UmsAdmin> umsAdminList = adminMapper.selectList(wrapper);
         if (umsAdminList.size() > 0) {
             return null;
         }
@@ -130,9 +129,13 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private void updateLoginTimeByUsername(String username) {
         UmsAdmin record = new UmsAdmin();
         record.setLoginTime(new Date());
-        UmsAdminExample example = new UmsAdminExample();
-        example.createCriteria().andUsernameEqualTo(username);
-        adminMapper.updateByExampleSelective(record, example);
+//        UmsAdminExample example = new UmsAdminExample();
+//        example.createCriteria().andUsernameEqualTo(username);
+//        adminMapper.updateByExampleSelective(record, example);
+
+        UpdateWrapper<UmsAdmin> wrapper = new UpdateWrapper();
+        wrapper.eq("username",username);
+        adminMapper.update(record,wrapper);
     }
 
     @Override
@@ -142,19 +145,20 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Override
     public UmsAdmin getItem(Long id) {
-        return adminMapper.selectByPrimaryKey(id);
+//        return adminMapper.selectByPrimaryKey(id);
+        return adminMapper.selectById(id);
     }
 
     @Override
     public List<UmsAdmin> list(String name, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum, pageSize);
-        UmsAdminExample example = new UmsAdminExample();
-        UmsAdminExample.Criteria criteria = example.createCriteria();
+
+        QueryWrapper<UmsAdmin> wrapper = new QueryWrapper();
         if (!StringUtils.isEmpty(name)) {
-            criteria.andUsernameLike("%" + name + "%");
-            example.or(example.createCriteria().andNickNameLike("%" + name + "%"));
+            wrapper.like("username","%" + name + "%");
+            wrapper.or(cond-> cond.like("nick_name","%" + name + "%"));
         }
-        return adminMapper.selectByExample(example);
+        return adminMapper.selectList(wrapper);
     }
 
     @Override
@@ -162,48 +166,47 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         admin.setId(id);
         //密码已经加密处理，需要单独修改
         admin.setPassword(null);
-        return adminMapper.updateByPrimaryKeySelective(admin);
+        return adminMapper.updateById(admin);
     }
 
     @Override
     public int delete(Long id) {
-        return adminMapper.deleteByPrimaryKey(id);
+        return adminMapper.deleteById(id);
     }
 
     @Override
     public int updateRole(Long adminId, List<Long> roleIds) {
         int count = roleIds == null ? 0 : roleIds.size();
         //先删除原来的关系
-        UmsAdminRoleRelationExample adminRoleRelationExample = new UmsAdminRoleRelationExample();
-        adminRoleRelationExample.createCriteria().andAdminIdEqualTo(adminId);
-        adminRoleRelationMapper.deleteByExample(adminRoleRelationExample);
+        UpdateWrapper<UmsAdminRoleRelation> wrapper = new UpdateWrapper<>();
+        wrapper.eq("admin_id",adminId);
+        adminRoleRelationMapper.delete(wrapper);
         //建立新关系
         if (!CollectionUtils.isEmpty(roleIds)) {
-            List<UmsAdminRoleRelation> list = new ArrayList<>();
             for (Long roleId : roleIds) {
                 UmsAdminRoleRelation roleRelation = new UmsAdminRoleRelation();
                 roleRelation.setAdminId(adminId);
                 roleRelation.setRoleId(roleId);
-                list.add(roleRelation);
+                adminRoleRelationMapper.insert(roleRelation);
             }
-            adminRoleRelationDao.insertList(list);
         }
         return count;
     }
 
     @Override
     public List<UmsRole> getRoleList(Long adminId) {
-        return adminRoleRelationDao.getRoleList(adminId);
+        return roleMapper.getRoleList(adminId);
     }
 
     @Override
     public int updatePermission(Long adminId, List<Long> permissionIds) {
         //删除原所有权限关系
-        UmsAdminPermissionRelationExample relationExample = new UmsAdminPermissionRelationExample();
-        relationExample.createCriteria().andAdminIdEqualTo(adminId);
-        adminPermissionRelationMapper.deleteByExample(relationExample);
+        UpdateWrapper<UmsAdminPermissionRelation> wrapper = new UpdateWrapper<>();
+        wrapper.eq("admin_id",adminId);
+        adminPermissionRelationMapper.delete(wrapper);
+
         //获取用户所有角色权限
-        List<UmsPermission> permissionList = adminRoleRelationDao.getRolePermissionList(adminId);
+        List<UmsPermission> permissionList = adminPermissionRelationMapper.getRolePermissionList(adminId);
         List<Long> rolePermissionList = permissionList.stream().map(UmsPermission::getId).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(permissionIds)) {
             List<UmsAdminPermissionRelation> relationList = new ArrayList<>();
@@ -235,7 +238,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Override
     public List<UmsPermission> getPermissionList(Long adminId) {
-        return adminRoleRelationDao.getPermissionList(adminId);
+        return adminPermissionRelationMapper.getPermissionList(adminId);
     }
 
     public UserDetails loadUserByUsername(String username){

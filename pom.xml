@@ -24,7 +24,6 @@
         <module>tulingmall-portal</module>
         <module>tulingmall-order</module>
         <module>tulingmall-cart</module>
-        <module>tulingmall-unqid</module>
     </modules>
 
     <properties>
@@ -37,7 +36,7 @@
 
         <pagehelper-starter.version>1.2.10</pagehelper-starter.version>
         <pagehelper.version>5.1.8</pagehelper.version>
-        <druid.version>1.1.18</druid.version>
+        <druid.version>1.1.10</druid.version>
         <freemarker.version>2.3.30</freemarker.version>
         <hutool.version>4.5.7</hutool.version>
         <swagger2.version>2.7.0</swagger2.version>

@@ -1,5 +1,7 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.SmsHomeBrandMapper;
 import com.tuling.tulingmall.model.SmsHomeBrand;
@@ -34,37 +36,34 @@ public class SmsHomeBrandServiceImpl implements SmsHomeBrandService {
         SmsHomeBrand homeBrand = new SmsHomeBrand();
         homeBrand.setId(id);
         homeBrand.setSort(sort);
-        return homeBrandMapper.updateByPrimaryKeySelective(homeBrand);
+        return homeBrandMapper.updateById(homeBrand);
     }
 
     @Override
     public int delete(List<Long> ids) {
-        SmsHomeBrandExample example = new SmsHomeBrandExample();
-        example.createCriteria().andIdIn(ids);
-        return homeBrandMapper.deleteByExample(example);
+        return homeBrandMapper.deleteBatchIds(ids);
     }
 
     @Override
     public int updateRecommendStatus(List<Long> ids, Integer recommendStatus) {
-        SmsHomeBrandExample example = new SmsHomeBrandExample();
-        example.createCriteria().andIdIn(ids);
+        UpdateWrapper<SmsHomeBrand> wrapper = new UpdateWrapper<>();
+        wrapper.in("id",ids);
         SmsHomeBrand record = new SmsHomeBrand();
         record.setRecommendStatus(recommendStatus);
-        return homeBrandMapper.updateByExampleSelective(record,example);
+        return homeBrandMapper.update(record,wrapper);
     }
 
     @Override
     public List<SmsHomeBrand> list(String brandName, Integer recommendStatus, Integer pageSize, Integer pageNum) {
         PageHelper.startPage(pageNum,pageSize);
-        SmsHomeBrandExample example = new SmsHomeBrandExample();
-        SmsHomeBrandExample.Criteria criteria = example.createCriteria();
+        QueryWrapper<SmsHomeBrand> wrapper = new QueryWrapper<>();
         if(!StringUtils.isEmpty(brandName)){
-            criteria.andBrandNameLike("%"+brandName+"%");
+            wrapper.like("brand_name","%"+brandName+"%");
         }
         if(recommendStatus!=null){
-            criteria.andRecommendStatusEqualTo(recommendStatus);
+            wrapper.eq("recommend_status",recommendStatus);
         }
-        example.setOrderByClause("sort desc");
-        return homeBrandMapper.selectByExample(example);
+        wrapper.orderByDesc("sort");
+        return homeBrandMapper.selectList(wrapper);
     }
 }
