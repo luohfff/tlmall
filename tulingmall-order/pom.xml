@@ -10,12 +10,10 @@
 	<artifactId>tulingmall-order</artifactId>
 	<name>tulingmall-order</name>
 	<packaging>pom</packaging>
-	<description>订单微服务</description>
+	<description>订单服务</description>
 
 	<modules>
 		<module>tulingmall-order-async</module>
-		<module>tulingmall-order-sharding</module>
-		<module>tulingmall-seckill</module>
 	</modules>
 
 </project>
