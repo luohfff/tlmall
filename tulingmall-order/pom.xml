@@ -13,7 +13,7 @@
 	<description>订单服务</description>
 
 	<modules>
-		<module>tulingmall-order-async</module>
+		<module>tulingmall-order-curr</module>
 	</modules>
 
 </project>
