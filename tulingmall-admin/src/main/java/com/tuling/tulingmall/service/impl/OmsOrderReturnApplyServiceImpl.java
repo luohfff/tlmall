@@ -7,7 +7,6 @@ import com.tuling.tulingmall.dto.OmsReturnApplyQueryParam;
 import com.tuling.tulingmall.dto.OmsUpdateStatusParam;
 import com.tuling.tulingmall.mapper.OmsOrderReturnApplyMapper;
 import com.tuling.tulingmall.model.OmsOrderReturnApply;
-import com.tuling.tulingmall.model.OmsOrderReturnApplyExample;
 import com.tuling.tulingmall.service.OmsOrderReturnApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,6 @@ public class OmsOrderReturnApplyServiceImpl implements OmsOrderReturnApplyServic
 
     @Override
     public int delete(List<Long> ids) {
-        OmsOrderReturnApplyExample example = new OmsOrderReturnApplyExample();
-        example.createCriteria().andIdIn(ids).andStatusEqualTo(3);
         UpdateWrapper<OmsOrderReturnApply> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("status",3).and(wrapper->wrapper.in("id",ids));
         return returnApplyMapper.delete(updateWrapper);

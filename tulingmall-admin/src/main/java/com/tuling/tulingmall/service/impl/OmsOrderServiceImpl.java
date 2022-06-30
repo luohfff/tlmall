@@ -6,7 +6,6 @@ import com.tuling.tulingmall.dto.*;
 import com.tuling.tulingmall.mapper.OmsOrderMapper;
 import com.tuling.tulingmall.mapper.OmsOrderOperateHistoryMapper;
 import com.tuling.tulingmall.model.OmsOrder;
-import com.tuling.tulingmall.model.OmsOrderExample;
 import com.tuling.tulingmall.model.OmsOrderOperateHistory;
 import com.tuling.tulingmall.service.OmsOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,9 +75,6 @@ public class OmsOrderServiceImpl implements OmsOrderService {
     public int delete(List<Long> ids) {
         OmsOrder record = new OmsOrder();
         record.setDeleteStatus(1);
-        OmsOrderExample example = new OmsOrderExample();
-        example.createCriteria().andDeleteStatusEqualTo(0).andIdIn(ids);
-
         UpdateWrapper<OmsOrder> updateWrapper = new UpdateWrapper<>();
         updateWrapper.in("id",ids).and(wrapper -> wrapper.eq("delete_status",0));
         return orderMapper.update(record,updateWrapper);

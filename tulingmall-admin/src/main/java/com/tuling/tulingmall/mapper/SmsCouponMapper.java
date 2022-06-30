@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tuling.tulingmall.dto.SmsCouponParam;
 import com.tuling.tulingmall.model.SmsCoupon;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-
+@DS("promotion")
 public interface SmsCouponMapper extends BaseMapper<SmsCoupon> {
 
     @Select("SELECT" +

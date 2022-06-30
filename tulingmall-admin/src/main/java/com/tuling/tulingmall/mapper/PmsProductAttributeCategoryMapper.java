@@ -1,12 +1,13 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tuling.tulingmall.dto.PmsProductAttributeCategoryItem;
 import com.tuling.tulingmall.model.PmsProductAttributeCategory;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
-
+@DS("goods")
 public interface PmsProductAttributeCategoryMapper extends BaseMapper<PmsProductAttributeCategory> {
 
     @Select("SELECT\n" +

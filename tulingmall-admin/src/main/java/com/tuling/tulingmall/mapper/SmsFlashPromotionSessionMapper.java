@@ -1,11 +1,8 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tuling.tulingmall.model.SmsFlashPromotionSession;
-import com.tuling.tulingmall.model.SmsFlashPromotionSessionExample;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
+@DS("promotion")
 public interface SmsFlashPromotionSessionMapper extends BaseMapper<SmsFlashPromotionSession> {
 }

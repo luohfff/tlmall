@@ -1,14 +1,14 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tuling.tulingmall.dto.SmsFlashPromotionProduct;
 import com.tuling.tulingmall.model.SmsFlashPromotionProductRelation;
-import com.tuling.tulingmall.model.SmsFlashPromotionProductRelationExample;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
-
+@DS("promotion")
 public interface SmsFlashPromotionProductRelationMapper extends BaseMapper<SmsFlashPromotionProductRelation> {
     /**
      * 获取限时购及相关商品信息

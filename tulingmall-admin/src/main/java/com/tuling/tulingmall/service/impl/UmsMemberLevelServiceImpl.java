@@ -3,7 +3,6 @@ package com.tuling.tulingmall.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tuling.tulingmall.mapper.UmsMemberLevelMapper;
 import com.tuling.tulingmall.model.UmsMemberLevel;
-import com.tuling.tulingmall.model.UmsMemberLevelExample;
 import com.tuling.tulingmall.service.UmsMemberLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

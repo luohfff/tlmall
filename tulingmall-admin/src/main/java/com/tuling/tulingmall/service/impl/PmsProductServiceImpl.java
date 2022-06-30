@@ -251,7 +251,6 @@ public class PmsProductServiceImpl implements PmsProductService {
 
     @Override
     public List<PmsProduct> list(String keyword) {
-        PmsProductExample productExample = new PmsProductExample();
         QueryWrapper<PmsProduct> wrapper = new QueryWrapper<>();
         wrapper.eq("delete_status",0);
         if(!StringUtils.isEmpty(keyword)){

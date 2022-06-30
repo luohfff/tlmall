@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tuling.tulingmall.dto.SmsFlashPromotionSessionDetail;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionSessionMapper;
 import com.tuling.tulingmall.model.SmsFlashPromotionSession;
-import com.tuling.tulingmall.model.SmsFlashPromotionSessionExample;
 import com.tuling.tulingmall.service.SmsFlashPromotionProductRelationService;
 import com.tuling.tulingmall.service.SmsFlashPromotionSessionService;
 import org.springframework.beans.BeanUtils;

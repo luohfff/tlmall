@@ -8,7 +8,6 @@ import com.tuling.tulingmall.mapper.PmsBrandMapper;
 import com.tuling.tulingmall.mapper.PmsProductMapper;
 import com.tuling.tulingmall.model.PmsBrand;
 import com.tuling.tulingmall.model.PmsProduct;
-import com.tuling.tulingmall.model.PmsProductExample;
 import com.tuling.tulingmall.service.PmsBrandService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +55,6 @@ public class PmsBrandServiceImpl implements PmsBrandService {
         //更新品牌时要更新商品中的品牌名称
         PmsProduct product = new PmsProduct();
         product.setBrandName(pmsBrand.getName());
-        PmsProductExample example = new PmsProductExample();
-        example.createCriteria().andBrandIdEqualTo(id);
         UpdateWrapper<PmsProduct> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("brand_id",id);
         productMapper.update(product,updateWrapper);

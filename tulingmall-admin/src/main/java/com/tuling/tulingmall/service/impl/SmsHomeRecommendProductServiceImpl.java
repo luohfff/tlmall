@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.SmsHomeRecommendProductMapper;
 import com.tuling.tulingmall.model.SmsHomeRecommendProduct;
-import com.tuling.tulingmall.model.SmsHomeRecommendProductExample;
 import com.tuling.tulingmall.service.SmsHomeRecommendProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

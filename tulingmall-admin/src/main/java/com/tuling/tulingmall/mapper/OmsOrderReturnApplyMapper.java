@@ -1,15 +1,15 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tuling.tulingmall.dto.OmsOrderReturnApplyResult;
 import com.tuling.tulingmall.dto.OmsReturnApplyQueryParam;
 import com.tuling.tulingmall.model.OmsOrderReturnApply;
-import com.tuling.tulingmall.model.OmsOrderReturnApplyExample;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
-
+@DS("order")
 public interface OmsOrderReturnApplyMapper extends BaseMapper<OmsOrderReturnApply> {
 
     /**

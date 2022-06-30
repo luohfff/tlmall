@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tuling.tulingmall.dto.OmsOrderDeliveryParam;
 import com.tuling.tulingmall.dto.OmsOrderDetail;
@@ -10,7 +11,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
-
+@DS("order")
 public interface OmsOrderMapper extends BaseMapper<OmsOrder> {
     /**
      * 条件查询订单
