@@ -24,6 +24,8 @@
         <module>tulingmall-portal</module>
         <module>tulingmall-order</module>
         <module>tulingmall-cart</module>
+        <module>tulingmall-core</module>
+        <module>tulingmall-unqid</module>
     </modules>
 
     <properties>
