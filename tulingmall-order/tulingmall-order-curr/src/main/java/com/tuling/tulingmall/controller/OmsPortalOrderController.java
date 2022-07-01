@@ -67,11 +67,13 @@ public class OmsPortalOrderController {
     private SecKillOrderService secKillOrderService;
 
     @ApiOperation("根据购物车信息生成确认单信息")
-    @ApiImplicitParam(name = "itemId",value = "购物车选择购买的选项ID",allowMultiple = true,paramType = "query",dataType = "long")
+    @ApiImplicitParam(name = "itemId",value = "购物车选择购买的选项ID",allowMultiple = true,
+            paramType = "query",dataType = "long")
     @RequestMapping(value = "/generateConfirmOrder",method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<ConfirmOrderResult> generateConfirmOrder(@RequestParam(value = "itemIds") List<Long> itemIds,
-                                                                 @RequestHeader("memberId") Long memberId) throws BusinessException {
+    public CommonResult<ConfirmOrderResult> generateConfirmOrder(
+            @RequestParam(value = "itemIds") List<Long> itemIds,
+            @RequestHeader("memberId") Long memberId) throws BusinessException {
         ConfirmOrderResult confirmOrderResult = portalOrderService.generateConfirmOrder(itemIds,memberId);
         return CommonResult.success(confirmOrderResult);
     }
