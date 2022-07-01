@@ -115,7 +115,6 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         result.setCartPromotionItemList(cartPromotionItemList);
         //获取用户收货地址列表
         //List<UmsMemberReceiveAddress> memberReceiveAddressList = memberReceiveAddressService.list();
-        //todo 测试通过了
         List<UmsMemberReceiveAddress> memberReceiveAddressList = umsMemberFeignApi.list().getData();
 
         result.setMemberReceiveAddressList(memberReceiveAddressList);

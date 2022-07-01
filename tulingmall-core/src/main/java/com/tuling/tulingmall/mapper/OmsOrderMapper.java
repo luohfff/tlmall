@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.OmsOrder;
 import com.tuling.tulingmall.model.OmsOrderExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("order")
 public interface OmsOrderMapper {
     long countByExample(OmsOrderExample example);
 

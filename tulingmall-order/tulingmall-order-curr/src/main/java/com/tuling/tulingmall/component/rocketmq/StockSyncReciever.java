@@ -56,7 +56,7 @@ public class StockSyncReciever implements RocketMQListener<String> {
          */
         if(redisOpsUtil.hasKey(RedisKeyPrefixConst.STOCK_REFRESHED_MESSAGE_PREFIX + promotionId)){
             log.info("start sync mysql stock to redis");
-            //todo 同步一下库存到缓存当中
+            //同步一下库存到缓存当中
             Integer stock = stockManageFeignApi.selectStock(productID,promotionId).getData();
             if(stock > 0){
                 //重置库存

@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddressExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("user")
 public interface UmsMemberReceiveAddressMapper {
     long countByExample(UmsMemberReceiveAddressExample example);
 

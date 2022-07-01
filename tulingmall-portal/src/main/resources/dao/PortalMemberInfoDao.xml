@@ -39,9 +39,9 @@
             lv.priviledge_member_price lv_priviledge_member_price,
             lv.priviledge_birthday lv_priviledge_birthday
         FROM
-            ums_member um
+            tl_mall_user.ums_member um
         LEFT JOIN
-            ums_member_level lv on lv.id = um.member_level_id
+            tl_mall_user.ums_member_level lv on lv.id = um.member_level_id
         WHERE um.id = #{memberId} AND um.status = 1
     </select>
 </mapper>

@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.CmsSubjectCategory;
 import com.tuling.tulingmall.model.CmsSubjectCategoryExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("normal")
 public interface CmsSubjectCategoryMapper {
     long countByExample(CmsSubjectCategoryExample example);
 

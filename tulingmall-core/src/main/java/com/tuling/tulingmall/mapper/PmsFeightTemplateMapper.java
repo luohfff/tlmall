@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.PmsFeightTemplate;
 import com.tuling.tulingmall.model.PmsFeightTemplateExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("goods")
 public interface PmsFeightTemplateMapper {
     long countByExample(PmsFeightTemplateExample example);
 

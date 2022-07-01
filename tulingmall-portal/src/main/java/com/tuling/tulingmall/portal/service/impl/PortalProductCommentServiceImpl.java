@@ -58,6 +58,7 @@ public class PortalProductCommentServiceImpl implements PortalProductCommentServ
     public Integer insertProductComment(PmsComment pmsComment) {
         UmsMember member = umsMemberFeignApi.getMemberById().getData();
         //判断一下当前用户是否购买过当前评论的商品
+        //fixme 拆库后看怎么调微服务
         Integer status = productCommentDao.selectUserOrder(member.getId(), pmsComment.getProductId());
         if(status > 0){
             pmsComment.setCreateTime(new Date());

@@ -1,8 +1,39 @@
 spring:
   datasource:
-    url: jdbc:mysql://192.168.65.71:3306/tl_mall_normal?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
-    username: tlmall
-    password: tlmall123
+    dynamic:
+      primary: user
+      # 未匹配到数据源时，true抛异常，false使用默认数据源
+      strict: false
+      datasource:
+        user:
+          url: jdbc:mysql://192.168.65.71:3306/tl_mall_user?characterEncoding=utf-8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: tlmall
+          password: tlmall123
+        goods:
+          url: jdbc:mysql://192.168.65.71:3306/tl_mall_goods?characterEncoding=utf-8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: tlmall
+          password: tlmall123
+        promotion:
+          url: jdbc:mysql://192.168.65.71:3306/tl_mall_promotion?characterEncoding=utf-8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: tlmall
+          password: tlmall123
+        normal:
+          url: jdbc:mysql://192.168.65.71:3306/tl_mall_normal?characterEncoding=utf-8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: tlmall
+          password: tlmall123
+        order:
+          url: jdbc:mysql://192.168.65.223:3306/tl_mall_order?characterEncoding=utf-8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: tlmall
+          password: tlmall123
+#    url: jdbc:mysql://192.168.65.71:3306/tl_mall_normal?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: tlmall
+#    password: tlmall123
     druid:
       initial-size: 5 #连接池初始化大小
       min-idle: 10 #最小空闲连接数
@@ -18,7 +49,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: tl.nacos.com:8848
+        server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848
 mybatis:
   mapper-locations:
     - classpath:dao/*.xml

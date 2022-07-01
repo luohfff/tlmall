@@ -77,7 +77,7 @@ public class PmsProductServiceImpl implements PmsProductService {
     /*
      * zk分布式锁
      */
-    @Autowired
+//    @Autowired
     private ZKLock zkLock;
     private String lockPath = "/load_db";
 

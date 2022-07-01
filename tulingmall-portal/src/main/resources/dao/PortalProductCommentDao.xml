@@ -18,9 +18,9 @@
         cr.create_time cr_create_time,
         cr.type cr_type
         FROM
-        pms_comment pc
+            tl_mall_goods.pms_comment pc
         LEFT JOIN
-        pms_comment_replay cr ON pc.id = cr.comment_id
+            tl_mall_goods.pms_comment_replay cr ON pc.id = cr.comment_id
         WHERE
         pc.show_status = 0 and pc.product_id = #{productId}
     </select>

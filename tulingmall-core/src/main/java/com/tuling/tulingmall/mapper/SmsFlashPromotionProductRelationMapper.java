@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.SmsFlashPromotionProductRelation;
 import com.tuling.tulingmall.model.SmsFlashPromotionProductRelationExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("promotion")
 public interface SmsFlashPromotionProductRelationMapper {
     long countByExample(SmsFlashPromotionProductRelationExample example);
 

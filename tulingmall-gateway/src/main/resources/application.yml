@@ -53,7 +53,10 @@ logging:
 tuling:
   gateway:
     shouldSkipUrls:
-      - /oauth/**
-      - /sso/**
-      - /home/**
-      - /pms/**
+       - /oauth/**
+       - /sso/**
+       - /home/**
+       - /portal/commentlist/**
+       - /order/paySuccess/**
+       - /pms/**
+       - /static/qrcode/**

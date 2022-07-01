@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.SmsCoupon;
 import com.tuling.tulingmall.model.SmsCouponExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("promotion")
 public interface SmsCouponMapper {
     long countByExample(SmsCouponExample example);
 

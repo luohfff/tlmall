@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.OmsOrderReturnReason;
 import com.tuling.tulingmall.model.OmsOrderReturnReasonExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("order")
 public interface OmsOrderReturnReasonMapper {
     long countByExample(OmsOrderReturnReasonExample example);
 

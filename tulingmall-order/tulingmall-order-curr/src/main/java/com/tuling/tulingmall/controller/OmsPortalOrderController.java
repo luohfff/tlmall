@@ -203,7 +203,7 @@ public class OmsPortalOrderController {
     @RequestMapping(value = "/cancelOrder",method = RequestMethod.POST)
     @ResponseBody
     public CommonResult cancelOrder(Long orderId,@RequestHeader("memberId") Long memberId){
-        //todo
+
         MqCancelOrder mqCancelOrder = new MqCancelOrder();
         mqCancelOrder.setMemberId(memberId);
         mqCancelOrder.setOrderId(orderId);
@@ -411,7 +411,7 @@ public class OmsPortalOrderController {
         } else if (requestNum > 10000) {
             return CommonResult.failed("访问超载，请稍后再试");
         }
-        //todo 创建token
+        //创建token
         String token = MD5.md5(UUID.randomUUID().toString());
 
         log.info("miaosha token:{}",token);

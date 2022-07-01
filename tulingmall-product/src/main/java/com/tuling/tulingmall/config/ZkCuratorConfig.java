@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Configuration;
  * @date ：Created in 2020/2/20
  * @version: V1.0
  * @slogan: 天下风云出我辈，一入代码岁月催
- * @description: zookeeper配置
+ * @description: zookeeper配置 抛弃不用了
  **/
-@Configuration
+//@Configuration
 public class ZkCuratorConfig {
     @Value("${zk.curator.retryCount}")
     private int retryCount;
