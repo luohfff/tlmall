@@ -1,7 +1,5 @@
 package com.tuling.tulingmall.config;
 
-import com.tuling.tulingmall.component.zklock.ZKLock;
-import com.tuling.tulingmall.component.zklock.ZKLockImpl;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
@@ -40,10 +38,5 @@ public class ZkCuratorConfig {
                 , sessionTimeOutMs
                 , connectionTimeOutMs
                 , new RetryNTimes(retryCount,elapsedTimeMs));
-    }
-
-    @Bean
-    public ZKLock zkLock(){
-        return new ZKLockImpl();
     }
 }

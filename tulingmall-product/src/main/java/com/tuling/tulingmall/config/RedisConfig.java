@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  **/
 @Slf4j
 @Configuration
-public class RedisConfig implements InitializingBean {
+public class RedisConfig{
     @Value("${spring.redis.cluster.nodes}")
     String redisNodes;
 
@@ -68,32 +68,6 @@ public class RedisConfig implements InitializingBean {
         return template;
     }
 
-    @Autowired
-    private FlashPromotionProductDao flashPromotionProductDao;
-
-    /**
-     * 加载所有的秒杀活动商品库存到缓存redis中
-     * 获取所有的秒杀活动中商品
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        FlashPromotionParam promotion = flashPromotionProductDao.getFlashPromotion(null);
-        if (null==promotion){
-            return;
-        }
-        Date now = new Date();
-        Date endDate = promotion.getEndDate();//结束时间
-        final Long expired = endDate.getTime()-now.getTime();//剩余时间
-        //秒杀商品库存缓存到redis
-        promotion.getRelation().stream().forEach((item)->{
-            redisOpsUtil().setIfAbsent(
-                    RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + item.getProductId()
-                    , item.getFlashPromotionCount()
-                    , expired
-                    , TimeUnit.MILLISECONDS);
-        });
-    }
     @Bean
     public RedisOpsUtil redisOpsUtil(){
         return new RedisOpsUtil();

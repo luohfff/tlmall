@@ -6,10 +6,16 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: tl.nacos.com:8848
-        file-extension: yml
-        shared-dataids: tulingmall-db-common.yml,tulingmall-nacos.yml
-        refreshable-dataids: tulingmall-db-common.yml,tulingmall-nacos.yml
+        server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848 #配置中心的地址
+        file-extension: yml #配置文件结尾的配置
+        shared-configs[0]:
+          data-id: tulingmall-nacos.yml
+          group: DEFAULT_GROUP
+          refresh: true
+        shared-configs[1]:
+          data-id: tulingmall-db-common.yml
+          group: DEFAULT_GROUP
+          refresh: true
 logging:
   level:
     com:

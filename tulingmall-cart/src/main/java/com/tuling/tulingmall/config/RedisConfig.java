@@ -10,9 +10,11 @@ import com.tuling.tulingmall.util.RedisOpsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -33,7 +35,13 @@ import java.util.concurrent.TimeUnit;
  **/
 @Slf4j
 @Configuration
-public class RedisConifg implements InitializingBean {
+public class RedisConfig {
+
+    @Value("${spring.redis.cluster.nodes}")
+    String redisNodes;
+
+    @Value("${spring.redis.password}")
+    String redisPass;
 
     @Autowired
     private RedisConnectionFactory connectionFactory;
@@ -61,35 +69,6 @@ public class RedisConifg implements InitializingBean {
         return template;
     }
 
-
-
-
-    @Autowired
-    private FlashPromotionProductDao flashPromotionProductDao;
-
-    /**
-     * 加载所有的秒杀活动商品库存到缓存redis中
-     * 获取所有的秒杀活动中商品
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        FlashPromotionParam promotion = flashPromotionProductDao.getFlashPromotion(null);
-        if (null==promotion){
-            return;
-        }
-        Date now = new Date();
-        Date endDate = promotion.getEndDate();//结束时间
-        final Long expired = endDate.getTime()-now.getTime();//剩余时间
-        //秒杀商品库存缓存到redis
-        promotion.getRelation().stream().forEach((item)->{
-            redisOpsUtil().setIfAbsent(
-                    RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + item.getProductId()
-                    , item.getFlashPromotionCount()
-                    , expired
-                    , TimeUnit.MILLISECONDS);
-        });
-    }
     @Bean
     public RedisOpsUtil redisOpsUtil(){
         return new RedisOpsUtil();
@@ -100,7 +79,11 @@ public class RedisConifg implements InitializingBean {
     @Bean
     public RedissonClient redissonClient(){
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://tlshop.com:6379").setPassword("123456").setDatabase(1);
+        ClusterServersConfig clusterServersConfig = config.useClusterServers();
+        for (String node: redisNodes.split(",")){
+            clusterServersConfig.addNodeAddress("redis://"+node);
+        }
+        clusterServersConfig.setPassword(redisPass);
         return Redisson.create(config);
     }
 

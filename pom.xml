@@ -47,6 +47,7 @@
         <mybatis-plus.version>3.3.2</mybatis-plus.version>
         <dynamic-datasource.version>3.3.2</dynamic-datasource.version>
         <mysql-connector.version>8.0.15</mysql-connector.version>
+        <commons-pool2.version>2.4.3</commons-pool2.version>
         <jjwt.version>0.9.0</jjwt.version>
         <aliyun-oss.version>2.5.0</aliyun-oss.version>
         <logstash-logback.version>5.3</logstash-logback.version>
@@ -200,6 +201,11 @@
                 <version>${freemarker.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${commons-pool2.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

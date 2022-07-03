@@ -22,7 +22,7 @@ public class ElasticSearchConfig {
                         new HttpHost("192.168.21.131", 9200, "http"),
                         new HttpHost("192.168.21.132", 9200, "http")));*/
                RestClient.builder(
-                        new HttpHost("tl.es.com", 9200, "http")));
+                        new HttpHost("192.168.65.219", 9200, "http")));
         return client;
     }
 }

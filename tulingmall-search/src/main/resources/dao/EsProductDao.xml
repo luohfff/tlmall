@@ -35,9 +35,9 @@
             pav.product_attribute_id attr_product_attribute_id,
             pa.type attr_type,
             pa.name attr_name
-        from pms_product p
-        left join pms_product_attribute_value pav on p.id = pav.product_id
-        left join pms_product_attribute pa on pav.product_attribute_id= pa.id
+        from tl_mall_goods.pms_product p
+        left join tl_mall_goods.pms_product_attribute_value pav on p.id = pav.product_id
+        left join tl_mall_goods.pms_product_attribute pa on pav.product_attribute_id= pa.id
         where delete_status = 0 and publish_status = 1
         <if test="id!=null">
             and p.id=#{id}

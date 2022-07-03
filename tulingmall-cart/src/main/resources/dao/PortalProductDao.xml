@@ -51,9 +51,9 @@
             ps.stock sku_stock,
             ps.pic sku_pic
         FROM
-            pms_product p
-            LEFT JOIN pms_product_attribute pa ON p.product_attribute_category_id = pa.product_attribute_category_id
-            LEFT JOIN pms_sku_stock ps ON p.id=ps.product_id
+            tl_mall_goods.pms_product p
+            LEFT JOIN tl_mall_goods.pms_product_attribute pa ON p.product_attribute_category_id = pa.product_attribute_category_id
+            LEFT JOIN tl_mall_goods.pms_sku_stock ps ON p.id=ps.product_id
         WHERE
             p.id = #{id}
             AND pa.type = 0
@@ -79,10 +79,10 @@
             full_re.full_price full_full_price,
             full_re.reduce_price full_reduce_price
         FROM
-            pms_product p
-            LEFT JOIN pms_sku_stock sku ON p.id = sku.product_id
-            LEFT JOIN pms_product_ladder ladder ON p.id = ladder.product_id
-            LEFT JOIN pms_product_full_reduction full_re ON p.id = full_re.product_id
+        tl_mall_goods.pms_product p
+            LEFT JOIN tl_mall_goods.pms_sku_stock sku ON p.id = sku.product_id
+            LEFT JOIN tl_mall_goods.pms_product_ladder ladder ON p.id = ladder.product_id
+            LEFT JOIN tl_mall_goods.pms_product_full_reduction full_re ON p.id = full_re.product_id
         WHERE
             p.id IN
         <foreach collection="ids" open="(" close=")" item="id" separator=",">
@@ -121,16 +121,16 @@
         m.id member_id,m.product_id member_product_id,m.member_level_id member_member_level_id,m.member_price member_member_price,m.member_level_name member_member_level_name,
         s.id sku_id,s.product_id sku_product_id,s.price sku_price,s.low_stock sku_low_stock,s.pic sku_pic,s.sale sku_sale,s.sku_code sku_sku_code,s.sp1 sku_sp1,s.sp2 sku_sp2,s.sp3 sku_sp3,s.stock sku_stock,
         a.id attribute_id,a.product_id attribute_product_id,a.product_attribute_id attribute_product_attribute_id,a.value attribute_value
-        FROM pms_product p
-        LEFT JOIN pms_product_ladder l ON p.id = l.product_id
-        LEFT JOIN pms_product_full_reduction pf ON pf.product_id=p.id
-        LEFT JOIN pms_member_price m ON m.product_id = p.id
-        LEFT JOIN pms_sku_stock s ON s.product_id = p.id
-        LEFT JOIN pms_product_attribute_value a ON a.product_id=p.id
+        FROM tl_mall_goods.pms_product p
+        LEFT JOIN tl_mall_goods.pms_product_ladder l ON p.id = l.product_id
+        LEFT JOIN tl_mall_goods.pms_product_full_reduction pf ON pf.product_id=p.id
+        LEFT JOIN tl_mall_goods.pms_member_price m ON m.product_id = p.id
+        LEFT JOIN tl_mall_goods.pms_sku_stock s ON s.product_id = p.id
+        LEFT JOIN tl_mall_goods.pms_product_attribute_value a ON a.product_id=p.id
         WHERE p.id=#{id}
     </select>
 
     <select id="getAllProductId" resultType="java.lang.Long">
-        select p.id from pms_product p where p.delete_status=0
+        select p.id from tl_mall_goods.pms_product p where p.delete_status=0
     </select>
 </mapper>
