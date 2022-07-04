@@ -3,7 +3,7 @@
 <mapper namespace="com.tuling.tulingmall.dao.PmsProductCategoryAttributeRelationDao">
     <!--批量新增回写主键支持-->
     <insert id="insertList">
-        INSERT INTO pms_product_category_attribute_relation (product_category_id, product_attribute_id) VALUES
+        INSERT INTO tl_mall_goods.pms_product_category_attribute_relation (product_category_id, product_attribute_id) VALUES
         <foreach collection="list" separator="," item="item" index="index">
             (#{item.productCategoryId,jdbcType=BIGINT},
             #{item.productAttributeId,jdbcType=BIGINT})
