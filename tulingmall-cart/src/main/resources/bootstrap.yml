@@ -2,8 +2,6 @@ spring:
   application:
     name: tulingmall-cart
   cloud:
-    config:
-      override-none: true
     nacos:
       config:
         server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848 #配置中心的地址

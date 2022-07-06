@@ -56,4 +56,25 @@ public class RedisOpsUtil {
                 .opsForValue().increment(key,delta);
     }
 
+    public boolean expire(String key,long timeout,TimeUnit unit){
+        return redisTemplate.expire(key,timeout, unit);
+    }
+
+    public boolean delete(String key){
+        return redisTemplate.delete(key);
+    }
+
+    public boolean hasKey(String key){
+        return redisTemplate.hasKey(key);
+    }
+
+    /**
+     * 发布channel信息
+     * @param channel
+     * @param message
+     */
+    public void publish(String channel,Object message){
+        redisTemplate.convertAndSend(channel,message);
+    }
+
 }

@@ -5,5 +5,5 @@ spring:
     name: tulingmall-product
 mybatis:
   mapper-locations:
-    - classpath:dao/*.xml
     - classpath*:com/**/mapper/*.xml
+    - classpath:dao/*.xml

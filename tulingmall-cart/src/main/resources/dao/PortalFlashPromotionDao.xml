@@ -61,8 +61,8 @@
             pr.flash_promotion_limit,
             p.*
         FROM
-            sms_flash_promotion_product_relation pr
-            LEFT JOIN pms_product p ON pr.product_id = p.id
+            tl_mall_promotion.sms_flash_promotion_product_relation pr
+            LEFT JOIN tl_mall_goods.pms_product p ON pr.product_id = p.id
         WHERE
             pr.flash_promotion_id = #{flashPromotionId}
             AND pr.flash_promotion_session_id = #{sessionId}

@@ -1,50 +1,6 @@
 server:
-  port: 8866
+  port: 8855
 spring:
-  datasource:
-    dynamic:
-      primary: user
-      # 未匹配到数据源时，true抛异常，false使用默认数据源
-      strict: false
-      datasource:
-        user:
-          url: jdbc:mysql://192.168.65.71:3306/tl_mall_user?characterEncoding=utf-8&useSSL=false
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          username: tlmall
-          password: tlmall123
-        goods:
-          url: jdbc:mysql://192.168.65.71:3306/tl_mall_goods?characterEncoding=utf-8&useSSL=false
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          username: tlmall
-          password: tlmall123
-        promotion:
-          url: jdbc:mysql://192.168.65.71:3306/tl_mall_promotion?characterEncoding=utf-8&useSSL=false
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          username: tlmall
-          password: tlmall123
-        normal:
-          url: jdbc:mysql://192.168.65.71:3306/tl_mall_normal?characterEncoding=utf-8&useSSL=false
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          username: tlmall
-          password: tlmall123
-        order:
-          url: jdbc:mysql://192.168.65.223:3306/tl_mall_order?characterEncoding=utf-8&useSSL=false
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          username: tlmall
-          password: tlmall123
-    druid:
-      initial-size: 5 #连接池初始化大小
-      min-idle: 10 #最小空闲连接数
-      max-active: 20 #最大连接数
-      web-stat-filter:
-        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
-      stat-view-servlet: #访问监控网页的登录用户名和密码
-        login-username: druid
-        login-password: druid
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848
   redis:
     cluster:
       nodes: 192.168.65.153:6379,192.168.65.222:6379,192.168.65.218:6379,192.168.65.186:6379,192.168.65.111:6379,192.168.65.162:6379
@@ -60,14 +16,6 @@ mybatis:
   mapper-locations:
     - classpath:dao/*.xml
     - classpath*:com/**/mapper/*.xml
-management: #开启SpringBoot Admin的监控
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
 
 #zk配置
 zk:
@@ -77,3 +25,15 @@ zk:
    connectUrl: tlshop.com:2181 #zk地址
    sessionTimeOutMs: 60000 #会话超时时间
    connectionTimeOutMs: 5000 #连接超时时间
+
+rocketmq:
+  producer:
+    send-message-timeout: 30000 #发送消息超时时间
+    group: order-group
+  tulingmall:
+    scheduleTopic: order-status-check #定时任务
+    cancelGroup: cancel-order #消费组业务逻辑,取消超时未支付订单
+    transGroup: cart-delete #事务消息群组
+    transTopic: order-cart #订单-购物车主题
+    asyncOrderTopic: async-order #异步订单topic
+    asyncOrderGroup: async-order-group #异步下单消息消费

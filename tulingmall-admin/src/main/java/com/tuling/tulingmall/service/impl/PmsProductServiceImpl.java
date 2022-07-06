@@ -196,7 +196,7 @@ public class PmsProductServiceImpl implements PmsProductService {
         product.setVerifyStatus(verifyStatus);
 
         QueryWrapper<PmsProduct> wrapper = new QueryWrapper<>();
-        wrapper.in("ids",ids);
+        wrapper.in("id",ids);
         List<PmsProductVertifyRecord> list = new ArrayList<>();
         int count = productMapper.update(product,wrapper);
         //修改完审核状态后插入审核记录
@@ -218,7 +218,7 @@ public class PmsProductServiceImpl implements PmsProductService {
         PmsProduct record = new PmsProduct();
         record.setPublishStatus(publishStatus);
         QueryWrapper<PmsProduct> wrapper = new QueryWrapper<>();
-        wrapper.in("ids",ids);
+        wrapper.in("id",ids);
         return productMapper.update(record, wrapper);
     }
 
@@ -227,7 +227,7 @@ public class PmsProductServiceImpl implements PmsProductService {
         PmsProduct record = new PmsProduct();
         record.setRecommandStatus(recommendStatus);
         QueryWrapper<PmsProduct> wrapper = new QueryWrapper<>();
-        wrapper.in("ids",ids);
+        wrapper.in("id",ids);
         return productMapper.update(record, wrapper);
     }
 
@@ -236,7 +236,7 @@ public class PmsProductServiceImpl implements PmsProductService {
         PmsProduct record = new PmsProduct();
         record.setNewStatus(newStatus);
         QueryWrapper<PmsProduct> wrapper = new QueryWrapper<>();
-        wrapper.in("ids",ids);
+        wrapper.in("id",ids);
         return productMapper.update(record, wrapper);
     }
 
@@ -245,7 +245,7 @@ public class PmsProductServiceImpl implements PmsProductService {
         PmsProduct record = new PmsProduct();
         record.setDeleteStatus(deleteStatus);
         QueryWrapper<PmsProduct> wrapper = new QueryWrapper<>();
-        wrapper.in("ids",ids);
+        wrapper.in("id",ids);
         return productMapper.update(record, wrapper);
     }
 
