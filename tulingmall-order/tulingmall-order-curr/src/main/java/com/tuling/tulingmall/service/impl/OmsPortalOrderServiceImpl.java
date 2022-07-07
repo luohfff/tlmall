@@ -308,7 +308,7 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
             }
         }
         //删除购物车中的下单商品 --wly
-//        deleteCartItemList(cartPromotionItemList, memberId);
+        deleteCartItemList(cartPromotionItemList, memberId);
         Map<String, Object> result = new HashMap<>();
         result.put("order", order);
         result.put("orderItemList", orderItemList);

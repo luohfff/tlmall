@@ -37,3 +37,13 @@ rocketmq:
     transTopic: order-cart #订单-购物车主题
     asyncOrderTopic: async-order #异步订单topic
     asyncOrderGroup: async-order-group #异步下单消息消费
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+        requestInterceptors:
+          - com.tuling.tulingmall.feignapi.interceptor.HeaderInterceptor
+        readTimeout: 3000
+        connectTimeout: 3000

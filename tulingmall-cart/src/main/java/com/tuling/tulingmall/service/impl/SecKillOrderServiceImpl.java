@@ -8,14 +8,12 @@ import com.tuling.tulingmall.component.rocketmq.OrderMessageSender;
 import com.tuling.tulingmall.dao.MiaoShaStockDao;
 import com.tuling.tulingmall.domain.CartPromotionItem;
 import com.tuling.tulingmall.domain.ConfirmOrderResult;
-import com.tuling.tulingmall.domain.OrderParam;
 import com.tuling.tulingmall.domain.PmsProductParam;
 import com.tuling.tulingmall.feignapi.pms.PmsProductFeignApi;
 import com.tuling.tulingmall.feignapi.ums.UmsMemberFeignApi;
 import com.tuling.tulingmall.mapper.OmsOrderItemMapper;
 import com.tuling.tulingmall.mapper.OmsOrderMapper;
 import com.tuling.tulingmall.model.OmsOrder;
-import com.tuling.tulingmall.model.OmsOrderItem;
 import com.tuling.tulingmall.model.UmsMember;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.service.SecKillOrderService;
@@ -24,12 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author ：图灵学院
@@ -55,8 +51,8 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     private LocalCache<Boolean> cache;
     @Autowired
     private MiaoShaStockDao miaoShaStockDao;
-    @Value("${redis.key.prefix.orderId}")
-    private String REDIS_KEY_PREFIX_ORDER_ID;
+//    @Value("${redis.key.prefix.orderId}")
+//    private String REDIS_KEY_PREFIX_ORDER_ID;
     @Autowired
     private OrderMessageSender orderMessageSender;
 
@@ -95,6 +91,8 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
         //【6】构建商品信息
         List<CartPromotionItem> cartPromotionItemList = new ArrayList<>();
         CartPromotionItem promotionItem = new CartPromotionItem();
+        promotionItem.setProductSubTitle(product.getSubTitle());
+        promotionItem.setPrice(product.getPrice());
         promotionItem.setProductId(product.getId());//产品ID
         promotionItem.setProductName(product.getName());//产品名称
         promotionItem.setMemberId(memberId);//会员ID
@@ -464,21 +462,21 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     /**
      * 生成18位订单编号:8位日期+2位平台号码+2位支付方式+6位以上自增id
      */
-    private String generateOrderSn(OmsOrder order) {
-        StringBuilder sb = new StringBuilder();
-        String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String key = REDIS_KEY_PREFIX_ORDER_ID + date;
-        Long increment = redisOpsUtil.incr(key,1);
-        sb.append(date);
-        sb.append(String.format("%02d", order.getSourceType()));
-        sb.append(String.format("%02d", order.getPayType()));
-        String incrementStr = increment.toString();
-        if (incrementStr.length() <= 6) {
-            sb.append(String.format("%06d", increment));
-        } else {
-            sb.append(incrementStr);
-        }
-        return sb.toString();
-    }
+//    private String generateOrderSn(OmsOrder order) {
+//        StringBuilder sb = new StringBuilder();
+//        String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+//        String key = REDIS_KEY_PREFIX_ORDER_ID + date;
+//        Long increment = redisOpsUtil.incr(key,1);
+//        sb.append(date);
+//        sb.append(String.format("%02d", order.getSourceType()));
+//        sb.append(String.format("%02d", order.getPayType()));
+//        String incrementStr = increment.toString();
+//        if (incrementStr.length() <= 6) {
+//            sb.append(String.format("%06d", increment));
+//        } else {
+//            sb.append(incrementStr);
+//        }
+//        return sb.toString();
+//    }
 
 }
