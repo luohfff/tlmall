@@ -46,7 +46,7 @@ public class CartItemController {
     }
 
     @ApiOperation(value = "添加商品到购物车", notes = "修改购物逻辑,数据不必全都从前台传")
-    @RequestMapping(value = "/add")
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
     public CommonResult add(@RequestBody OmsCartItem cartItem, @RequestHeader("memberId") Long memberId, @RequestHeader("nickName") String nickName) {
         int count = cartItemService.add(cartItem, memberId, nickName);

@@ -1,6 +1,7 @@
 package com.tuling.tulingmall.service.impl;
 
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.common.exception.BusinessException;
 import com.tuling.tulingmall.domain.CartProduct;
 import com.tuling.tulingmall.domain.CartPromotionItem;
@@ -87,6 +88,7 @@ public class OmsCartItemServiceImpl implements OmsCartItemService {
     /**
      * 根据会员id,商品id和规格获取购物车中商品
      */
+    @DS("cart")
     private OmsCartItem getCartItem(OmsCartItem cartItem) {
         OmsCartItemExample example = new OmsCartItemExample();
         OmsCartItemExample.Criteria criteria = example.createCriteria().andMemberIdEqualTo(cartItem.getMemberId())
