@@ -15,12 +15,12 @@ import java.util.List;
 * @createDate: 2020/1/23 17:00
 * @version: 1.0
 */
-@FeignClient(name = "tulingmall-coupons",path = "/coupon")
+@FeignClient(name = "tulingmall-promotion",path = "/coupon")
 public interface UmsCouponFeignApi {
 
     @RequestMapping(value = "/listCart", method = RequestMethod.POST)
     @ResponseBody
-    CommonResult<List<SmsCouponHistoryDetail>> listCart2Feign(@RequestParam("type") Integer type,
-                                                                     @RequestBody List<CartPromotionItem> cartPromotionItemList);
+    CommonResult<List<SmsCouponHistoryDetail>> listCartCoupons(@RequestParam("type") Integer type,
+                                                               @RequestBody List<CartPromotionItem> cartPromotionItemList);
 
 }

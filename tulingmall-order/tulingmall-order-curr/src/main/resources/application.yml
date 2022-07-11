@@ -6,3 +6,7 @@ spring:
 #    active: local
 logging:
   config: classpath:logback-spring.xml
+mybatis:
+  mapper-locations:
+    - classpath:dao/*.xml
+    - classpath:mapper/*.xml

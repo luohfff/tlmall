@@ -6,7 +6,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: 192.168.65.206:8848
 #  datasource:
 #    url: jdbc:mysql://192.168.65.223:3306/tl_mall_order?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
 #    username: tlmall
@@ -118,11 +118,6 @@ spring:
 #        server-addr: 192.168.65.232:8848
   main:
     allow-bean-definition-overriding: true
-mybatis:
-  mapper-locations:
-    - classpath:dao/*.xml
-    - classpath*:com/**/mapper/*.xml
-
 #feign:
 #  client:
 #    config:

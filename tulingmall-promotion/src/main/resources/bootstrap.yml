@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: tulingmall-promotion
   cloud:
     nacos:
       config:
@@ -9,10 +11,8 @@ spring:
           group: DEFAULT_GROUP
           refresh: true
         shared-configs[1]:
-          data-id: tulingmall-db-common.yml
+          data-id: tulingmall-redis.yml
           group: DEFAULT_GROUP
           refresh: true
-  application:
-    name: tulingmall-promotion
   profiles:
     active: dev

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tuling.tulingmall.dao.SmsCouponHistoryDao">
-    <resultMap id="couponHistoryDetailMap" type="com.tuling.tulingmall.domain.SmsCouponHistoryDetail"
-               extends="com.tuling.tulingmall.mapper.SmsCouponHistoryMapper.BaseResultMap">
-        <association property="coupon" resultMap="com.tuling.tulingmall.mapper.SmsCouponMapper.BaseResultMap" columnPrefix="c_">
+<mapper namespace="com.tuling.tulingmall.promotion.dao.SmsCouponHistoryDao">
+    <resultMap id="couponHistoryDetailMap" type="com.tuling.tulingmall.promotion.domain.SmsCouponHistoryDetail"
+               extends="com.tuling.tulingmall.promotion.mapper.SmsCouponHistoryMapper.BaseResultMap">
+        <association property="coupon" resultMap="com.tuling.tulingmall.promotion.mapper.SmsCouponMapper.BaseResultMap" columnPrefix="c_">
         </association>
-        <collection property="productRelationList" columnPrefix="cpr_" resultMap="com.tuling.tulingmall.mapper.SmsCouponProductRelationMapper.BaseResultMap">
+        <collection property="productRelationList" columnPrefix="cpr_" resultMap="com.tuling.tulingmall.promotion.mapper.SmsCouponProductRelationMapper.BaseResultMap">
         </collection>
-        <collection property="categoryRelationList" columnPrefix="cpcr_" resultMap="com.tuling.tulingmall.mapper.SmsCouponProductCategoryRelationMapper.BaseResultMap">
+        <collection property="categoryRelationList" columnPrefix="cpcr_" resultMap="com.tuling.tulingmall.promotion.mapper.SmsCouponProductCategoryRelationMapper.BaseResultMap">
         </collection>
     </resultMap>
     <select id="getDetailList" resultMap="couponHistoryDetailMap">
