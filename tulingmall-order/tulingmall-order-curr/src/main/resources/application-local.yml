@@ -55,7 +55,7 @@ spring:
           table-strategy:
             complex:
               sharding-columns: id,member_id
-              algorithm-class-name: com.tuling.tulingmall.sharding.OmsOrderShardingAlgorithm
+              algorithm-class-name: com.tuling.tulingmall.ordercurr.sharding.OmsOrderShardingAlgorithm
 #          key-generator:
 #            column: id
 #            type: CUSTOM
@@ -68,7 +68,7 @@ spring:
           table-strategy:
             complex:
               sharding-columns: order_id
-              algorithm-class-name: com.tuling.tulingmall.sharding.OmsOrderItemShardingAlgorithm
+              algorithm-class-name: com.tuling.tulingmall.ordercurr.sharding.OmsOrderItemShardingAlgorithm
 #          key-generator:
 #            column: id
 #            type: SNOWFLAKE
