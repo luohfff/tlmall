@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.UmsMemberProductCategoryRelation;
 import com.tuling.tulingmall.model.UmsMemberProductCategoryRelationExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("user")
 public interface UmsMemberProductCategoryRelationMapper {
     long countByExample(UmsMemberProductCategoryRelationExample example);
 

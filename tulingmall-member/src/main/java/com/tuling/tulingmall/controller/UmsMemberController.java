@@ -94,7 +94,6 @@ public class UmsMemberController {
         return CommonResult.success(tokenMap);
     }
 
-
     @ApiOperation(value = "获取当前登陆用户")
     @RequestMapping(value = "/getCurrentMember", method = RequestMethod.GET)
     @ResponseBody
@@ -103,6 +102,4 @@ public class UmsMemberController {
         log.info("当前登陆用户:{}",umsMember.toString());
         return CommonResult.success(umsMember);
     }
-
-
 }

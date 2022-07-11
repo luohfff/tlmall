@@ -20,9 +20,22 @@
 			<groupId>com.tuling</groupId>
 			<artifactId>tulingmall-common</artifactId>
 		</dependency>
-		<dependency>
+<!--		<dependency>
 			<groupId>com.tuling</groupId>
 			<artifactId>tulingmall-core</artifactId>
+		</dependency>-->
+<!--		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+		</dependency>-->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -32,16 +45,16 @@
 		<!--加入springcloud alibaba-->
 		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
-			<artifactId>spring-cloud-alibaba-nacos-discovery</artifactId>
-			<exclusions>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+<!--			<exclusions>
 				<exclusion>
 					<groupId>com.alibaba.nacos</groupId>
 					<artifactId>nacos-client</artifactId>
 				</exclusion>
-			</exclusions>
+			</exclusions>-->
 		</dependency>
 
-		<dependency>
+<!--		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
 			<artifactId>spring-cloud-alibaba-nacos-config</artifactId>
 			<version>2.1.1.RELEASE</version>
@@ -51,13 +64,13 @@
 					<artifactId>nacos-client</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
 
-		<dependency>
+<!--		<dependency>
 			<groupId>com.alibaba.nacos</groupId>
 			<artifactId>nacos-client</artifactId>
 			<version>1.4.1</version>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -83,7 +96,7 @@
 			<version>4.1.1</version>
 		</dependency>
 		<!-- transaction 2pc XA 2阶段提交分布式事务 -->
-		<dependency>
+<!--		<dependency>
 			<groupId>org.apache.shardingsphere</groupId>
 			<artifactId>sharding-transaction-xa-core</artifactId>
 			<version>4.1.1</version>
@@ -93,7 +106,7 @@
 					<groupId>org.slf4j</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
 
 		<!-- Base - 基于华为servicecomb的saga柔性事务,shardingjdbc正式版之后没有进行维护,需要自己重构saga工程 -->
 		<!--<dependency>

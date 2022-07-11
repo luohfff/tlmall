@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.CmsPrefrenceAreaProductRelation;
 import com.tuling.tulingmall.model.CmsPrefrenceAreaProductRelationExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("normal")
 public interface CmsPrefrenceAreaProductRelationMapper {
     long countByExample(CmsPrefrenceAreaProductRelationExample example);
 

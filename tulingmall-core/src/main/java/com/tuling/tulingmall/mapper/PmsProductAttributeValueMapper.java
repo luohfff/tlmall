@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.PmsProductAttributeValue;
 import com.tuling.tulingmall.model.PmsProductAttributeValueExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("goods")
 public interface PmsProductAttributeValueMapper {
     long countByExample(PmsProductAttributeValueExample example);
 

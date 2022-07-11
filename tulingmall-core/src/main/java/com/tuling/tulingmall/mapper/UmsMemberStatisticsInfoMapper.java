@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.UmsMemberStatisticsInfo;
 import com.tuling.tulingmall.model.UmsMemberStatisticsInfoExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("user")
 public interface UmsMemberStatisticsInfoMapper {
     long countByExample(UmsMemberStatisticsInfoExample example);
 

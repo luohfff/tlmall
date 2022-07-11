@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.UmsMemberLevel;
 import com.tuling.tulingmall.model.UmsMemberLevelExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("user")
 public interface UmsMemberLevelMapper {
     long countByExample(UmsMemberLevelExample example);
 

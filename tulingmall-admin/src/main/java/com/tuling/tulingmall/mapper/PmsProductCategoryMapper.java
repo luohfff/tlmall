@@ -10,12 +10,12 @@ import java.util.List;
 @DS("goods")
 public interface PmsProductCategoryMapper extends BaseMapper<PmsProductCategory> {
 
-    @Select("select" +
-            "            c1.id," +
-            "            c1.name," +
-            "            c2.id   child_id," +
-            "            c2.name child_name" +
-            "        from pms_product_category c1 left join pms_product_category c2 on c1.id = c2.parent_id" +
-            "        where c1.parent_id = 0")
+//    @Select("select" +
+//            "            c1.id," +
+//            "            c1.name," +
+//            "            c2.id   child_id," +
+//            "            c2.name child_name" +
+//            "        from pms_product_category c1 left join pms_product_category c2 on c1.id = c2.parent_id" +
+//            "        where c1.parent_id = 0")
     List<PmsProductCategoryWithChildrenItem> listWithChildren();
 }

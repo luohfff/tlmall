@@ -3,7 +3,6 @@ package com.tuling.tulingmall.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.component.LocalCache;
-import com.tuling.tulingmall.component.zklock.ZKLock;
 import com.tuling.tulingmall.dao.FlashPromotionProductDao;
 import com.tuling.tulingmall.dao.PortalProductDao;
 import com.tuling.tulingmall.domain.*;
@@ -14,12 +13,9 @@ import com.tuling.tulingmall.model.SmsFlashPromotionExample;
 import com.tuling.tulingmall.model.SmsFlashPromotionSession;
 import com.tuling.tulingmall.model.SmsFlashPromotionSessionExample;
 import com.tuling.tulingmall.service.PmsProductService;
-import com.tuling.tulingmall.service.T;
 import com.tuling.tulingmall.util.DateUtil;
 import com.tuling.tulingmall.util.RedisOpsUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.Redisson;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -75,14 +70,6 @@ public class PmsProductServiceImpl implements PmsProductService {
 
     @Autowired
     private LocalCache cache;
-
-
-    /*
-     * zk分布式锁
-     */
-    @Autowired
-    private ZKLock zkLock;
-    private String lockPath = "/load_db";
 
     @Autowired
     RedissonClient redission;
@@ -137,119 +124,7 @@ public class PmsProductServiceImpl implements PmsProductService {
         return productInfo;
     }
 
-
-    /**
-     * 获取商品详情信息  加入redis 加入锁
-     *
-     * @param id 产品ID
-     */
-    /**
-     * 获取商品详情信息  加入redis 加入锁
-     *
-     * @param id 产品ID
-     */
-    public PmsProductParam getProductInfoDisLock(Long id) {
-        PmsProductParam productInfo = redisOpsUtil.get(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, PmsProductParam.class);
-        if (null != productInfo) {
-            return productInfo;
-        }
-        RLock lock = redission.getLock(lockPath + id);
-        try {
-            if (lock.tryLock(0, 3, TimeUnit.SECONDS)) {
-                productInfo = portalProductDao.getProductInfo(id);
-                log.info("走数据库:" + id);
-                if (null == productInfo) {
-                    return null;
-                }
-                checkFlash(id, productInfo);
-                redisOpsUtil.set(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, productInfo, 360, TimeUnit.SECONDS);
-            } else {
-                 productInfo = redisOpsUtil.get(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, PmsProductParam.class);
-               /* Thread.sleep(10);
-                getProductInfoDisLock(id);*/
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            if (lock.isLocked()) {
-                if (lock.isHeldByCurrentThread()) {
-                    lock.unlock();
-                }
-            }
-
-        }
-        return productInfo;
-    }
-
-    /**
-     * 获取商品详情信息 分布式锁、 本地缓存、redis缓存
-     *
-     * @param id 产品ID
-     */
-    public PmsProductParam getProductInfoLocalCache(Long id) {
-        PmsProductParam productInfo = null;
-        productInfo = cache.get(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id);
-        if (null != productInfo) {
-            return productInfo;//没网络io 没磁盘io
-        }
-        productInfo = redisOpsUtil.get(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, PmsProductParam.class);
-        if (productInfo != null) {
-            cache.setLocalCache(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, productInfo);//设置本地缓存 //解决磁盘io 但是还有网络uo
-            return productInfo;
-        }
-        RLock lock = redission.getLock(lockPath + id);
-        try {
-            if (lock.tryLock(0, 10, TimeUnit.SECONDS)) {
-                productInfo = portalProductDao.getProductInfo(id);//网络io 磁盘io
-                if (null == productInfo) {
-                    return null;
-                }
-                checkFlash(id, productInfo);
-                redisOpsUtil.set(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, productInfo, 3600, TimeUnit.SECONDS);
-                cache.setLocalCache(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, productInfo);
-                log.info("set cache productId:");
-            } else {
-                productInfo = redisOpsUtil.get(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, PmsProductParam.class);
-                if (productInfo != null) {
-                    cache.setLocalCache(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, productInfo);
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            if (lock.isLocked()) {
-                if (lock.isHeldByCurrentThread())
-                    lock.unlock();
-            }
-        }
-        return productInfo;
-    }
-
     private PmsProductParam checkFlash(Long id, PmsProductParam productInfo) {
-        FlashPromotionParam promotion = flashPromotionProductDao.getFlashPromotion(id);
-        if (!ObjectUtils.isEmpty(promotion)) {
-            productInfo.setFlashPromotionCount(promotion.getRelation().get(0).getFlashPromotionCount());
-            productInfo.setFlashPromotionLimit(promotion.getRelation().get(0).getFlashPromotionLimit());
-            productInfo.setFlashPromotionPrice(promotion.getRelation().get(0).getFlashPromotionPrice());
-            productInfo.setFlashPromotionRelationId(promotion.getRelation().get(0).getId());
-            productInfo.setFlashPromotionEndDate(promotion.getEndDate());
-            productInfo.setFlashPromotionStartDate(promotion.getStartDate());
-            productInfo.setFlashPromotionStatus(promotion.getStatus());
-        }
-        return productInfo;
-    }
-
-
-    /***
-     * 直接访问数据库
-     * @param id
-     * @return
-     */
-    public PmsProductParam getProductInfo1(Long id) {
-        PmsProductParam productInfo = portalProductDao.getProductInfo(id);
-        if (null == productInfo) {
-            return null;
-        }
         FlashPromotionParam promotion = flashPromotionProductDao.getFlashPromotion(id);
         if (!ObjectUtils.isEmpty(promotion)) {
             productInfo.setFlashPromotionCount(promotion.getRelation().get(0).getFlashPromotionCount());

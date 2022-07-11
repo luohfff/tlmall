@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-com.tuling.tulingmall.spi.OrderByRedisKeyGenerator
+#com.tuling.tulingmall.spi.OrderByRedisKeyGenerator

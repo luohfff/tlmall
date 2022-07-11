@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 @Service("SegmentService")
@@ -56,6 +58,14 @@ public class SegmentService {
 
     public Result getId(String key) {
         return idGen.get(key);
+    }
+
+    public List<Result> getIds(String key,int keyNumber) {
+        List<Result> results = new ArrayList<>();
+        for (int i = 1;i <= keyNumber; i++){
+            results.add(idGen.get(key));
+        }
+        return results;
     }
 
     public SegmentIDGenImpl getIdGen() {

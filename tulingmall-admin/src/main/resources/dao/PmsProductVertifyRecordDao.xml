@@ -3,7 +3,7 @@
 <mapper namespace="com.tuling.tulingmall.dao.PmsProductVertifyRecordDao">
     <!--批量新增回写主键支持-->
     <insert id="insertList">
-        insert into pms_product_vertify_record (product_id, create_time, vertify_man,status, detail) values
+        insert into tl_mall_goods.pms_product_vertify_record (product_id, create_time, vertify_man,status, detail) values
         <foreach collection="list" separator="," item="item" index="index">
             (#{item.productId,jdbcType=BIGINT},
             #{item.createTime,jdbcType=TIMESTAMP},

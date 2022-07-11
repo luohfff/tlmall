@@ -26,7 +26,7 @@ public class TulingTokenEnhancer implements TokenEnhancer {
 
         final Map<String, Object> retMap = new HashMap<>();
 
-        //todo 这里暴露memberId到Jwt的令牌中,后期可以根据自己的业务需要 进行添加字段
+        //这里暴露memberId到Jwt的令牌中,后期可以根据自己的业务需要 进行添加字段
         additionalInfo.put("memberId",memberDetails.getUmsMember().getId());
         additionalInfo.put("nickName",memberDetails.getUmsMember().getNickname());
         additionalInfo.put("integration",memberDetails.getUmsMember().getIntegration());

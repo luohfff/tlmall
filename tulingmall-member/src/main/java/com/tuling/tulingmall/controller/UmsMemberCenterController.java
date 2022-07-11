@@ -79,5 +79,4 @@ public class UmsMemberCenterController {
         }
         return CommonResult.failed();
     }
-
 }

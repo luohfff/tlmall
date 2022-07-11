@@ -19,11 +19,25 @@
         <dependency>
             <groupId>com.tuling</groupId>
             <artifactId>tulingmall-common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>druid-spring-boot-starter</artifactId>
+                    <groupId>com.alibaba</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.tuling</groupId>
             <artifactId>tulingmall-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+                    <groupId>com.baomidou</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+
         <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>

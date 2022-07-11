@@ -1,10 +1,12 @@
 package com.tuling.tulingmall.model;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+@TableName("tl_mall_promotion.sms_flash_promotion_product_relation")
 public class SmsFlashPromotionProductRelation implements Serializable {
     @ApiModelProperty(value = "编号")
     private Long id;

@@ -1,11 +1,12 @@
 package com.tuling.tulingmall.mapper;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.model.UmsAdminLoginLog;
 import com.tuling.tulingmall.model.UmsAdminLoginLogExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@DS("user")
 public interface UmsAdminLoginLogMapper {
     long countByExample(UmsAdminLoginLogExample example);
 
