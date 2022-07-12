@@ -1,6 +1,6 @@
 package com.tuling.tulingmall.promotion.service.impl;
 
-public class ConstantCoupon {
+public class ConstantPromotion {
 
     /*优惠券类型；0->全场赠券；1->会员赠券；2->购物赠券；3->注册赠券*/
     public final static int COUPON_TYPE_GENERAL = 0;
@@ -26,5 +26,17 @@ public class ConstantCoupon {
     public final static int USER_COUPON_USE_STATE_UNUSE = 0;
     public final static int USER_COUPON_USE_STATE_USED = 1;
     public final static int USER_COUPON_USE_STATE_OVERDUE = 2;
+
+    /*首页推荐状态：0->不推荐;1->推荐*/
+    public final static int HOME_PRODUCT_RECOMMEND_NO = 0;
+    public final static int HOME_PRODUCT_RECOMMEND_YES = 1;
+
+    /*首页轮播广告轮播位置：0->PC首页轮播；1->app首页轮播*/
+    public final static int HOME_ADVERTISE_TYPE_PC = 0;
+    public final static int HOME_ADVERTISE_TYPE_APP = 1;
+
+    /*首页轮播广告上下线状态：0->下线；1->上线*/
+    public final static int HOME_ADVERTISE_STATUS_OFFLINE = 0;
+    public final static int HOME_ADVERTISE_STATUS_ONLINE = 1;
 
 }

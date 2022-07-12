@@ -66,9 +66,9 @@ public class UserCouponServiceImpl implements UserCouponService {
         couponHistory.setMemberId(memberId);
         couponHistory.setMemberNickname(nickName);
         //主动领取
-        couponHistory.setGetType(ConstantCoupon.USER_COUPON_GET_TYPE_PROACTIVE);
+        couponHistory.setGetType(ConstantPromotion.USER_COUPON_GET_TYPE_PROACTIVE);
         //未使用
-        couponHistory.setUseStatus(ConstantCoupon.USER_COUPON_USE_STATE_UNUSE);
+        couponHistory.setUseStatus(ConstantPromotion.USER_COUPON_USE_STATE_UNUSE);
         smsCouponHistoryMapper.insert(couponHistory);
         /*修改优惠券表的数量、领取数量
         这种实现无疑有并发问题，比如AB用户同时领取优惠券，此时优惠券数量为100，那么在写库的时候
@@ -142,7 +142,7 @@ public class UserCouponServiceImpl implements UserCouponService {
                 }else{
                     disableList.add(couponHistoryDetail);
                 }
-            }else if(useType.equals(1)){
+            }else if(useType.equals(ConstantPromotion.COUPON_USE_TYPE_SPEC_KIND)){
                 //1->指定分类
                 //计算指定分类商品的总价
                 List<Long> productCategoryIds = new ArrayList<>();
@@ -155,7 +155,7 @@ public class UserCouponServiceImpl implements UserCouponService {
                 }else{
                     disableList.add(couponHistoryDetail);
                 }
-            }else if(useType.equals(2)){
+            }else if(useType.equals(ConstantPromotion.COUPON_USE_TYPE_SPEC_PRODUCT)){
                 //2->指定商品
                 //计算指定商品的总价
                 List<Long> productIds = new ArrayList<>();
