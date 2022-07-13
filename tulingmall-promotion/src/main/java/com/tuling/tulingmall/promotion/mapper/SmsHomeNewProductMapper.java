@@ -19,6 +19,8 @@ public interface SmsHomeNewProductMapper {
 
     List<SmsHomeNewProduct> selectByExample(SmsHomeNewProductExample example);
 
+    List<Long> selectProductIdByExample(SmsHomeNewProductExample example);
+
     SmsHomeNewProduct selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") SmsHomeNewProduct record, @Param("example") SmsHomeNewProductExample example);

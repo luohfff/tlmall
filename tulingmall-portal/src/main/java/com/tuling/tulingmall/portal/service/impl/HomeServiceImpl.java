@@ -9,6 +9,7 @@ import com.tuling.tulingmall.model.*;
 import com.tuling.tulingmall.portal.dao.HomeDao;
 import com.tuling.tulingmall.portal.domain.HomeContentResult;
 import com.tuling.tulingmall.portal.feignapi.pms.PmsProductFeignApi;
+import com.tuling.tulingmall.portal.feignapi.promotion.PromotionFeignApi;
 import com.tuling.tulingmall.portal.service.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,22 +34,28 @@ public class HomeServiceImpl implements HomeService {
     private PmsProductCategoryMapper productCategoryMapper;
     @Autowired
     private CmsSubjectMapper subjectMapper;
+    @Autowired
+    private PromotionFeignApi promotionFeignApi;
 
     @Override
-    public HomeContentResult content() {
-        HomeContentResult result = new HomeContentResult();
-        //获取首页广告
-        result.setAdvertiseList(getHomeAdvertiseList());
-        //获取推荐品牌
-        result.setBrandList(homeDao.getRecommendBrandList(0,4));
-        //获取秒杀信息 首页显示
-        result.setHomeFlashPromotion(pmsProductFeignApi.getHomeSecKillProductList().getData());
-        //获取新品推荐
-        result.setNewProductList(homeDao.getNewProductList(0,4));
-        //获取人气推荐
-        result.setHotProductList(homeDao.getHotProductList(0,4));
+    public HomeContentResult cmsContent(HomeContentResult content) {
+//        //获取首页广告
+//        result.setAdvertiseList(getHomeAdvertiseList());
+//        //获取推荐品牌
+//        result.setBrandList(homeDao.getRecommendBrandList(0,4));
+//        //获取秒杀信息 首页显示
+//        result.setHomeFlashPromotion(pmsProductFeignApi.getHomeSecKillProductList().getData());
+//        //获取新品推荐
+//        result.setNewProductList(homeDao.getNewProductList(0,4));
+//        //获取人气推荐
+//        result.setHotProductList(homeDao.getHotProductList(0,4));
         //获取推荐专题
-        result.setSubjectList(homeDao.getRecommendSubjectList(0,4));
+        content.setSubjectList(homeDao.getRecommendSubjectList(0,4));
+        return content;
+    }
+
+    public HomeContentResult recommendContent(){
+        HomeContentResult result = promotionFeignApi.content().getData();
         return result;
     }
 

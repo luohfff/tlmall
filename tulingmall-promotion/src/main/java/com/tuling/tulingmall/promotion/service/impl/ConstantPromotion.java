@@ -39,4 +39,7 @@ public class ConstantPromotion {
     public final static int HOME_ADVERTISE_STATUS_OFFLINE = 0;
     public final static int HOME_ADVERTISE_STATUS_ONLINE = 1;
 
+    /*首页推荐分页大小*/
+    public final static int HOME_RECOMMEND_PAGESIZE = 4;
+
 }

@@ -12,9 +12,6 @@ import java.util.List;
 /**
 * @vlog: 高于生活，源于生活
 * @desc: 类的描述:远程调用 会员中心获取具体收获地址
-* @author: smlz
-* @createDate: 2020/1/23 15:01
-* @version: 1.0
 */
 @FeignClient(name = "tulingmall-member",path = "/member")
 public interface UmsMemberFeignApi {

@@ -148,6 +148,20 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+  <select id="selectProductIdByExample" resultType="java.lang.Long">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    product_id
+    from sms_home_new_product
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
   <update id="updateByExampleSelective" parameterType="map">
     update sms_home_new_product
     <set>

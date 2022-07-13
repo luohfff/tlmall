@@ -19,6 +19,8 @@ public interface SmsHomeBrandMapper {
 
     List<SmsHomeBrand> selectByExample(SmsHomeBrandExample example);
 
+    List<Long> selectBrandIdByExample(SmsHomeBrandExample example);
+
     SmsHomeBrand selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") SmsHomeBrand record, @Param("example") SmsHomeBrandExample example);

@@ -5,9 +5,6 @@ import feign.Logger;
 import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 
-/**
- * Created by smlz on 2020/2/2.
- */
 public class FeignConfig {
 
     @Bean

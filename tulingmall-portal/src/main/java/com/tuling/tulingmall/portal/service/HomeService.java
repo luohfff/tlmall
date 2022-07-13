@@ -9,14 +9,16 @@ import java.util.List;
 
 /**
  * 首页内容管理Service
- * Created by tuling on 2019/1/28.
  */
 public interface HomeService {
 
     /**
-     * 获取首页内容
+     * 获取首页管理系统CMS推荐数据
      */
-    HomeContentResult content();
+    HomeContentResult cmsContent(HomeContentResult content);
+
+    /*获取营销系统推荐数据*/
+    HomeContentResult recommendContent();
 
     /**
      * 首页商品推荐

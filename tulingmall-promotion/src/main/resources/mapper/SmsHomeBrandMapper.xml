@@ -148,7 +148,18 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <update id="updateByExampleSelective" parameterType="map">
+    <select id="selectBrandIdByExample" resultType="java.lang.Long">
+      select
+      brand_id
+      from sms_home_brand
+      <if test="_parameter != null">
+        <include refid="Example_Where_Clause" />
+      </if>
+      <if test="orderByClause != null">
+        order by ${orderByClause}
+      </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
     update sms_home_brand
     <set>
       <if test="record.id != null">
