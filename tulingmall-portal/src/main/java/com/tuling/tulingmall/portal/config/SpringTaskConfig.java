@@ -5,7 +5,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 定时任务配置
- * Created by tuling on 2019/4/8.
  */
 @Configuration
 @EnableScheduling

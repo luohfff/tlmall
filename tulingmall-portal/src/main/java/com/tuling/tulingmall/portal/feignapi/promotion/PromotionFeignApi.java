@@ -17,7 +17,8 @@ import java.util.List;
 @FeignClient(name = "tulingmall-promotion",path = "/recommend")
 public interface PromotionFeignApi {
 
+    /*推荐内容类型:0->全部；1->品牌；2->新品推荐；3->人气推荐;4->轮播广告*/
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<HomeContentResult> content() ;
+    public CommonResult<HomeContentResult> content(@RequestParam int getType);
 }

@@ -11,7 +11,7 @@ public interface HomePromotionService {
     /**
      * 获取首页内容
      */
-    HomeContentResult content();
+    HomeContentResult content(int getType);
 
 //    /**
 //     * 首页商品推荐

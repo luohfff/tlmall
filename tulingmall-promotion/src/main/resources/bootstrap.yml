@@ -14,5 +14,9 @@ spring:
           data-id: tulingmall-redis.yml
           group: DEFAULT_GROUP
           refresh: true
+        shared-configs[2]:
+          data-id: tulingmall-redis-key.yml
+          group: DEFAULT_GROUP
+          refresh: true
   profiles:
     active: dev

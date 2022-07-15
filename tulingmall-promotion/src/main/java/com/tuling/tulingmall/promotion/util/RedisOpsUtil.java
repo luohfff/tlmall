@@ -1,17 +1,11 @@
-package com.tuling.tulingmall.portal.util;
+package com.tuling.tulingmall.promotion.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author ：图灵学院
- * @date ：Created in 2020/2/26
- * @version: V1.0
- * @slogan: 天下风云出我辈，一入代码岁月催
- * @description:
- **/
 public class RedisOpsUtil {
 
     @Autowired
@@ -23,6 +17,10 @@ public class RedisOpsUtil {
 
     public void set(String key, Object value, long timeout, TimeUnit unit){
         redisTemplate.opsForValue().set(key,value,timeout,unit);
+    }
+
+    public <V> void putListAllRight(String key, Collection<V> values){
+        redisTemplate.opsForList().rightPushAll(key,values);
     }
 
     public <T> T getListAll(String key,Class<?> T){
@@ -57,6 +55,18 @@ public class RedisOpsUtil {
     public Long incr(String key,long delta){
         return redisTemplate
                 .opsForValue().increment(key,delta);
+    }
+
+    public boolean expire(String key,long timeout,TimeUnit unit){
+        return redisTemplate.expire(key,timeout, unit);
+    }
+
+    public boolean delete(String key){
+        return redisTemplate.delete(key);
+    }
+
+    public boolean hasKey(String key){
+        return redisTemplate.hasKey(key);
     }
 
 }

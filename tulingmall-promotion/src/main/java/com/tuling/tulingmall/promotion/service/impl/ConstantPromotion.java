@@ -42,4 +42,11 @@ public class ConstantPromotion {
     /*首页推荐分页大小*/
     public final static int HOME_RECOMMEND_PAGESIZE = 4;
 
+    /*获取推荐内容类型:0->全部；1->品牌；2->新品推荐；3->人气推荐;4->轮播广告*/
+    public final static int HOME_GET_TYPE_ALL = 0;
+    public final static int HOME_GET_TYPE_BARND = 1;
+    public final static int HOME_GET_TYPE_NEW = 2;
+    public final static int HOME_GET_TYPE_HOT = 3;
+    public final static int HOME_GET_TYPE_AD = 4;
+
 }
