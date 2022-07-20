@@ -1,7 +1,7 @@
-package com.tuling.tulingmall.ordercurr.spi;
+package com.tuling.tulingmall.history.spi;
 
-import com.tuling.tulingmall.TulingmallOrderCurrApplication;
-import com.tuling.tulingmall.ordercurr.util.RedisOpsUtil;
+import com.tuling.tulingmall.TulingmallOrderHistoryApplication;
+import com.tuling.tulingmall.history.util.RedisOpsUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.shardingsphere.spi.keygen.ShardingKeyGenerator;
@@ -47,7 +47,7 @@ public class OrderByRedisKeyGenerator implements ShardingKeyGenerator {
     @Override
     public Comparable<?> generateKey() {
         StringBuilder sb = new StringBuilder();
-        RedisOpsUtil redisOpsUtil = TulingmallOrderCurrApplication.getBean("redisOpsUtil");
+        RedisOpsUtil redisOpsUtil = TulingmallOrderHistoryApplication.getBean("redisOpsUtil");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String key = properties.getProperty("redis.prefix") + date;

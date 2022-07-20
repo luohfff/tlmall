@@ -1,7 +1,6 @@
 package com.tuling.tulingmall;
 
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
-import org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -12,12 +11,12 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class})
 //@SpringBootApplication
 @EnableFeignClients
-public class TulingmallOrderApplication {
+public class TulingmallOrderCurrApplication {
 
 	private static ApplicationContext applicationContext;
 
 	public static void main(String[] args) {
-		applicationContext = SpringApplication.run(TulingmallOrderApplication.class, args);
+		applicationContext = SpringApplication.run(TulingmallOrderCurrApplication.class, args);
 	}
 
 	public static <T> T getBean(String beanName) {
