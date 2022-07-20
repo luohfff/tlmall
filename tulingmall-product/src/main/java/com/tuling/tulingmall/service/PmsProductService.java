@@ -2,12 +2,13 @@ package com.tuling.tulingmall.service;
 
 
 import com.tuling.tulingmall.domain.*;
+import com.tuling.tulingmall.model.PmsBrand;
+import com.tuling.tulingmall.model.PmsProduct;
 
 import java.util.List;
 
 /**
  * @author ：图灵学院
- * @date ：Created in 2019/12/31
  * @version: V1.0
  * @slogan: 天下风云出我辈，一入代码岁月催
  * @description:
@@ -19,6 +20,20 @@ public interface PmsProductService {
      * @param id 产品ID
      */
     PmsProductParam getProductInfo(Long id);
+
+    /**
+     * 批量获取产品信息
+     * @param productIdList
+     * @return
+     */
+    List<PmsProduct> getProductBatch(List<Long> productIdList);
+
+    /**
+     * 批量获取推荐品牌
+     * @param brandIdList
+     * @return
+     */
+    List<PmsBrand> getRecommandBrandList(List<Long> brandIdList);
 
     /**
      * 获取秒杀商品

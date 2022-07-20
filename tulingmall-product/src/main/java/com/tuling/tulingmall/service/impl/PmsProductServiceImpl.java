@@ -7,12 +7,11 @@ import com.tuling.tulingmall.component.zklock.ZKLock;
 import com.tuling.tulingmall.dao.FlashPromotionProductDao;
 import com.tuling.tulingmall.dao.PortalProductDao;
 import com.tuling.tulingmall.domain.*;
+import com.tuling.tulingmall.mapper.PmsBrandMapper;
+import com.tuling.tulingmall.mapper.PmsProductMapper;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionMapper;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionSessionMapper;
-import com.tuling.tulingmall.model.SmsFlashPromotion;
-import com.tuling.tulingmall.model.SmsFlashPromotionExample;
-import com.tuling.tulingmall.model.SmsFlashPromotionSession;
-import com.tuling.tulingmall.model.SmsFlashPromotionSessionExample;
+import com.tuling.tulingmall.model.*;
 import com.tuling.tulingmall.service.PmsProductService;
 import com.tuling.tulingmall.util.DateUtil;
 import com.tuling.tulingmall.util.RedisOpsUtil;
@@ -63,6 +62,12 @@ public class PmsProductServiceImpl implements PmsProductService {
     private SmsFlashPromotionMapper flashPromotionMapper;
 
     @Autowired
+    private PmsProductMapper pmsProductMapper;
+
+    @Autowired
+    private PmsBrandMapper pmsBrandMapper;
+
+    @Autowired
     private SmsFlashPromotionSessionMapper promotionSessionMapper;
 
     @Autowired
@@ -92,7 +97,6 @@ public class PmsProductServiceImpl implements PmsProductService {
      */
     public PmsProductParam getProductInfo(Long id) {
         return getProductInfoOne(id);
-
     }
 
     /**
@@ -107,8 +111,29 @@ public class PmsProductServiceImpl implements PmsProductService {
         }
         checkFlash(id, productInfo);//判断是否为秒杀商品
         return productInfo;
+    }
 
+    /**
+     * 批量获取产品信息
+     * @param productIdList
+     * @return
+     */
+    public List<PmsProduct> getProductBatch(List<Long> productIdList){
+        List<PmsProduct> products = new ArrayList<>();
+        for(Long productId:productIdList){
+            PmsProduct pmsProduct = pmsProductMapper.selectByPrimaryKey(productId);
+            products.add(pmsProduct);
+        }
+        return products;
+    }
 
+    public List<PmsBrand> getRecommandBrandList(List<Long> brandIdList){
+        List<PmsBrand> brands = new ArrayList<>();
+        for(Long brandId:brandIdList){
+            PmsBrand pmsBrand = pmsBrandMapper.selectByPrimaryKey(brandId);
+            brands.add(pmsBrand);
+        }
+        return brands;
     }
 
     /**

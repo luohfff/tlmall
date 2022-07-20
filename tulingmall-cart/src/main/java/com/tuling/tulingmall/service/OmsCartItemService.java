@@ -30,10 +30,9 @@ public interface OmsCartItemService {
     List<OmsCartItem> list(Long memberId);
 
     /**
-     * 获取被选择的包含促销活动信息的购物车列表
-     * add by yangguo
-     * @param memberId
+     * 获取指定购物车列表
      * @param itemIds
+     * @param memberId
      * @return
      */
     List<CartPromotionItem> listSelectedPromotion(Long memberId, List<Long> itemIds) throws BusinessException;
