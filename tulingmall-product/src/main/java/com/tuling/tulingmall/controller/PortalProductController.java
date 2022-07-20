@@ -3,6 +3,8 @@ package com.tuling.tulingmall.controller;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.dao.PortalProductDao;
 import com.tuling.tulingmall.domain.*;
+import com.tuling.tulingmall.model.PmsBrand;
+import com.tuling.tulingmall.model.PmsProduct;
 import com.tuling.tulingmall.service.PmsProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,6 +43,18 @@ public class PortalProductController {
     public CommonResult getProductInfo(@PathVariable Long id) {
         PmsProductParam pmsProductParam=pmsProductService.getProductInfo(id);
         return CommonResult.success(pmsProductParam);
+    }
+
+    @ApiOperation(value = "批量推荐品牌信息#订单模块需要")
+    @RequestMapping(value = "/getRecommandBrandList", method = RequestMethod.GET)
+    public List<PmsBrand> getRecommandBrandList(List<Long> brandIdList){
+        return pmsProductService.getRecommandBrandList(brandIdList);
+    }
+
+    @ApiOperation(value = "批量获取产品详情#订单模块需要")
+    @RequestMapping(value ="/getProductBatch",method = RequestMethod.GET)
+    public List<PmsProduct> getProductBatch(List<Long> productIdList){
+        return pmsProductService.getProductBatch(productIdList);
     }
 
 

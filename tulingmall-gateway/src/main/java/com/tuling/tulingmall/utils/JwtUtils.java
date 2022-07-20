@@ -37,12 +37,14 @@ public class JwtUtils {
     /**
      * 认证服务器许可我们的网关的client_secret(需要在oauth_client_details表中配置)
      */
-    private static final String CLIENT_SECRET = "smlz";
+//    private static final String CLIENT_SECRET = "smlz";
+    private static final String CLIENT_SECRET = "tlmall";
 
     /**
      * 认证服务器暴露的获取token_key的地址
      */
-    private static final String AUTH_TOKEN_KEY_URL = "http://tulingmall-authcenter/oauth/token_key";
+//    private static final String AUTH_TOKEN_KEY_URL = "http://tulingmall-authcenter/oauth/token_key";
+    private static final String AUTH_TOKEN_KEY_URL = "http://tulingmall-authcenter/oauth/token";
 
     /**
      * 请求头中的 token的开始
