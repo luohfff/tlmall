@@ -72,6 +72,12 @@ public class CartItemController {
         return CommonResult.success(cartPromotionItemList);
     }
 
+    @ApiOperation("获取某个会员的指定的购物车列表,包括促销信息#订单模块需要")
+    @RequestMapping(value = "/list/selectedpromotion", method = RequestMethod.GET)
+    public List<CartPromotionItem> listSelectedPromotion(List<Long> itemIds,@RequestHeader("memberId") Long memberId) throws BusinessException {
+        return cartItemService.listSelectedPromotion(memberId,itemIds);
+    }
+
     @ApiOperation("修改购物车中某个商品的数量")
     @RequestMapping(value = "/update/quantity", method = RequestMethod.POST)
     @ResponseBody

@@ -117,6 +117,12 @@ public class OmsCartItemServiceImpl implements OmsCartItemService {
         return cartItemMapper.selectByExample(example);
     }
 
+//    public List<OmsCartItem> listSelected(List<Long>itemIds,Long memberId) {
+//        OmsCartItemExample example = new OmsCartItemExample();
+//        example.createCriteria().andDeleteStatusEqualTo(0).andIdIn(itemIds).andMemberIdEqualTo(memberId);
+//        return cartItemMapper.selectByExample(example);
+//    }
+
     /**
      * 获取被选择的包含促销活动信息的购物车列表
      * add by yangguo
@@ -150,6 +156,16 @@ public class OmsCartItemServiceImpl implements OmsCartItemService {
         }
         return cartPromotionItemList;
     }
+
+//    @Override
+//    public List<CartPromotionItem> listSelectedPromotion(List<Long> itemIds,Long memberId) {
+//        List<OmsCartItem> cartItemList = listSelected(itemIds,memberId);
+//        List<CartPromotionItem> cartPromotionItemList = new ArrayList<>();
+//        if(!CollectionUtils.isEmpty(cartItemList)){
+//            cartPromotionItemList = promotionService.calcCartPromotion(cartItemList);
+//        }
+//        return cartPromotionItemList;
+//    }
 
     @Override
     public int updateQuantity(Long id, Long memberId, Integer quantity) {
