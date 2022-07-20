@@ -6,16 +6,34 @@ import com.tuling.tulingmall.portal.domain.HomeContentResult;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class CaffeineCacheConfig {
 
+    private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+
     @Bean(name = "promotion")
-    public Cache<String, HomeContentResult> caffeineCache() {
+    public Cache<String, HomeContentResult> promotionCache() {
+        int rnd = RANDOM.nextInt(10);
         return Caffeine.newBuilder()
-                // 设置最后一次写入或访问后经过固定时间过期
-                .expireAfterWrite(60, TimeUnit.SECONDS)
+                // 设置最后一次写入经过固定时间过期
+                .expireAfterWrite(30 + rnd, TimeUnit.MINUTES)
+                // 初始的缓存空间大小
+                .initialCapacity(20)
+                // 缓存的最大条数
+                .maximumSize(100)
+                .build();
+    }
+
+    /*以双缓存的形式提升首页的访问性能*/
+    @Bean(name = "promotionBak")
+    public Cache<String, HomeContentResult> promotionCacheBak() {
+        int rnd = RANDOM.nextInt(10);
+        return Caffeine.newBuilder()
+                // 设置最后一次写入经过固定时间过期
+                .expireAfterWrite(41 + rnd, TimeUnit.MINUTES)
                 // 初始的缓存空间大小
                 .initialCapacity(20)
                 // 缓存的最大条数

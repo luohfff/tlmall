@@ -51,7 +51,11 @@ public class HomeServiceImpl implements HomeService {
 
     @Autowired
     @Qualifier("promotion")
-    private Cache<String, HomeContentResult> caffeineCache;
+    private Cache<String, HomeContentResult> promotionCache;
+
+    @Autowired
+    @Qualifier("promotionBak")
+    private Cache<String, HomeContentResult> promotionCacheBak;
 
     @Override
     public HomeContentResult cmsContent(HomeContentResult content) {
@@ -62,53 +66,73 @@ public class HomeServiceImpl implements HomeService {
 
     /*处理首页推荐品牌和商品内容*/
     public HomeContentResult recommendContent(){
-        /*品牌和产品在缓存中统一处理，有则视为同有，无则视为同无*/
+        /*品牌和产品在本地缓存中统一处理，有则视为同有，无则视为同无*/
         final String brandKey = promotionRedisKey.getBrandKey();
+        final boolean allowLocalCache = promotionRedisKey.isAllowLocalCache();
         /*先从本地缓存中获取推荐内容*/
-        HomeContentResult result = promotionRedisKey.isAllowLocalCache() ?
-                caffeineCache.getIfPresent(brandKey) : null;
+        HomeContentResult result = allowLocalCache ?
+                promotionCache.getIfPresent(brandKey) : null;
         if(result == null){
-            final String recProductKey = promotionRedisKey.getRecProductKey();
-            final String newProductKey = promotionRedisKey.getNewProductKey();
-            final String homeAdvertiseKey = promotionRedisKey.getHomeAdvertiseKey();
-            List<PmsBrand> recommendBrandList = null;
-            List<SmsHomeAdvertise> smsHomeAdvertises = null;
-            List<PmsProduct> newProducts  = null;
-            List<PmsProduct> recommendProducts  = null;
-            /*本地缓存中没有则从redis获取*/
-            if(promotionRedisKey.isAllowRemoteCache()){
-                recommendBrandList = redisOpsUtil.getListAll(brandKey, PmsBrand.class);
-                smsHomeAdvertises = redisOpsUtil.getListAll(homeAdvertiseKey, SmsHomeAdvertise.class);
-                newProducts = redisOpsUtil.getListAll(newProductKey, PmsProduct.class);
-                recommendProducts = redisOpsUtil.getListAll(recProductKey, PmsProduct.class);
+            result = allowLocalCache ?
+                    promotionCacheBak.getIfPresent(brandKey) : null;
+        }
+        /*本地缓存中没有*/
+        if(result == null){
+            log.warn("从本地缓存中获取推荐品牌和商品失败，可能出错或禁用本地缓存[{}]",allowLocalCache);
+            result = getFromRemote();
+            if(null != result) {
+                promotionCache.put(brandKey,result);
+                promotionCacheBak.put(brandKey,result);
             }
-            /*redis没有则从微服务中获取*/
-            if(CollectionUtil.isEmpty(recommendBrandList)
-                    ||CollectionUtil.isEmpty(smsHomeAdvertises)
-                    ||CollectionUtil.isEmpty(newProducts)
-                    ||CollectionUtil.isEmpty(recommendProducts)){
-                result = promotionFeignApi.content(0).getData();
-            }else{
-                result = new HomeContentResult();
-                result.setBrandList(recommendBrandList);
-                result.setAdvertiseList(smsHomeAdvertises);
-                result.setHotProductList(recommendProducts);
-                result.setNewProductList(newProducts);
-            }
-            if(null != result) caffeineCache.put(brandKey,result);
+        }
+        return result;
+    }
+
+    /*从远程(Redis或者对应微服务)获取推荐内容*/
+    public HomeContentResult getFromRemote(){
+        List<PmsBrand> recommendBrandList = null;
+        List<SmsHomeAdvertise> smsHomeAdvertises = null;
+        List<PmsProduct> newProducts  = null;
+        List<PmsProduct> recommendProducts  = null;
+        HomeContentResult result = null;
+        /*从redis获取*/
+        if(promotionRedisKey.isAllowRemoteCache()){
+            recommendBrandList = redisOpsUtil.getListAll(promotionRedisKey.getBrandKey(), PmsBrand.class);
+            smsHomeAdvertises = redisOpsUtil.getListAll(promotionRedisKey.getHomeAdvertiseKey(), SmsHomeAdvertise.class);
+            newProducts = redisOpsUtil.getListAll(promotionRedisKey.getNewProductKey(), PmsProduct.class);
+            recommendProducts = redisOpsUtil.getListAll(promotionRedisKey.getRecProductKey(), PmsProduct.class);
+        }
+        /*redis没有则从微服务中获取*/
+        if(CollectionUtil.isEmpty(recommendBrandList)
+                ||CollectionUtil.isEmpty(smsHomeAdvertises)
+                ||CollectionUtil.isEmpty(newProducts)
+                ||CollectionUtil.isEmpty(recommendProducts)) {
+            result = promotionFeignApi.content(0).getData();
+        }else{
+            result = new HomeContentResult();
+            result.setBrandList(recommendBrandList);
+            result.setAdvertiseList(smsHomeAdvertises);
+            result.setHotProductList(recommendProducts);
+            result.setNewProductList(newProducts);
         }
         return result;
     }
 
     /*缓存预热*/
-//    @PostConstruct
-//    public void preheatCache(){
-//        try {
-//            this.recommendContent();
-//        } catch (Exception e) {
-//            log.error("缓存预热失败：{}",e);
-//        }
-//    }
+    @PostConstruct
+    public void preheatCache(){
+        try {
+            if(promotionRedisKey.isAllowLocalCache()){
+                final String brandKey = promotionRedisKey.getBrandKey();
+                HomeContentResult result = getFromRemote();
+                promotionCache.put(brandKey,result);
+                promotionCacheBak.put(brandKey,result);
+                log.info("promotionCache 数据缓存预热完成");
+            }
+        } catch (Exception e) {
+            log.error("promotionCache 数据缓存预热失败：{}",e);
+        }
+    }
 
     @Override
     public List<PmsProduct> recommendProductList(Integer pageSize, Integer pageNum) {
@@ -143,10 +167,4 @@ public class HomeServiceImpl implements HomeService {
         return subjectMapper.selectByExample(example);
     }
 
-    private List<SmsHomeAdvertise> getHomeAdvertiseList() {
-        SmsHomeAdvertiseExample example = new SmsHomeAdvertiseExample();
-        example.createCriteria().andTypeEqualTo(1).andStatusEqualTo(1);
-        example.setOrderByClause("sort desc");
-        return advertiseMapper.selectByExample(example);
-    }
 }

@@ -1,23 +1,19 @@
-package com.tuling.tulingmall.promotion.config;
+package com.tuling.tulingmall.rediscomm.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tuling.tulingmall.promotion.util.RedisOpsUtil;
-import lombok.extern.slf4j.Slf4j;
+import com.tuling.tulingmall.rediscomm.util.RedisDistrLock;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@Slf4j
 @Configuration
 public class RedisConifg {
 
@@ -52,6 +48,11 @@ public class RedisConifg {
     @Bean
     public RedisOpsUtil redisOpsUtil(){
         return new RedisOpsUtil();
+    }
+
+    @Bean
+    public RedisDistrLock redisDistrLock(){
+        return new RedisDistrLock();
     }
 
 }

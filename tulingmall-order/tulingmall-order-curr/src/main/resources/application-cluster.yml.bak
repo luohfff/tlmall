@@ -1,12 +1,6 @@
 server:
   port: 8844
 spring:
-  application:
-    name: tulingmall-order-curr
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 192.168.65.206:8848
 #  datasource:
 #    url: jdbc:mysql://192.168.65.223:3306/tl_mall_order?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
 #    username: tlmall

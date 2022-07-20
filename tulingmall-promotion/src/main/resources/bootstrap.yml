@@ -11,12 +11,14 @@ spring:
           group: DEFAULT_GROUP
           refresh: true
         shared-configs[1]:
-          data-id: tulingmall-redis.yml
+          data-id: tulingmall-redis.yml # redis服务集群配置
           group: DEFAULT_GROUP
           refresh: true
         shared-configs[2]:
-          data-id: tulingmall-redis-key.yml
+          data-id: tulingmall-redis-key-dev.yml #在多个服务之间共享redis的key
           group: DEFAULT_GROUP
           refresh: true
+      discovery:
+        server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848
   profiles:
     active: dev

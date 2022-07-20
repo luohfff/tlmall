@@ -8,6 +8,8 @@ import com.tuling.tulingmall.ordercurr.component.CancelOrderSender;
 import com.tuling.tulingmall.ordercurr.dao.PortalOrderDao;
 import com.tuling.tulingmall.ordercurr.dao.PortalOrderItemDao;
 import com.tuling.tulingmall.ordercurr.domain.*;
+import com.tuling.tulingmall.ordercurr.feignapi.cart.CartFeignApi;
+import com.tuling.tulingmall.ordercurr.feignapi.ums.UmsMemberFeignApi;
 import com.tuling.tulingmall.ordercurr.feignapi.unqid.UnqidFeignApi;
 import com.tuling.tulingmall.ordercurr.mapper.OmsOrderItemMapper;
 import com.tuling.tulingmall.ordercurr.mapper.OmsOrderMapper;
@@ -36,8 +38,8 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
     @Autowired
     private UnqidFeignApi unqidFeignApi;
 
-//    @Autowired
-//    private UmsMemberFeignApi umsMemberFeignApi;
+    @Autowired
+    private UmsMemberFeignApi umsMemberFeignApi;
 
 //    @Autowired
 //    private PmsProductFeignApi pmsProductFeignApi;
@@ -69,6 +71,8 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
     private OmsOrderItemMapper orderItemMapper;
     @Autowired
     private CancelOrderSender cancelOrderSender;
+    @Autowired
+    private CartFeignApi cartFeignApi;
 
     /**
      * 查询用户订单
@@ -154,8 +158,8 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
 
         List<OmsOrderItem> orderItemList = new ArrayList<>();
 
-        //List<CartPromotionItem> cartPromotionItemList = cartFeignApi.listSelectedPromotion(orderParam.getItemIds(),memberId);
-        List<CartPromotionItem> cartPromotionItemList = MockService.listSelectedPromotion(orderParam.getItemIds(),memberId);
+        List<CartPromotionItem> cartPromotionItemList = cartFeignApi.listSelectedPromotion(orderParam.getItemIds(),memberId);
+        //List<CartPromotionItem> cartPromotionItemList = MockService.listSelectedPromotion(orderParam.getItemIds(),memberId);
         int itemSize = cartPromotionItemList.size();
 
         /*一次获取多个OrderItem的id，但是可能获取的数量少于订单详情数*/
@@ -186,7 +190,8 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
             if(itemListIndex < itemSize){
                 orderItem.setId(Long.valueOf(omsOrderItemIDList.get(itemListIndex)));
             }else{
-                log.warn("从分布式ID服务获得的id已经用完，可能订单详情太多或分布式ID服务出错，请检查！");
+                log.warn("从分布式ID服务获得的id已经用完，可能订单详情太多或分布式ID服务出错，请检查！" +
+                        "正尝试每个订单详情单独获得id");
                 orderItem.setId(Long.valueOf(unqidFeignApi.getSegmentId(OrderConstant.LEAF_ORDER_ITEM_ID_KEY)));
             }
             orderItem.setCouponAmount(new BigDecimal(0));
@@ -229,8 +234,8 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         order.setOrderType(OrderConstant.ORDER_TYPE_NORMAL);
         //收货人信息：姓名、电话、邮编、地址
         /* TODO 通过Feign远程调用 会员服务*/
-        //UmsMemberReceiveAddress address = umsMemberFeignApi.getItem(orderParam.getMemberReceiveAddressId()).getData();
-        UmsMemberReceiveAddress address = MockService.getMemberReceiveAddress();
+        UmsMemberReceiveAddress address = umsMemberFeignApi.getItem(orderParam.getMemberReceiveAddressId()).getData();
+        //UmsMemberReceiveAddress address = MockService.getMemberReceiveAddress();
         order.setReceiverName(address.getName());
         order.setReceiverPhone(address.getPhoneNumber());
         order.setReceiverPostCode(address.getPostCode());

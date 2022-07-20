@@ -43,28 +43,15 @@
 		</dependency>
 
 		<!--加入springcloud alibaba-->
+		<!--加入springcloud alibaba-->
 		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
 			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-<!--			<exclusions>
-				<exclusion>
-					<groupId>com.alibaba.nacos</groupId>
-					<artifactId>nacos-client</artifactId>
-				</exclusion>
-			</exclusions>-->
 		</dependency>
-
-<!--		<dependency>
+		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
-			<artifactId>spring-cloud-alibaba-nacos-config</artifactId>
-			<version>2.1.1.RELEASE</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.alibaba.nacos</groupId>
-					<artifactId>nacos-client</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
+			<artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+		</dependency>
 
 <!--		<dependency>
 			<groupId>com.alibaba.nacos</groupId>
@@ -78,11 +65,11 @@
 		</dependency>
 
 		<!-- 加入rocketmq -->
-<!--		<dependency>
+		<dependency>
 			<groupId>org.apache.rocketmq</groupId>
 			<artifactId>rocketmq-spring-boot-starter</artifactId>
 			<version>2.0.4</version>
-		</dependency>-->
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

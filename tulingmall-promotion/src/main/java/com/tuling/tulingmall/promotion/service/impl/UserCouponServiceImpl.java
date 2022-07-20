@@ -6,7 +6,6 @@ import com.tuling.tulingmall.promotion.mapper.SmsCouponMapper;
 import com.tuling.tulingmall.promotion.dao.SmsCouponHistoryDao;
 import com.tuling.tulingmall.promotion.domain.CartPromotionItem;
 import com.tuling.tulingmall.promotion.domain.SmsCouponHistoryDetail;
-import com.tuling.tulingmall.model.*;
 import com.tuling.tulingmall.promotion.model.*;
 import com.tuling.tulingmall.promotion.service.UserCouponService;
 import lombok.extern.slf4j.Slf4j;

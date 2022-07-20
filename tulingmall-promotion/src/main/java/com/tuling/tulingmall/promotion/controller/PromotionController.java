@@ -2,7 +2,6 @@ package com.tuling.tulingmall.promotion.controller;
 
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.promotion.model.SmsCouponHistory;
-import com.tuling.tulingmall.promotion.clientapi.OmsCartItemClientApi;
 import com.tuling.tulingmall.promotion.domain.CartPromotionItem;
 import com.tuling.tulingmall.promotion.domain.SmsCouponHistoryDetail;
 import com.tuling.tulingmall.promotion.service.UserCouponService;
@@ -24,10 +23,6 @@ import java.util.List;
 public class PromotionController {
     @Autowired
     private UserCouponService userCouponService;
-
-    @Autowired
-    private OmsCartItemClientApi omsCartItemClientApi;
-
 
     @ApiOperation("用户领取指定优惠券")
     @RequestMapping(value = "/add/{couponId}", method = RequestMethod.POST)

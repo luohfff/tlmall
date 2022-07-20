@@ -20,6 +20,8 @@ public interface HomeService {
     /*获取营销系统推荐数据*/
     HomeContentResult recommendContent();
 
+    HomeContentResult getFromRemote();
+
     /**
      * 首页商品推荐
      */

@@ -53,10 +53,10 @@ public class PromotionRedisKey {
     }
 
 
-    @Value("${promotion.allowLocalCache}")
+    @Value("${promotion.demo.allowLocalCache:true}")
     private boolean allowLocalCache;
 
-    @Value("${promotion.allowRemoteCache}")
+    @Value("${promotion.demo.allowRemoteCache:true}")
     private boolean allowRemoteCache;
 
     public boolean isAllowLocalCache() {
