@@ -131,7 +131,7 @@ public class UserCouponServiceImpl implements UserCouponService {
             Integer useType = couponHistoryDetail.getCoupon().getUseType();
             BigDecimal minPoint = couponHistoryDetail.getCoupon().getMinPoint();
             Date endTime = couponHistoryDetail.getCoupon().getEndTime();
-            if(useType.equals(0)){
+            if(useType.equals(ConstantPromotion.COUPON_USE_TYPE_GENERAL)){
                 //0->全场通用
                 //判断是否满足优惠起点
                 //计算购物车商品的总价
