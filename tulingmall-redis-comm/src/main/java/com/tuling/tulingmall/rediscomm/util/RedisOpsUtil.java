@@ -1,12 +1,15 @@
 package com.tuling.tulingmall.rediscomm.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class RedisOpsUtil {
 
     @Autowired
@@ -21,7 +24,11 @@ public class RedisOpsUtil {
     }
 
     public <V> void putListAllRight(String key, Collection<V> values){
-        redisTemplate.opsForList().rightPushAll(key,values);
+        if(CollectionUtils.isEmpty(values)){
+            log.warn("{}没有数据可放入Redis",key);
+        }else{
+            redisTemplate.opsForList().rightPushAll(key,values);
+        }
     }
 
     public <T> T getListAll(String key,Class<?> T){

@@ -22,6 +22,8 @@ public interface HomeService {
 
     HomeContentResult getFromRemote();
 
+    void preheatCache();
+
     /**
      * 首页商品推荐
      */

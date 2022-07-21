@@ -1,4 +1,4 @@
-package com.tuling.tulingmall.promotion.model;
+package com.tuling.tulingmall.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

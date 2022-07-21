@@ -1,9 +1,6 @@
 package com.tuling;
 
-import com.tuling.tulingmall.SeataATOrderService;
-import com.tuling.tulingmall.common.exception.BusinessException;
-import com.tuling.tulingmall.domain.OrderParam;
-import com.tuling.tulingmall.service.OmsPortalOrderService;
+import com.tuling.tulingmall.history.SeataATOrderService;
 import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.apache.shardingsphere.transaction.core.TransactionTypeHolder;
 import org.junit.Test;
@@ -12,12 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 /**
  * @author ：楼兰

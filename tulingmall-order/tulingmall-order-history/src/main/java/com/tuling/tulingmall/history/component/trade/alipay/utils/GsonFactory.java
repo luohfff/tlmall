@@ -4,13 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.tuling.tulingmall.history.component.trade.alipay.model.hb.*;
-import com.tuling.tulingmall.ordercurr.component.trade.alipay.model.hb.*;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * Created by liuyangkly on 15/6/26.
  * 使用google gson作为json序列化反序列化工具
  */
 public class GsonFactory {

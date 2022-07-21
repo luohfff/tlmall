@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 
-//不使用ShardingSphere。SpringBootConfiguration会往Spring中注入ShardingDataSource
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class})
-//@SpringBootApplication
 @EnableFeignClients
 public class TulingmallOrderCurrApplication {
 

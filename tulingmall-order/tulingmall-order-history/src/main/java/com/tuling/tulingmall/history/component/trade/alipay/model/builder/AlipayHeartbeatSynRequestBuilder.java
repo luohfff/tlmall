@@ -2,7 +2,6 @@ package com.tuling.tulingmall.history.component.trade.alipay.model.builder;
 
 import com.google.gson.annotations.SerializedName;
 import com.tuling.tulingmall.history.component.trade.alipay.model.hb.*;
-import com.tuling.tulingmall.ordercurr.component.trade.alipay.model.hb.*;
 import com.tuling.tulingmall.history.component.trade.alipay.utils.Utils;
 import org.apache.commons.lang.StringUtils;
 
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by liuyangkly on 16/3/2.
  */
 public class AlipayHeartbeatSynRequestBuilder extends RequestBuilder {
 

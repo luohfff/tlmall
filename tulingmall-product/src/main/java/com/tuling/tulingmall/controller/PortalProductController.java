@@ -46,14 +46,14 @@ public class PortalProductController {
     }
 
     @ApiOperation(value = "批量推荐品牌信息#订单模块需要")
-    @RequestMapping(value = "/getRecommandBrandList", method = RequestMethod.GET)
-    public List<PmsBrand> getRecommandBrandList(List<Long> brandIdList){
+    @RequestMapping(value = "/getRecommandBrandList", method = RequestMethod.POST)
+    public List<PmsBrand> getRecommandBrandList(@RequestParam(value="brandIdList") List<Long> brandIdList){
         return pmsProductService.getRecommandBrandList(brandIdList);
     }
 
     @ApiOperation(value = "批量获取产品详情#订单模块需要")
-    @RequestMapping(value ="/getProductBatch",method = RequestMethod.GET)
-    public List<PmsProduct> getProductBatch(List<Long> productIdList){
+    @RequestMapping(value ="/getProductBatch",method = RequestMethod.POST)
+    public List<PmsProduct> getProductBatch(@RequestParam(value="productIdList") List<Long> productIdList){
         return pmsProductService.getProductBatch(productIdList);
     }
 

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
-* @vlog: 高于生活，源于生活
 * @desc: 类的描述:Feign调用添加请求头
 */
 @Slf4j

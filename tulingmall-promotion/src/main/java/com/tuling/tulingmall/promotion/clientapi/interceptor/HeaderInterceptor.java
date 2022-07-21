@@ -9,17 +9,19 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 
-///**
-//* @desc: 类的描述:Feign调用添加请求头
-//*/
-//@Slf4j
-//public class HeaderInterceptor implements RequestInterceptor {
-//    @Override
-//    public void apply(RequestTemplate template) {
-//
-//        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-//        HttpServletRequest request = attributes.getRequest();
-//        log.info("从Request中解析请求头");
-//        template.header("memberId",request.getHeader("memberId"));
-//    }
-//}
+/**
+* @desc: 类的描述:Feign调用添加请求头
+*/
+@Slf4j
+public class HeaderInterceptor implements RequestInterceptor {
+    @Override
+    public void apply(RequestTemplate template) {
+
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if(null != attributes){
+            HttpServletRequest request = attributes.getRequest();
+            log.info("从Request中解析请求头");
+            template.header("memberId",request.getHeader("memberId"));
+        }
+    }
+}
