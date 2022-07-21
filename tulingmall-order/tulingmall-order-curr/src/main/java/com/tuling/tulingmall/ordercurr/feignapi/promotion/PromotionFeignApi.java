@@ -18,6 +18,6 @@ public interface PromotionFeignApi {
     /*"type", value = "使用可用:0->不可用；1->可用"*/
     @RequestMapping(value = "/listCart", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<List<SmsCouponHistoryDetail>> listCartCoupons(@RequestParam Integer type,
+    public CommonResult<List<SmsCouponHistoryDetail>> listCartCoupons(@RequestParam(value="type") Integer type,
                     @RequestBody List<CartPromotionItem> cartPromotionItemList);
 }

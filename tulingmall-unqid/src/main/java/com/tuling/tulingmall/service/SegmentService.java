@@ -39,6 +39,8 @@ public class SegmentService {
             dataSource.setValidationQuery("select 1");
             dataSource.init();
 
+            logger.info("leaf.properties配置：{}",properties);
+
             // Config Dao
             IDAllocDao dao = new IDAllocDaoImpl(dataSource);
 

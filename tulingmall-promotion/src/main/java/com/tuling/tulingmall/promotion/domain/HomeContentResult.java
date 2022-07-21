@@ -1,7 +1,7 @@
 package com.tuling.tulingmall.promotion.domain;
 
-import com.tuling.tulingmall.promotion.model.PmsBrand;
-import com.tuling.tulingmall.promotion.model.PmsProduct;
+import com.tuling.tulingmall.model.PmsBrand;
+import com.tuling.tulingmall.model.PmsProduct;
 import com.tuling.tulingmall.promotion.model.SmsHomeAdvertise;
 import lombok.Getter;
 import lombok.Setter;

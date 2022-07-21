@@ -43,7 +43,6 @@
 		</dependency>
 
 		<!--加入springcloud alibaba-->
-		<!--加入springcloud alibaba-->
 		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
 			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>

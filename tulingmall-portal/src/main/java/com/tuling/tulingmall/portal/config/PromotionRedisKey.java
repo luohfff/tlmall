@@ -1,26 +1,28 @@
 package com.tuling.tulingmall.portal.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
 @Service
+@Slf4j
 public class PromotionRedisKey {
 
-    @Value ("${namespace.promotion}")
+    @Value ("${namespace.promotion:prmtd}")
     private String promotionNamespace;
 
-    @Value ("${promotion.brand}")
+    @Value ("${promotion.brand:br}")
     private String brand;
 
-    @Value ("${promotion.newProduct}")
+    @Value ("${promotion.newProduct:np}")
     private String newProduct;
 
-    @Value ("${promotion.recProduct}")
+    @Value ("${promotion.recProduct:rp}")
     private String recProduct;
 
-    @Value ("${promotion.homeAdvertise}")
+    @Value ("${promotion.homeAdvertise:hd}")
     private String homeAdvertise;
 
     private String brandKey;
@@ -34,6 +36,13 @@ public class PromotionRedisKey {
         newProductKey = promotionNamespace + "." + newProduct;
         recProductKey = promotionNamespace + "." + recProduct;
         homeAdvertiseKey = promotionNamespace + "." + homeAdvertise;
+        StringBuilder logKeyStr = new StringBuilder();
+        logKeyStr.append("[品牌推荐redis主键=").append(brandKey)
+                .append("] [新品推荐redis主键=").append(newProductKey)
+                .append("] [人气推荐redis主键=").append(recProductKey)
+                .append("] [轮播广告redis主键=").append(homeAdvertiseKey)
+                .append("]");
+        log.info("促销系统Redis主键配置：{}",logKeyStr);
     }
 
     public String getBrandKey() {
@@ -51,7 +60,6 @@ public class PromotionRedisKey {
     public String getHomeAdvertiseKey() {
         return homeAdvertiseKey;
     }
-
 
     @Value("${promotion.demo.allowLocalCache:true}")
     private boolean allowLocalCache;

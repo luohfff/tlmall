@@ -13,23 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- *                  ,;,,;
- *                ,;;'(    社
- *      __      ,;;' ' \   会
- *   /'  '\'~~'~' \ /'\.)  主
- * ,;(      )    /  |.     义
- *,;' \    /-.,,(   ) \    码
- *     ) /       ) / )|    农
- *     ||        ||  \)     
- *     (_\       (_\
- * @author ：图灵学院
- * @date ：Created in 2020/2/9 13:00
- * @version: V1.0
- * @slogan: 天下风云出我辈，一入代码岁月催
- * @description: 
+ * @description:
  **/
 @RestController
-@Api(tags = "PortalProductCommentController", description = "商品评论管理#杨过添加")
+@Api(tags = "PortalProductCommentController", description = "商品评论管理")
 public class PortalProductCommentController {
     @Autowired
     private PortalProductCommentService commentService;

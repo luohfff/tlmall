@@ -163,7 +163,7 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
 
         List<OmsOrderItem> orderItemList = new ArrayList<>();
 
-        List<CartPromotionItem> cartPromotionItemList = cartFeignApi.listSelectedPromotion(orderParam.getItemIds(),memberId);
+        List<CartPromotionItem> cartPromotionItemList = cartFeignApi.listSelectedPromotion(orderParam.getItemIds());
         //List<CartPromotionItem> cartPromotionItemList = MockService.listSelectedPromotion(orderParam.getItemIds(),memberId);
         int itemSize = cartPromotionItemList.size();
 

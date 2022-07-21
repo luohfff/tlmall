@@ -1,6 +1,8 @@
 package com.tuling.tulingmall.promotion.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.tuling.tulingmall.model.PmsBrand;
+import com.tuling.tulingmall.model.PmsProduct;
 import com.tuling.tulingmall.promotion.clientapi.PmsProductClientApi;
 import com.tuling.tulingmall.promotion.config.PromotionRedisKey;
 import com.tuling.tulingmall.promotion.domain.HomeContentResult;
@@ -17,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.PostConstruct;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -86,15 +86,15 @@ public class HomePromotionServiceImpl implements HomePromotionService {
                 List<Long> smsHomeBrandIds = smsHomeBrandMapper.selectBrandIdByExample(example);
 //                pmsProductFeignApi.getHomeSecKillProductList();
 //                log.info("---------------------------");
-                recommendBrandList = pmsProductClientApi.getRecommendBrandList(smsHomeBrandIds);
+                recommendBrandList = pmsProductClientApi.getRecommandBrandList(smsHomeBrandIds);
                 redisOpsUtil.putListAllRight(brandKey,recommendBrandList);
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlBrandKey());
             }
             result.setBrandList(recommendBrandList);
-            log.info("品牌推荐信息存入缓存，键{}" ,brandKey);
+            log.debug("品牌推荐信息存入缓存，键{}" ,brandKey);
         }else{
-            log.info("品牌推荐信息已在缓存，键{}" ,brandKey);
+            log.debug("品牌推荐信息已在缓存，键{}" ,brandKey);
             result.setBrandList(recommendBrandList);
         }
     }
@@ -110,7 +110,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
                 SmsHomeRecommendProductExample example2 = new SmsHomeRecommendProductExample();
                 example2.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_NO);
                 List<Long> recommendProductIds = smsHomeRecommendProductMapper.selectProductIdByExample(example2);
-                recommendProducts = pmsProductClientApi.getProductList(recommendProductIds);
+                recommendProducts = pmsProductClientApi.getProductBatch(recommendProductIds);
                 redisOpsUtil.putListAllRight(recProductKey,recommendProducts);
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlRecProductKey());
@@ -134,7 +134,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
                 SmsHomeNewProductExample example = new SmsHomeNewProductExample();
                 example.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_NO);
                 List<Long> newProductIds = smsHomeNewProductMapper.selectProductIdByExample(example);
-                newProducts = pmsProductClientApi.getProductList(newProductIds);
+                newProducts = pmsProductClientApi.getProductBatch(newProductIds);
                 redisOpsUtil.putListAllRight(newProductKey,newProducts);
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlNewProductKey());

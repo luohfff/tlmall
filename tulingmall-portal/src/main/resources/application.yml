@@ -44,12 +44,6 @@ spring:
         login-username: druid
         login-password: druid
     type: com.alibaba.druid.pool.DruidDataSource
-  application:
-    name: tulingmall-portal
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848
 mybatis:
   mapper-locations:
     - classpath:dao/*.xml
@@ -65,12 +59,11 @@ feign:
         connectTimeout: 3000
 logging:
   level:
-    com:
-      tuling:
-        tulingmall:
-          portal:
-            feignapi:
-              pms:
-                PmsProductFeignApi: debug
+    root: info
 server:
   port: 8887
+promotion:
+  demo:
+    allowLocalCache: true
+    allowRemoteCache: true
+

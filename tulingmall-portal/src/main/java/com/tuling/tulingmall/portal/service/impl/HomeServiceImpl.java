@@ -78,7 +78,7 @@ public class HomeServiceImpl implements HomeService {
         }
         /*本地缓存中没有*/
         if(result == null){
-            log.warn("从本地缓存中获取推荐品牌和商品失败，可能出错或禁用本地缓存[{}]",allowLocalCache);
+            log.warn("从本地缓存中获取推荐品牌和商品失败，可能出错或禁用了本地缓存[allowLocalCache = {}]",allowLocalCache);
             result = getFromRemote();
             if(null != result) {
                 promotionCache.put(brandKey,result);
@@ -119,7 +119,6 @@ public class HomeServiceImpl implements HomeService {
     }
 
     /*缓存预热*/
-    @PostConstruct
     public void preheatCache(){
         try {
             if(promotionRedisKey.isAllowLocalCache()){
