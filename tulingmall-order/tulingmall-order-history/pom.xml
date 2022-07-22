@@ -20,14 +20,6 @@
 			<groupId>com.tuling</groupId>
 			<artifactId>tulingmall-common</artifactId>
 		</dependency>
-<!--		<dependency>
-			<groupId>com.tuling</groupId>
-			<artifactId>tulingmall-core</artifactId>
-		</dependency>-->
-<!--		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis</artifactId>
-		</dependency>-->
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
@@ -219,6 +211,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.3.2.RELEASE</version>
 			</plugin>
 		</plugins>
 	</build>

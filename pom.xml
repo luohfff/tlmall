@@ -11,8 +11,8 @@
     <description>图灵电商项目</description>
 
     <modules>
-        <module>tulingmall-common</module>
         <module>tulingmall-admin</module>
+        <module>tulingmall-common</module>
         <module>tulingmall-product</module>
         <module>tulingmall-security</module>
         <module>tulingmall-search</module>

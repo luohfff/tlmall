@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8833
 spring:
   application:
     name: tulingmall-unqid
