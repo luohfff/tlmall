@@ -1,8 +1,8 @@
 package com.tuling.tulingmall.promotion.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.tuling.tulingmall.promotion.model.PmsBrand;
-import com.tuling.tulingmall.promotion.model.PmsProduct;
+import com.tuling.tulingmall.model.PmsBrand;
+import com.tuling.tulingmall.model.PmsProduct;
 import com.tuling.tulingmall.promotion.clientapi.PmsProductClientApi;
 import com.tuling.tulingmall.promotion.config.PromotionRedisKey;
 import com.tuling.tulingmall.promotion.domain.HomeContentResult;

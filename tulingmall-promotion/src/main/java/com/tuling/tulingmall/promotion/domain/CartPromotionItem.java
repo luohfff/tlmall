@@ -1,13 +1,13 @@
 package com.tuling.tulingmall.promotion.domain;
 
-import com.tuling.tulingmall.promotion.model.OmsCartItem;
+import com.tuling.tulingmall.model.OmsCartItem;
 
 import java.math.BigDecimal;
 
 /**
  * 购物车中促销信息的封装
  */
-public class CartPromotionItem extends OmsCartItem{
+public class CartPromotionItem extends OmsCartItem {
     //促销活动信息
     private String promotionMessage;
 

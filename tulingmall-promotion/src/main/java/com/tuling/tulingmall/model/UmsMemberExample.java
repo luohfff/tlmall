@@ -1,4 +1,4 @@
-package com.tuling.tulingmall.promotion.model;
+package com.tuling.tulingmall.model;
 
 import java.util.ArrayList;
 import java.util.Date;
