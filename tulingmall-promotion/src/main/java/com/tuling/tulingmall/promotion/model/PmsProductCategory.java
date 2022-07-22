@@ -1,4 +1,4 @@
-package com.tuling.tulingmall.model;
+package com.tuling.tulingmall.promotion.model;
 
 import io.swagger.annotations.ApiModelProperty;
 

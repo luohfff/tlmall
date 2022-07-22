@@ -1,7 +1,7 @@
 package com.tuling.tulingmall.promotion.clientapi;
 
-import com.tuling.tulingmall.model.PmsBrand;
-import com.tuling.tulingmall.model.PmsProduct;
+import com.tuling.tulingmall.promotion.model.PmsBrand;
+import com.tuling.tulingmall.promotion.model.PmsProduct;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

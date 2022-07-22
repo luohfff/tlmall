@@ -1,6 +1,6 @@
 package com.tuling.tulingmall.promotion.domain;
 
-import com.tuling.tulingmall.model.PmsProduct;
+import com.tuling.tulingmall.promotion.model.PmsProduct;
 import lombok.Getter;
 import lombok.Setter;
 

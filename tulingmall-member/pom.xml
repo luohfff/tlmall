@@ -20,10 +20,6 @@
 			<groupId>com.tuling</groupId>
 			<artifactId>tulingmall-common</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>com.tuling</groupId>-->
-<!--			<artifactId>tulingmall-core</artifactId>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>dynamic-datasource-spring-boot-starter</artifactId>
@@ -97,18 +93,9 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-test</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -129,6 +116,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.3.2.RELEASE</version>
 			</plugin>
 		</plugins>
 	</build>

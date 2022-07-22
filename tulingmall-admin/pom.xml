@@ -96,6 +96,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.3.2.RELEASE</version>
                 <!-- 解决运行包不能被其他包依赖的问题 -->
                 <configuration>
                     <classifier>exec</classifier>

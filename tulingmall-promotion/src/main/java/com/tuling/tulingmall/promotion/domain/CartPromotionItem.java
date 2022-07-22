@@ -1,6 +1,6 @@
 package com.tuling.tulingmall.promotion.domain;
 
-import com.tuling.tulingmall.model.OmsCartItem;
+import com.tuling.tulingmall.promotion.model.OmsCartItem;
 
 import java.math.BigDecimal;
 

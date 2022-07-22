@@ -2,7 +2,7 @@
 //
 //
 //import com.tuling.tulingmall.common.api.CommonResult;
-//import com.tuling.tulingmall.model.UmsMember;
+//import com.tuling.tulingmall.promotion.model.UmsMember;
 //import com.tuling.tulingmall.promotion.clientapi.interceptor.config.FeignConfig;
 //import org.springframework.cloud.openfeign.FeignClient;
 //import org.springframework.web.bind.annotation.RequestMapping;
