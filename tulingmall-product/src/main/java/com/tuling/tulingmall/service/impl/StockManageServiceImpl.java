@@ -4,9 +4,11 @@ import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.dao.FlashPromotionProductDao;
 import com.tuling.tulingmall.domain.CartPromotionItem;
 import com.tuling.tulingmall.domain.PmsProductParam;
+import com.tuling.tulingmall.domain.StockChanges;
 import com.tuling.tulingmall.mapper.PmsSkuStockMapper;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionProductRelationMapper;
 import com.tuling.tulingmall.model.PmsSkuStock;
+import com.tuling.tulingmall.model.PmsSkuStockExample;
 import com.tuling.tulingmall.model.SmsFlashPromotionProductRelation;
 import com.tuling.tulingmall.service.PmsProductService;
 import com.tuling.tulingmall.service.StockManageService;
@@ -74,18 +76,62 @@ public class StockManageServiceImpl implements StockManageService {
         return CommonResult.success(miaoshaStock.getFlashPromotionCount());
     }
 
+    /*库存锁定,需要同时扣减商品库存和增加锁定库存，原来的实现：
+            PmsSkuStock skuStock = skuStockMapper.selectByPrimaryKey(.......);
+            skuStock.setLockStock(skuStock.getLockStock() + cartPromotionItem.getQuantity());
+            skuStockMapper.updateByPrimaryKeySelective(skuStock);
+    这里是先查再减，会有并发问题。
+    * 实际扣减时也要判断商品库存是否足够扣减，否则会出现超卖*/
     @Override
     public CommonResult lockStock(List<CartPromotionItem> cartPromotionItemList) {
         try {
-
             for (CartPromotionItem cartPromotionItem : cartPromotionItemList) {
-                PmsSkuStock skuStock = skuStockMapper.selectByPrimaryKey(cartPromotionItem.getProductSkuId());
-                skuStock.setLockStock(skuStock.getLockStock() + cartPromotionItem.getQuantity());
-                skuStockMapper.updateByPrimaryKeySelective(skuStock);
+                PmsSkuStockExample pmsSkuStockExample = new PmsSkuStockExample();
+                pmsSkuStockExample.createCriteria()
+                        .andIdEqualTo(cartPromotionItem.getProductSkuId())
+                        .andStockGreaterThanOrEqualTo(cartPromotionItem.getQuantity());
+                skuStockMapper.lockStockByExample(cartPromotionItem.getQuantity(),pmsSkuStockExample);
+            }
+            /*这里我们做了简单化处理，认为所有商品的库存锁定在业务上都可以成功，
+            也就是商品库存一定足够扣减。
+            实际要检查SQL操作返回行数，以供后续处理每个商品的锁定结果*/
+            return CommonResult.success(true);
+        }catch (Exception e) {
+            log.error("锁定库存失败...{}",e);
+            return CommonResult.failed();
+        }
+    }
+
+    /*订单支付后，实际扣减库存*/
+    @Override
+    public CommonResult reduceStock(List<StockChanges> stockChangesList) {
+        try {
+            for (StockChanges changesProduct : stockChangesList) {
+                PmsSkuStockExample pmsSkuStockExample = new PmsSkuStockExample();
+                pmsSkuStockExample.createCriteria()
+                        .andIdEqualTo(changesProduct.getProductSkuId());
+                skuStockMapper.reduceStockByExample(changesProduct.getChangesCount(),pmsSkuStockExample);
             }
             return CommonResult.success(true);
         }catch (Exception e) {
-            log.error("锁定库存失败...");
+            log.error("订单支付后扣减库存失败...{}",e);
+            return CommonResult.failed();
+        }
+    }
+
+    /*订单取消后，恢复库存*/
+    @Override
+    public CommonResult recoverStock(List<StockChanges> stockChangesList) {
+        try {
+            for (StockChanges changesProduct : stockChangesList) {
+                PmsSkuStockExample pmsSkuStockExample = new PmsSkuStockExample();
+                pmsSkuStockExample.createCriteria()
+                        .andIdEqualTo(changesProduct.getProductSkuId());
+                skuStockMapper.recoverStockByExample(changesProduct.getChangesCount(),pmsSkuStockExample);
+            }
+            return CommonResult.success(true);
+        }catch (Exception e) {
+            log.error("恢复库存失败...{}",e);
             return CommonResult.failed();
         }
     }

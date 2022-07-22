@@ -9,6 +9,7 @@ import com.tuling.tulingmall.ordercurr.dao.PortalOrderDao;
 import com.tuling.tulingmall.ordercurr.dao.PortalOrderItemDao;
 import com.tuling.tulingmall.ordercurr.domain.*;
 import com.tuling.tulingmall.ordercurr.feignapi.cart.CartFeignApi;
+import com.tuling.tulingmall.ordercurr.feignapi.pms.PmsProductStockFeignApi;
 import com.tuling.tulingmall.ordercurr.feignapi.promotion.PromotionFeignApi;
 import com.tuling.tulingmall.ordercurr.feignapi.ums.UmsMemberFeignApi;
 import com.tuling.tulingmall.ordercurr.feignapi.unqid.UnqidFeignApi;
@@ -46,8 +47,8 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
     @Autowired
     private PromotionFeignApi promotionFeignApi;
 
-//    @Autowired
-//    private PmsProductFeignApi pmsProductFeignApi;
+    @Autowired
+    private PmsProductStockFeignApi pmsProductStockFeignApi;
 
 //    @Autowired
 //    private UmsCouponFeignApi umsCouponFeignApi;
@@ -164,7 +165,6 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         List<OmsOrderItem> orderItemList = new ArrayList<>();
 
         List<CartPromotionItem> cartPromotionItemList = cartFeignApi.listSelectedPromotion(orderParam.getItemIds());
-        //List<CartPromotionItem> cartPromotionItemList = MockService.listSelectedPromotion(orderParam.getItemIds(),memberId);
         int itemSize = cartPromotionItemList.size();
 
         /*一次获取多个OrderItem的id，但是可能获取的数量少于订单详情数*/
@@ -223,14 +223,11 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         //计算order_item的实付金额
         handleRealAmount(orderItemList);
         //todo 分布式事务 进行库存锁定
-//        CommonResult lockResult = pmsProductFeignApi.lockStock(cartPromotionItemList);
-//        if(lockResult.getCode() ==ResultCode.FAILED.getCode()) {
-//            //标识扣减库存失败
-//            log.warn("远程调用锁定库存失败");
-//            throw new RuntimeException("远程调用锁定库存失败");
-//        }
-        //lockStock(cartPromotionItemList);
-        //根据商品合计、运费、活动优惠、优惠券、积分计算应付金额
+        CommonResult lockResult = pmsProductStockFeignApi.lockStock(cartPromotionItemList);
+        if(lockResult.getCode() ==ResultCode.FAILED.getCode()) {
+            log.warn("远程调用锁定库存失败");
+            throw new RuntimeException("远程调用锁定库存失败");
+        }
         OmsOrder order = new OmsOrder();
         order.setId(orderId);
         order.setDiscountAmount(new BigDecimal(0));
@@ -255,7 +252,6 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         //收货人信息：姓名、电话、邮编、地址
         /* TODO 通过Feign远程调用 会员服务*/
         UmsMemberReceiveAddress address = umsMemberFeignApi.getItem(orderParam.getMemberReceiveAddressId()).getData();
-        //UmsMemberReceiveAddress address = MockService.getMemberReceiveAddress();
         order.setReceiverName(address.getName());
         order.setReceiverPhone(address.getPhoneNumber());
         order.setReceiverPostCode(address.getPostCode());
@@ -291,17 +287,27 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
     }
 
     @Override
-    public Integer paySuccess(Long orderId,Integer payType) {
+    public void paySuccess(Long orderId,Integer payType) {
         //修改订单支付状态
         OmsOrder order = new OmsOrder();
         order.setId(orderId);
-        order.setStatus(1);
+        order.setStatus(OrderConstant.ORDER_STATUS_UNDELIVERY);
         order.setPayType(payType);
         order.setPaymentTime(new Date());
         omsOrderMapper.updateByPrimaryKeySelective(order);
-        //恢复所有下单商品的锁定库存，扣减真实库存
         OmsOrderDetail orderDetail = portalOrderDao.getDetail(orderId);
-        return portalOrderDao.updateSkuStock(orderDetail.getOrderItemList());
+        List<StockChanges> stockChangesList = new ArrayList<>();
+        for(OmsOrderItem omsOrderItem : orderDetail.getOrderItemList()){
+            stockChangesList.add(new StockChanges(omsOrderItem.getProductSkuId(),omsOrderItem.getProductQuantity()));
+        }
+        /*实际进行真实库存的扣减*/
+        // todo 分布式事务
+        // PO :可以使用MQ进行异步扣减
+        CommonResult lockResult = pmsProductStockFeignApi.reduceStock(stockChangesList);
+        if(lockResult.getCode() ==ResultCode.FAILED.getCode()) {
+            log.warn("远程调用真实库存的扣减失败");
+            throw new RuntimeException("远程调用真实库存的扣减失败");
+        }
     }
 
     @Override
@@ -314,19 +320,26 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         }
         //修改订单状态为交易取消
         List<Long> ids = new ArrayList<>();
+        List<StockChanges> stockChangesList = new ArrayList<>();
         for (OmsOrderDetail timeOutOrder : timeOutOrders) {
             ids.add(timeOutOrder.getId());
-        }
-        portalOrderDao.updateOrderStatus(ids, OrderConstant.ORDER_STATUS_CLOSE);
-        for (OmsOrderDetail timeOutOrder : timeOutOrders) {
             if(CollectionUtils.isEmpty(timeOutOrder.getOrderItemList())){
-                throw new RuntimeException("订单产品不允许为空");
+                log.warn("订单{}没有下没有商品详情，请检查该订单！",timeOutOrder.getId());
             }
             //解除订单商品库存锁定
-            portalOrderDao.releaseSkuStockLock(timeOutOrder.getOrderItemList());
-            //修改优惠券使用状态
-            //updateCouponStatus(timeOutOrder.getCouponId(), timeOutOrder.getMemberId(), 0);
+            for(OmsOrderItem omsOrderItem : timeOutOrder.getOrderItemList()){
+                stockChangesList.add(new StockChanges(omsOrderItem.getProductSkuId(),omsOrderItem.getProductQuantity()));
+            }
         }
+        portalOrderDao.updateOrderStatus(ids, OrderConstant.ORDER_STATUS_CLOSE);
+        if (!CollectionUtils.isEmpty(stockChangesList)) {
+            pmsProductStockFeignApi.recoverStock(stockChangesList);
+        }
+
+//        for (OmsOrderDetail timeOutOrder : timeOutOrders) {
+//            //修改优惠券使用状态
+//            //updateCouponStatus(timeOutOrder.getCouponId(), timeOutOrder.getMemberId(), 0);
+//        }
         return CommonResult.success(null);
     }
 
@@ -347,9 +360,13 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
             OmsOrderItemExample orderItemExample = new OmsOrderItemExample();
             orderItemExample.createCriteria().andOrderIdEqualTo(orderId);
             List<OmsOrderItem> orderItemList = orderItemMapper.selectByExample(orderItemExample);
+            List<StockChanges> stockChangesList = new ArrayList<>();
+            for(OmsOrderItem omsOrderItem : orderItemList){
+                stockChangesList.add(new StockChanges(omsOrderItem.getProductSkuId(),omsOrderItem.getProductQuantity()));
+            }
             //解除订单商品库存锁定
-            if (!CollectionUtils.isEmpty(orderItemList)) {
-                portalOrderDao.releaseSkuStockLock(orderItemList);
+            if (!CollectionUtils.isEmpty(stockChangesList)) {
+                pmsProductStockFeignApi.recoverStock(stockChangesList);
             }
             //修改优惠券使用状态
             //updateCouponStatus(cancelOrder.getCouponId(), cancelOrder.getMemberId(), 0);
@@ -643,30 +660,6 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
             totalAmount = totalAmount.add(item.getProductPrice().multiply(new BigDecimal(item.getProductQuantity())));
         }
         return totalAmount;
-    }
-
-    /**
-     * 锁定下单商品的所有库存
-     */
-    private void lockStock(List<CartPromotionItem> cartPromotionItemList) {
-        // todo
-//        for (CartPromotionItem cartPromotionItem : cartPromotionItemList) {
-//            PmsSkuStock skuStock = pmsSkuStockMapper.selectByPrimaryKey(cartPromotionItem.getProductSkuId());
-//            skuStock.setLockStock(skuStock.getLockStock() + cartPromotionItem.getQuantity());
-//            pmsSkuStockMapper.updateByPrimaryKeySelective(skuStock);
-//        }
-    }
-
-    /**
-     * 判断下单商品是否都有库存
-     */
-    private boolean hasStock(List<CartPromotionItem> cartPromotionItemList) {
-        for (CartPromotionItem cartPromotionItem : cartPromotionItemList) {
-            if (cartPromotionItem.getRealStock()==null||cartPromotionItem.getRealStock() <= 0) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

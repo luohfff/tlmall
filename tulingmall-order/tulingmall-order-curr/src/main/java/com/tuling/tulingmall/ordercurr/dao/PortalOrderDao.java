@@ -18,11 +18,6 @@ public interface PortalOrderDao {
     OmsOrderDetail getDetail(@Param("orderId") Long orderId);
 
     /**
-     * 修改 pms_sku_stock表的锁定库存及真实库存
-     */
-    int updateSkuStock(@Param("itemList") List<OmsOrderItem> orderItemList);
-
-    /**
      * 获取超时订单
      * @param minute 超时时间（分）
      */
@@ -32,11 +27,6 @@ public interface PortalOrderDao {
      * 批量修改订单状态
      */
     int updateOrderStatus(@Param("ids") List<Long> ids, @Param("status") Integer status);
-
-    /**
-     * 解除取消订单的库存锁定
-     */
-    int releaseSkuStockLock(@Param("itemList") List<OmsOrderItem> orderItemList);
 
     /**
      * 删除订单[逻辑删除],只能status为：3->已完成；4->已关闭；5->无效订单，才可以删除

@@ -3,6 +3,7 @@ package com.tuling.tulingmall.service;
 
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.domain.CartPromotionItem;
+import com.tuling.tulingmall.domain.StockChanges;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -53,4 +54,8 @@ public interface StockManageService {
      * @date:2020/3/16 19:36
      */
     CommonResult lockStock(List<CartPromotionItem> cartPromotionItemList);
+
+    CommonResult reduceStock(List<StockChanges> stockChangesList);
+
+    CommonResult recoverStock(List<StockChanges> stockChangesList);
 }

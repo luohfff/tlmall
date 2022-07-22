@@ -24,6 +24,12 @@ public interface PmsSkuStockMapper {
 
     int updateByExampleSelective(@Param("record") PmsSkuStock record, @Param("example") PmsSkuStockExample example);
 
+    int lockStockByExample(@Param("lockQuantity") Integer lockQuantity, @Param("example") PmsSkuStockExample example);
+
+    int reduceStockByExample(@Param("reduceQuantity") Integer reduceQuantity, @Param("example") PmsSkuStockExample example);
+
+    int recoverStockByExample(@Param("recoverQuantity") Integer recoverQuantity, @Param("example") PmsSkuStockExample example);
+
     int updateByExample(@Param("record") PmsSkuStock record, @Param("example") PmsSkuStockExample example);
 
     int updateByPrimaryKeySelective(PmsSkuStock record);

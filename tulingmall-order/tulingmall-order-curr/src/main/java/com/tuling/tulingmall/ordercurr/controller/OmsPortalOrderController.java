@@ -29,27 +29,6 @@ public class OmsPortalOrderController {
     @Autowired
     private OmsPortalOrderService portalOrderService;
 
-//    @Autowired
-//    private TradeService tradeService;
-
-//    @Autowired
-//    private RedisOpsUtil redisOpsUtil;
-
-//    @Autowired
-//    private SecKillOrderService secKillOrderService;
-
-//    @ApiOperation("根据购物车信息生成确认单信息，类似京东结算页")
-//    @ApiImplicitParam(name = "itemId",value = "购物车选择购买的选项ID",allowMultiple = true,
-//            paramType = "query",dataType = "long")
-//    @RequestMapping(value = "/generateConfirmOrder",method = RequestMethod.POST)
-//    @ResponseBody
-//    public CommonResult<ConfirmOrderResult> generateConfirmOrder(
-//            @RequestParam(value = "itemIds") List<Long> itemIds,
-//            @RequestHeader("memberId") Long memberId) throws BusinessException {
-//        ConfirmOrderResult confirmOrderResult = portalOrderService.generateConfirmOrder(itemIds,memberId);
-//        return CommonResult.success(confirmOrderResult);
-//    }
-
     @ApiOperation("根据购物车信息生成订单")
     @RequestMapping(value = "/generateOrder",method = RequestMethod.POST)
     @ResponseBody
@@ -65,55 +44,6 @@ public class OmsPortalOrderController {
         Long orderId = portalOrderService.generateOrderId(memberId);
         return CommonResult.success(orderId);
     }
-//    /**
-//     * 秒杀订单确认页
-//     * @param productId
-//     * @param memberId
-//     * @return
-//     * @throws BusinessException
-//     */
-//    @RequestMapping(value = "/miaosha/generateConfirmOrder",method = RequestMethod.POST)
-//    @ResponseBody
-//    public CommonResult generateMiaoShaConfirmOrder(@RequestParam("productId") Long productId,
-//                                                  String token,
-//                                                    @RequestHeader("memberId") Long memberId) throws BusinessException {
-//        return secKillOrderService.generateConfirmMiaoShaOrder(productId,memberId,token);
-//    }
-//
-//    @RequestMapping(value = "/miaosha/generateOrder",method = RequestMethod.POST)
-//    @ResponseBody
-//    public CommonResult generateMiaoShaOrder(@RequestBody OrderParam orderParam,
-//                                          String token,
-//                                             @RequestHeader("memberId") Long memberId) throws BusinessException {
-//        return secKillOrderService.generateSecKillOrder(orderParam,memberId,token);
-//    }
-//
-//    /**
-//     * 秒杀结果页面
-//     * @param memberId
-//     * @return
-//     */
-//    @ApiOperation("根据购物车信息生成订单")
-//    @GetMapping("/miaosha/result")
-//    @ResponseBody
-//    public CommonResult miaoShaResult(@RequestParam("productId") Long productId,@RequestHeader("memberId") Long memberId){
-//        String status = redisOpsUtil.get(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId
-//                + ":" + productId);
-//
-//        if(ObjectUtils.isEmpty(status)){
-//            return CommonResult.success(null,"无正在秒杀中的订单！");
-//        }
-//
-//        if(status.equals("-1")){
-//            return CommonResult.success(status,"秒杀失败！");
-//        }
-//
-//        if(status.equals("1")){
-//            return CommonResult.success(status,"正在排队中,请耐心等待！");
-//        }
-//        //如果Status>1，则秒杀成功,返回订单编号
-//        return CommonResult.success(status);
-//    }
 
     @ApiOperation("获取指定订单详情")
     @RequestMapping(value = "/specificOrderDetail",method = {RequestMethod.POST,RequestMethod.GET})
@@ -132,56 +62,17 @@ public class OmsPortalOrderController {
         return portalOrderService.getDetailOrder(Long.valueOf(orderSn));
     }
 
-//    @ApiOperation("支付成功的回调")
-//    @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
-//            allowableValues = "1,2", paramType = "query", dataType = "integer")})
-//    @RequestMapping(value = "/paySuccess/{payType}",method = RequestMethod.POST)
-//    @ResponseBody
-//    public void paySuccess(@PathVariable Integer payType,
-//                             HttpServletRequest request,
-//                             HttpServletResponse response) throws AlipayApiException {
-//        if(payType > 2 || payType < 0){
-//            throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
-//        }
-//        if(payType == 1){//支付宝支付
-//            //1、获取request里所有与alipay相关的参数，封装成一个map
-//            Map<String,String> param = Maps.newHashMap();
-//            Enumeration<String> parameterNames = request.getParameterNames();
-//            while (parameterNames.hasMoreElements()){
-//                String parameterName = parameterNames.nextElement();
-//                log.info("alipay callback parameters:-->"
-//                        +parameterName+":->" +request.getParameter(parameterName));
-//                if(!parameterName.toLowerCase().equals("sign_type")){
-//                    param.put(parameterName,request.getParameter(parameterName));
-//                }
-//            }
-//            // 2、验证请求是否是alipay返回的请求内容【验证请求合法性】
-//            // 很重要
-//            boolean isPassed = AlipaySignature.rsaCheckV2(param, Configs.getAlipayPublicKey(),"utf-8",Configs.getSignType());
-//            PrintWriter out = null;
-//            try {
-//                out = response.getWriter();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            if(isPassed){
-//                Long orderId = Long.parseLong(param.get("out_trade_no"));
-//                int count = portalOrderService.paySuccess(orderId,payType);
-//                if(count > 0){
-//                    log.info("支付成功，订单完成支付");
-//                    out.print("success");
-//                }else{
-//                    log.info("支付失败，订单未能完成支付");
-//                    out.print("unSuccess");
-//                }
-//            }else{
-//                log.info("支付失败，订单未能完成支付");
-//                out.print("unSuccess");
-//            }
-//        }else if(payType == 2){//微信支付
-//
-//        }
-//    }
+    @ApiOperation("支付成功修改订单状态")
+    @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
+            allowableValues = "1,2", paramType = "query", dataType = "integer")})
+    @RequestMapping(value = "/paySuccess/{orderId}",method = RequestMethod.POST)
+    @ResponseBody
+    public void paySuccess(@PathVariable Long orderId,Integer payType) {
+        if(payType > 2 || payType < 0){
+            throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
+        }
+        portalOrderService.paySuccess(orderId,payType);
+    }
 
     @ApiOperation("批量检查超时订单并取消")
     @RequestMapping(value = "/cancelTimeOutOrders",method = RequestMethod.POST)
@@ -282,137 +173,7 @@ public class OmsPortalOrderController {
 //        return tradeService.tradeStatusQuery(orderId,payType);
 //    }
 
-    /*--------------------------------限流防刷部分---------------------------------------*/
-//    @RequestMapping(value="/token", method=RequestMethod.GET)
-//    @ResponseBody
-//    public CommonResult getMiaoshaToken(HttpServletRequest request
-//            , @RequestParam("productId") Long productId
-//            , @RequestHeader("memberId") Long memberId
-//            , @RequestParam Integer verifyCode) {
-//        /*
-//         * 用redis限流，限制接口1分钟最多访问10000次
-//         */
-//        String requestURI = request.getRequestURI().toString();
-//        Long requestNum = redisOpsUtil.incr(requestURI);
-//        if (requestNum == 1) {
-//            redisOpsUtil.expire(requestURI,60, TimeUnit.SECONDS);
-//        } else if (requestNum > 10000) {
-//            return CommonResult.failed("访问超载，请稍后再试");
-//        }
-//
-//        String verifyCodeKey = RedisKeyPrefixConst.MIAOSHA_VERIFY_CODE_PREFIX + memberId + ":" + productId;
-//        /*
-//         * 校验验证码，防止接口被刷
-//         */
-//        Integer redisCode = redisOpsUtil.get(verifyCodeKey,Integer.class);
-//
-//        if(StringUtils.isEmpty(redisCode) || !redisCode.equals(verifyCode)) {
-//            return CommonResult.failed("验证码错误");
-//        }
-//        //验证成功,删除该验证码
-//        redisOpsUtil.delete(verifyCodeKey);
-//
-//        //创建一个token，代表该用户有购买商品的权限。
-//        String token = MD5.md5(UUID.randomUUID().toString());
-//
-//        log.info("miaosha token:{}",token);
-//
-//        redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_TOKEN_PREFIX + memberId + ":" + productId
-//                ,token
-//                ,300
-//                ,TimeUnit.SECONDS);
-//        System.out.println("token:::::::::::"+token);
-//        return CommonResult.success(token);
-//    }
-
-//    @RequestMapping(value="/verifyCode", method=RequestMethod.GET)
-//    @ResponseBody
-//    public CommonResult getVerifyCode(HttpServletRequest request,
-//                                      HttpServletResponse response,
-//                                      @RequestParam("productId") Long productId,
-//                                      @RequestHeader("memberId") Long memberId){
-//        try {
-//            //===============自定义验证码===========
-//            VerifyCodeImgUtil.VerifyCodeInfo imageInfo = VerifyCodeImgUtil.createVerifyCode();
-//            log.info("验证码答案:{}",imageInfo.getResult());
-//            //验证码答案写入到redis
-//            redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_VERIFY_CODE_PREFIX + memberId + ":" + productId
-//                    ,imageInfo.getResult()
-//                    ,300
-//                    ,TimeUnit.SECONDS);
-//            response.setHeader("Content-Type", "image/jpeg");
-//            OutputStream out = response.getOutputStream();
-//            ImageIO.write(imageInfo.getBufferedImage(), "JPEG", out);
-//            out.flush();
-//            out.close();
-//
-//            redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_VERIFY_CODE_PREFIX + memberId + ":" + productId
-//                    ,imageInfo.getResult()
-//                    ,300
-//                    ,TimeUnit.SECONDS);
-//            /**
-//             * 返回图片的base64编码,js解码成图片
-//             */
-//            /*ByteArrayOutputStream baos = new ByteArrayOutputStream();//io流
-//            ImageIO.write(imageInfo.getBufferedImage(), "png", baos);//写入流中
-//            byte[] bytes = baos.toByteArray();//转换成字节
-//            BASE64Encoder encoder = new BASE64Encoder();
-//            String png_base64 =  encoder.encodeBuffer(bytes).trim();//转换成base64串
-//            png_base64 = png_base64.replaceAll("\n", "").replaceAll("\r", "");//删除 \r\n
-//            return CommonResult.success(png_base64);*/
-//            //===============自定义验证码结束===========
-//            //====== HappyCaptcha验证码 =======
-//            //这个步骤就会完成生成图片并且往response发送的步骤。
-////            HappyCaptcha.require(request,response).style(CaptchaStyle.ANIM)
-////                    .type(CaptchaType.ARITHMETIC_ZH)
-////                    .build().finish();
-////            //HappyCaptcha生成的验证码是String类型
-////            Object captcha = request.getSession().getAttribute("happy-captcha");
-////            int code = Integer.parseInt(captcha.toString());
-////            log.info("验证码答案:{}",captcha);
-////
-////            redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_VERIFY_CODE_PREFIX + memberId + ":" + productId
-////                    ,code
-////                    ,300
-////                    ,TimeUnit.SECONDS);
-//            //====== HappyCaptcha验证码结束 =======
-//            return null;
-//        }catch(Exception e) {
-//            e.printStackTrace();
-//            return CommonResult.failed("秒杀失败");
-//        }
-//    }
 
 
-
-
-//    /*--------------------------------测试用---------------------------------------*/
-//    @RequestMapping(value="/token2", method=RequestMethod.GET)
-//    @ResponseBody
-//    public CommonResult getToken(HttpServletRequest request
-//            , @RequestParam("productId") Long productId
-//            , @RequestParam("memberId") Long memberId) {
-//        /*
-//         * 用redis限流，限制接口1分钟最多访问10000次
-//         */
-//        String requestURI = request.getRequestURI().toString();
-//        Long requestNum = redisOpsUtil.incr(requestURI);
-//        if (requestNum == 1) {
-//            redisOpsUtil.expire(requestURI,60, TimeUnit.SECONDS);
-//        } else if (requestNum > 10000) {
-//            return CommonResult.failed("访问超载，请稍后再试");
-//        }
-//        //todo 创建token
-//        String token = MD5.md5(UUID.randomUUID().toString());
-//
-//        log.info("miaosha token:{}",token);
-//
-//        redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_TOKEN_PREFIX + memberId + ":" + productId
-//                ,token
-//                ,300
-//                ,TimeUnit.SECONDS);
-//        System.out.println("token:::::::::::"+token);
-//        return CommonResult.success(token);
-//    }
 
 }

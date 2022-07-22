@@ -1,16 +1,28 @@
 package com.tuling.tulingmall.ordercurr.feignapi.pms;
 
+import com.tuling.tulingmall.common.api.CommonResult;
+import com.tuling.tulingmall.ordercurr.domain.CartPromotionItem;
+import com.tuling.tulingmall.ordercurr.domain.StockChanges;
+import com.tuling.tulingmall.ordercurr.model.OmsOrderItem;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
+
 /**
-* @vlog: 高于生活，源于生活
 * @desc: 类的描述: 订单服务用于调用商品服务锁定库存
-* @author: smlz
-* @createDate: 2020/3/16 15:25
-* @version: 1.0
 */
-/*@FeignClient(value = "tulingmall-product",path = "/stock")
+@FeignClient(value = "tulingmall-product",path = "/stock")
 public interface PmsProductStockFeignApi {
 
 
     @RequestMapping("/lockStock")
     CommonResult lockStock(@RequestBody List<CartPromotionItem> cartPromotionItemList);
-}*/
+
+    @RequestMapping("/reduceStock")
+    CommonResult reduceStock(@RequestBody List<StockChanges> stockChangesList);
+
+    @RequestMapping("/recoverStock")
+    CommonResult recoverStock(@RequestBody List<StockChanges> stockChangesList);
+}

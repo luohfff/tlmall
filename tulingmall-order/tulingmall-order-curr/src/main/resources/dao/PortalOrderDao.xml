@@ -53,26 +53,6 @@
             o.status = 0
             AND o.create_time &lt; date_add(NOW(), INTERVAL -#{minute} MINUTE);
     </select>
-
-    <update id="updateSkuStock">
-        UPDATE pms_sku_stock
-        SET
-            stock = CASE id
-            <foreach collection="itemList" item="item">
-              WHEN #{item.productSkuId} THEN stock - #{item.productQuantity}
-            </foreach>
-            END,
-            lock_stock = CASE id
-            <foreach collection="itemList" item="item">
-              WHEN #{item.productSkuId} THEN lock_stock - #{item.productQuantity}
-            </foreach>
-            END
-        WHERE
-            id IN
-        <foreach collection="itemList" item="item" separator="," open="(" close=")">
-            #{item.productSkuId}
-        </foreach>
-    </update>
     <update id="updateOrderStatus">
         update oms_order
         set status=#{status},gmt_modified=now()
@@ -81,21 +61,6 @@
             #{id}
         </foreach>
     </update>
-    <update id="releaseSkuStockLock">
-        UPDATE pms_sku_stock
-        SET
-        lock_stock = CASE id
-        <foreach collection="itemList" item="item">
-            WHEN #{item.productSkuId} THEN lock_stock - #{item.productQuantity}
-        </foreach>
-        END
-        WHERE
-        id IN
-        <foreach collection="itemList" item="item" separator="," open="(" close=")">
-            #{item.productSkuId}
-        </foreach>
-    </update>
-    <!-- add by yangguo -->
     <update id="deleteOrder">
         update oms_order
         set delete_status = 1,gmt_modified=now()
