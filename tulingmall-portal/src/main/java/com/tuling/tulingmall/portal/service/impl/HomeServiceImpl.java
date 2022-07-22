@@ -10,6 +10,7 @@ import com.tuling.tulingmall.mapper.SmsHomeAdvertiseMapper;
 import com.tuling.tulingmall.model.*;
 import com.tuling.tulingmall.portal.config.PromotionRedisKey;
 import com.tuling.tulingmall.portal.dao.HomeDao;
+import com.tuling.tulingmall.portal.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.portal.domain.HomeContentResult;
 import com.tuling.tulingmall.portal.feignapi.pms.PmsProductFeignApi;
 import com.tuling.tulingmall.portal.feignapi.promotion.PromotionFeignApi;
@@ -21,11 +22,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 首页内容管理Service实现类
- * Created by tuling on 2019/1/28.
  */
 @Slf4j
 @Service
@@ -85,6 +86,9 @@ public class HomeServiceImpl implements HomeService {
                 promotionCacheBak.put(brandKey,result);
             }
         }
+        // fixme 增加秒杀空集合和CMS推荐空集合
+        result.setHomeFlashPromotion(new ArrayList<FlashPromotionProduct>());
+        result.setSubjectList(new ArrayList<CmsSubject>());
         return result;
     }
 
