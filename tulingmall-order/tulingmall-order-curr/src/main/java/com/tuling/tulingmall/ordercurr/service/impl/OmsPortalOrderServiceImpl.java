@@ -287,7 +287,7 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
     }
 
     @Override
-    public void paySuccess(Long orderId,Integer payType) {
+    public Integer paySuccess(Long orderId,Integer payType) {
         //修改订单支付状态
         OmsOrder order = new OmsOrder();
         order.setId(orderId);
@@ -306,7 +306,11 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         CommonResult lockResult = pmsProductStockFeignApi.reduceStock(stockChangesList);
         if(lockResult.getCode() ==ResultCode.FAILED.getCode()) {
             log.warn("远程调用真实库存的扣减失败");
-            throw new RuntimeException("远程调用真实库存的扣减失败");
+            return -1;
+            //throw new RuntimeException("远程调用真实库存的扣减失败");
+        }else{
+            log.debug("远程调用真实库存的扣减成功");
+            return (Integer) lockResult.getData();
         }
     }
 

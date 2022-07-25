@@ -292,6 +292,20 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
+  <update id="updateSkuStock">
+    UPDATE pms_sku_stock
+    SET
+    lock_stock = CASE id
+    <foreach collection="itemList" item="item">
+      WHEN #{item.productSkuId} THEN lock_stock - #{item.productQuantity}
+    </foreach>
+    END
+    WHERE
+    id IN
+    <foreach collection="itemList" item="item" separator="," open="(" close=")">
+      #{item.productSkuId}
+    </foreach>
+  </update>
   <update id="recoverStockByExample" parameterType="java.lang.Integer">
     update pms_sku_stock
     set

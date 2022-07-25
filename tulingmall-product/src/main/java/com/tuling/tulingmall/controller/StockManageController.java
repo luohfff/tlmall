@@ -65,7 +65,7 @@ public class StockManageController {
     }
 
     /**
-    * @desc: 类的描述:锁定库存
+    * 锁定库存
     */
     @RequestMapping("/lockStock")
     public CommonResult lockStock(@RequestBody List<CartPromotionItem> cartPromotionItemList) {

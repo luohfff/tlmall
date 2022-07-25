@@ -1,6 +1,7 @@
 package com.tuling.tulingmall.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.tuling.tulingmall.domain.StockChanges;
 import com.tuling.tulingmall.model.PmsSkuStock;
 import com.tuling.tulingmall.model.PmsSkuStockExample;
 import org.apache.ibatis.annotations.Param;
@@ -27,6 +28,8 @@ public interface PmsSkuStockMapper {
     int lockStockByExample(@Param("lockQuantity") Integer lockQuantity, @Param("example") PmsSkuStockExample example);
 
     int reduceStockByExample(@Param("reduceQuantity") Integer reduceQuantity, @Param("example") PmsSkuStockExample example);
+
+    int updateSkuStock(@Param("itemList") List<StockChanges> orderItemList);
 
     int recoverStockByExample(@Param("recoverQuantity") Integer recoverQuantity, @Param("example") PmsSkuStockExample example);
 

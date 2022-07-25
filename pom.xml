@@ -50,6 +50,7 @@
         <mysql-connector.version>8.0.15</mysql-connector.version>
         <commons-pool2.version>2.4.3</commons-pool2.version>
         <rocketmq-spring-boot-starter.version>2.2.1</rocketmq-spring-boot-starter.version>
+        <mongodb-spring-boot-starter.version>2.3.2.RELEASE</mongodb-spring-boot-starter.version>
         <jjwt.version>0.9.0</jjwt.version>
         <aliyun-oss.version>2.5.0</aliyun-oss.version>
         <logstash-logback.version>5.3</logstash-logback.version>
@@ -219,6 +220,12 @@
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-spring-boot-starter</artifactId>
                 <version>${rocketmq-spring-boot-starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-mongodb</artifactId>
+                <version>${mongodb-spring-boot-starter.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -44,7 +44,7 @@ public interface OmsPortalOrderService {
      * 支付成功后的回调
      */
     @Transactional
-    void paySuccess(Long orderId, Integer payType);
+    Integer paySuccess(Long orderId, Integer payType);
 
     /**
      * 自动取消超时订单
