@@ -284,8 +284,6 @@ public class TradeServiceImpl implements TradeService {
         }
     }
 
-
-
     /**
      * 微信支付方式
      * @return
