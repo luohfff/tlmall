@@ -60,13 +60,13 @@ public class OmsPortalOrderController {
     }
 
     @ApiOperation("获取指定订单详情")
-    @RequestMapping(value = "/specificOrderDetail",method = {RequestMethod.POST,RequestMethod.GET})
+    @RequestMapping(value = {"/specificOrderDetail","/orderDetail"},method = {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
     public CommonResult specificOrderDetail(@RequestParam Long orderId){
         return portalOrderService.getDetailOrder(orderId);
     }
 
-    @ApiOperation("获取指定业务订单详情")
+    @ApiOperation("获取指定业务编号订单详情")
     @RequestMapping(value = "/specificOrderSnDetail",method = {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
     public CommonResult specificOrderSnDetail(@RequestParam String orderSn){
