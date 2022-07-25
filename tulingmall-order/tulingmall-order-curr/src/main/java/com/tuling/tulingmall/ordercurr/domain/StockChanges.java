@@ -22,6 +22,8 @@ public class StockChanges {
         this.changesCount = changesCount;
     }
 
+    public StockChanges(){}
+
     public StockChanges(Long productSkuId, Integer changesCount) {
         this.productSkuId = productSkuId;
         this.changesCount = changesCount;

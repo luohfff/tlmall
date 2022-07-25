@@ -2,9 +2,7 @@ package com.tuling.tulingmall.ordercurr.feignapi.cart;
 
 import com.tuling.tulingmall.ordercurr.domain.CartPromotionItem;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,7 +17,7 @@ public interface CartFeignApi {
 //    @RequestMapping(value = "/api/segment/get/{key}")
 //    public List<CartPromotionItem> listSelectedPromotion(List<Long> itemIds,Long memberId);
 
-    @RequestMapping(value = "/list/selectedpromotion", method = RequestMethod.GET)
-    public List<CartPromotionItem> listSelectedPromotion(List<Long> itemIds);
+    @RequestMapping(value = "/list/selectedpromotion", method = RequestMethod.POST)
+    public List<CartPromotionItem> listSelectedPromotion(@RequestBody List<Long> itemIds);
 
 }

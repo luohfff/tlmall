@@ -4,6 +4,7 @@ import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.ordercurr.domain.CartPromotionItem;
 import com.tuling.tulingmall.ordercurr.domain.StockChanges;
 import com.tuling.tulingmall.ordercurr.model.OmsOrderItem;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

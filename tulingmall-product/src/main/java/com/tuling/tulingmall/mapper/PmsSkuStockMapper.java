@@ -2,6 +2,7 @@ package com.tuling.tulingmall.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.tuling.tulingmall.domain.StockChanges;
+import com.tuling.tulingmall.model.OmsOrderItem;
 import com.tuling.tulingmall.model.PmsSkuStock;
 import com.tuling.tulingmall.model.PmsSkuStockExample;
 import org.apache.ibatis.annotations.Param;

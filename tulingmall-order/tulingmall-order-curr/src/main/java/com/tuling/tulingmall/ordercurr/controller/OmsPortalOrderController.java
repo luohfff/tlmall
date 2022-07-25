@@ -152,6 +152,13 @@ public class OmsPortalOrderController {
         return portalOrderService.findMemberOrderList(pageSize,pageNum,memberId,status);
     }
 
+    @ApiOperation("查看订单详情#杨过添加")
+    @RequestMapping(value = "/orderDetail",method = {RequestMethod.POST,RequestMethod.GET})
+    @ResponseBody
+    public CommonResult orderDetail(@RequestParam Long orderId){
+        return portalOrderService.getDetailOrder(orderId);
+    }
+
     /**
      * 订单支付逻辑：支付支持两种方式：alipay,wechat
      * @param orderId
@@ -237,6 +244,4 @@ public class OmsPortalOrderController {
 
         }
     }
-
-
 }

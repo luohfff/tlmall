@@ -1,0 +1,9 @@
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+        requestInterceptors:
+          - com.tuling.tulingmall.ordercurr.feignapi.interceptor.HeaderInterceptor
+        readTimeout: 3000
+        connectTimeout: 3000
