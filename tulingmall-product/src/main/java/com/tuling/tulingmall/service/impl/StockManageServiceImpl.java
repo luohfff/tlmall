@@ -106,13 +106,14 @@ public class StockManageServiceImpl implements StockManageService {
     @Override
     public CommonResult reduceStock(List<StockChanges> stockChangesList) {
         try {
-            for (StockChanges changesProduct : stockChangesList) {
-                PmsSkuStockExample pmsSkuStockExample = new PmsSkuStockExample();
-                pmsSkuStockExample.createCriteria()
-                        .andIdEqualTo(changesProduct.getProductSkuId());
-                skuStockMapper.reduceStockByExample(changesProduct.getChangesCount(),pmsSkuStockExample);
-            }
-            return CommonResult.success(true);
+//            for (StockChanges changesProduct : stockChangesList) {
+//                PmsSkuStockExample pmsSkuStockExample = new PmsSkuStockExample();
+//                pmsSkuStockExample.createCriteria()
+//                        .andIdEqualTo(changesProduct.getProductSkuId());
+//                skuStockMapper.reduceStockByExample(changesProduct.getChangesCount(),pmsSkuStockExample);
+//            }
+            int result = skuStockMapper.updateSkuStock(stockChangesList);
+            return CommonResult.success(result);
         }catch (Exception e) {
             log.error("订单支付后扣减库存失败...{}",e);
             return CommonResult.failed();

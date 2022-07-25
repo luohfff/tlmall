@@ -30,5 +30,11 @@ public class OrderConstant {
     public static final int ORDER_TYPE_SECKILL = 1;
 
 
+    /*支付方式：0->未支付；1->支付宝；2->微信*/
+    public static final int ORDER_PAY_TYPE_NO = 0;
+    public static final int ORDER_PAY_TYPE_ALIPAY = 1;
+    public static final int ORDER_PAY_TYPE_WECHAT = 2;
+
+
 
 }

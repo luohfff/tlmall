@@ -7,10 +7,6 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * @author ：图灵学院
- * @date ：Created in 2020/2/25
- * @version: V1.0
- * @slogan: 天下风云出我辈，一入代码岁月催
  * @description:
  **/
 @Data

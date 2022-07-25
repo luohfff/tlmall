@@ -1,11 +1,16 @@
 package com.tuling.tulingmall.ordercurr.controller;
 
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.internal.util.AlipaySignature;
+import com.google.common.collect.Maps;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.exception.BusinessException;
+import com.tuling.tulingmall.ordercurr.component.trade.alipay.config.Configs;
 import com.tuling.tulingmall.ordercurr.domain.MqCancelOrder;
 import com.tuling.tulingmall.ordercurr.domain.OmsOrderDetail;
 import com.tuling.tulingmall.ordercurr.domain.OrderParam;
 import com.tuling.tulingmall.ordercurr.service.OmsPortalOrderService;
+import com.tuling.tulingmall.ordercurr.service.TradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -15,7 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单管理Controller
@@ -28,6 +39,9 @@ public class OmsPortalOrderController {
 
     @Autowired
     private OmsPortalOrderService portalOrderService;
+
+    @Autowired
+    private TradeService tradeService;
 
     @ApiOperation("根据购物车信息生成订单")
     @RequestMapping(value = "/generateOrder",method = RequestMethod.POST)
@@ -144,36 +158,85 @@ public class OmsPortalOrderController {
      * @param payType
      * @return
      */
-//    @ApiOperation("订单支付#实现支付宝支付{微信支付暂未实现}")
-//    @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
-//                    allowableValues = "1,2", paramType = "query", dataType = "integer")})
-//    @RequestMapping(value = "/tradeQrCode",method = RequestMethod.POST)
-//    @ResponseBody
-//    public CommonResult tradeQrCode(@RequestParam(value = "orderId") Long orderId,
-//                                    @RequestHeader("memberId") Long memberId,
-//                                    @RequestParam(value = "payType") Integer payType){
-//        if(payType > 2 || payType < 0){
-//            throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
-//        }
-//        return tradeService.tradeQrCode(orderId,payType,memberId);
-//    }
+    @ApiOperation("订单支付#实现支付宝支付{微信支付暂未实现}")
+    @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
+                    allowableValues = "1,2", paramType = "query", dataType = "integer")})
+    @RequestMapping(value = "/tradeQrCode",method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult tradeQrCode(@RequestParam(value = "orderId") Long orderId,
+                                    @RequestHeader("memberId") Long memberId,
+                                    @RequestParam(value = "payType") Integer payType){
+        if(payType > 2 || payType < 0){
+            throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
+        }
+        return tradeService.tradeQrCode(orderId,payType,memberId);
+    }
 
 
-//    @ApiOperation("订单支付状态查询,手动查询#实现支付宝查询")
-//    @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
-//            allowableValues = "1,2", paramType = "query", dataType = "integer")})
-//    @RequestMapping(value = "/tradeStatusQuery",method = RequestMethod.POST)
-//    @ResponseBody
-//    public CommonResult tradeStatusQuery(@RequestParam(value = "orderId") Long orderId,
-//                                         @RequestParam(value = "payType") Integer payType){
-//
-//        if(payType > 2 || payType < 0){
-//            throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
-//        }
-//        return tradeService.tradeStatusQuery(orderId,payType);
-//    }
+    @ApiOperation("订单支付状态查询,手动查询#实现支付宝查询")
+    @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
+            allowableValues = "1,2", paramType = "query", dataType = "integer")})
+    @RequestMapping(value = "/tradeStatusQuery",method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult tradeStatusQuery(@RequestParam(value = "orderId") Long orderId,
+                                         @RequestParam(value = "payType") Integer payType){
 
+        if(payType > 2 || payType < 0){
+            throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
+        }
+        return tradeService.tradeStatusQuery(orderId,payType);
+    }
 
+    @ApiOperation("支付成功的回调")
+    @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
+            allowableValues = "1,2", paramType = "query", dataType = "integer")})
+    @RequestMapping(value = "/paySuccess/{payType}",method = RequestMethod.POST)
+    @ResponseBody
+    public void paySuccess(@PathVariable Integer payType,
+                           HttpServletRequest request,
+                           HttpServletResponse response) throws AlipayApiException {
+        if(payType > 2 || payType < 0){
+            throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
+        }
+        if(payType == 1){//支付宝支付
+            //1、获取request里所有与alipay相关的参数，封装成一个map
+            Map<String,String> param = Maps.newHashMap();
+            Enumeration<String> parameterNames = request.getParameterNames();
+            while (parameterNames.hasMoreElements()){
+                String parameterName = parameterNames.nextElement();
+                log.info("alipay callback parameters:-->"
+                        +parameterName+":->" +request.getParameter(parameterName));
+                if(!parameterName.toLowerCase().equals("sign_type")){
+                    param.put(parameterName,request.getParameter(parameterName));
+                }
+            }
+            // 2、验证请求是否是alipay返回的请求内容【验证请求合法性】
+            // 很重要
+            boolean isPassed = AlipaySignature.rsaCheckV2(param, Configs.getAlipayPublicKey(),"utf-8",Configs.getSignType());
+            PrintWriter out = null;
+            try {
+                out = response.getWriter();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(isPassed){
+                Long orderId = Long.parseLong(param.get("out_trade_no"));
+                int count = portalOrderService.paySuccess(orderId,payType);
+                if(count > 0){
+                    log.info("支付成功，订单完成支付");
+                    out.print("success");
+                }else{
+                    log.info("支付失败，订单未能完成支付");
+                    out.print("unSuccess");
+                }
+            }else{
+                log.info("支付失败，订单未能完成支付");
+                out.print("unSuccess");
+            }
+        }else if(payType == 2){//微信支付
+
+        }
+    }
 
 
 }

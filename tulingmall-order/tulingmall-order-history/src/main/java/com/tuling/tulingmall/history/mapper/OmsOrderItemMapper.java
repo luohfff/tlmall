@@ -5,6 +5,7 @@ import com.tuling.tulingmall.history.model.OmsOrderItemExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+
 public interface OmsOrderItemMapper {
     long countByExample(OmsOrderItemExample example);
 
