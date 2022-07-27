@@ -1,42 +1,40 @@
 package com.tuling.tulingmall.ordercurr.component.rocketmq;//package com.tuling.tulingmall.component.rocketmq;
-//
-//import com.tuling.tulingmall.domain.OrderMessage;
-//import lombok.extern.slf4j.Slf4j;
-//import org.apache.rocketmq.client.producer.LocalTransactionState;
-//import org.apache.rocketmq.client.producer.SendResult;
-//import org.apache.rocketmq.client.producer.SendStatus;
-//import org.apache.rocketmq.client.producer.TransactionSendResult;
-//import org.apache.rocketmq.spring.core.RocketMQTemplate;
-//import org.apache.rocketmq.spring.support.RocketMQHeaders;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.messaging.Message;
-//import org.springframework.messaging.support.MessageBuilder;
-//import org.springframework.stereotype.Component;
-//
-//@Slf4j
-//@Component
-//public class OrderMessageSender {
-//
-//    @Value("${rocketmq.tulingmall.scheduleTopic}")
-//    private String scheduleTopic;
-//
-//    @Value("${rocketmq.tulingmall.transGroup}")
-//    private String transGroup;
-//
-//    @Value("${rocketmq.tulingmall.transTopic}")
-//    private String transTopic;
-//
-//    @Value("${rocketmq.tulingmall.asyncOrderTopic}")
-//    private String asyncOrderTopic;
-//
-//    private String TAG = "cancelOrder";
-//    private String TXTAG = "trans";
-//    private String ORDERTAG = "create-order";
-//
-//    @Autowired
-//    private RocketMQTemplate rocketMQTemplate;
-//
+
+import com.tuling.tulingmall.ordercurr.domain.OrderParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.client.producer.SendStatus;
+import org.apache.rocketmq.client.producer.TransactionSendResult;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.apache.rocketmq.spring.support.RocketMQHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component
+public class OrderMessageSender {
+
+    @Value("${rocketmq.tulingmall.scheduleTopic}")
+    private String scheduleTopic;
+
+    @Value("${rocketmq.tulingmall.transGroup}")
+    private String transGroup;
+
+    @Value("${rocketmq.tulingmall.transTopic}")
+    private String transTopic;
+
+    @Value("${rocketmq.tulingmall.asyncOrderTopic}")
+    private String asyncOrderTopic;
+
+    private String TAG = "cancelOrder";
+    private String TXTAG = "trans";
+    private String ORDERTAG = "create-order";
+
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
+
 //    /**
 //     * 发送延时订单
 //     * @param cancelId
@@ -61,16 +59,20 @@ package com.tuling.tulingmall.ordercurr.component.rocketmq;//package com.tuling.
 //                ,transactionSendResult.getLocalTransactionState().name());
 //        return  transactionSendResult.getLocalTransactionState();
 //    }
-//
-//    /**
-//     * 发送订单消息
-//     * @return
-//     */
-//    public boolean sendCreateOrderMsg(OrderMessage message){
+
+    /**
+     * 使用事务消息机制发送订单
+     * @return
+     */
+    public boolean sendCreateOrderMsg(Long orderId, Long memberId){
 //        SendResult result = rocketMQTemplate.syncSend(asyncOrderTopic+":"+ORDERTAG,message);
-//        return SendStatus.SEND_OK == result.getSendStatus();
-//    }
-//
+        String destination = asyncOrderTopic+":"+ORDERTAG;
+        Message<String> message = MessageBuilder.withPayload(orderId+":"+memberId)
+                .build();
+        TransactionSendResult sendResult = rocketMQTemplate.sendMessageInTransaction(destination,message,orderId);
+        return SendStatus.SEND_OK == sendResult.getSendStatus();
+    }
+
 //    /**
 //     * 发送延时同步库存消息，60s后同步库存
 //     * @param productId
@@ -82,5 +84,4 @@ package com.tuling.tulingmall.ordercurr.component.rocketmq;//package com.tuling.
 //        SendResult result = rocketMQTemplate.syncSend("stock-sync",message,5000,5);
 //        return SendStatus.SEND_OK == result.getSendStatus();
 //    }
-//
-//}
+}

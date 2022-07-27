@@ -5,6 +5,7 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.google.common.collect.Maps;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.exception.BusinessException;
+import com.tuling.tulingmall.ordercurr.component.rocketmq.OrderMessageSender;
 import com.tuling.tulingmall.ordercurr.component.trade.alipay.config.Configs;
 import com.tuling.tulingmall.ordercurr.domain.MqCancelOrder;
 import com.tuling.tulingmall.ordercurr.domain.OmsOrderDetail;
@@ -16,6 +17,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +46,9 @@ public class OmsPortalOrderController {
     @Autowired
     private TradeService tradeService;
 
+    @Autowired
+    private OrderMessageSender orderMessageSender;
+
     @ApiOperation("根据购物车信息生成订单")
     @RequestMapping(value = "/generateOrder",method = RequestMethod.POST)
     @ResponseBody
@@ -50,6 +56,20 @@ public class OmsPortalOrderController {
                                       @RequestHeader("memberId") Long memberId) throws BusinessException {
         return portalOrderService.generateOrder(orderParam,memberId);
     }
+
+//    @ApiOperation("根据购物车信息生成订单")
+//    @RequestMapping(value = "/generateOrder",method = RequestMethod.POST)
+//    @ResponseBody
+//    public CommonResult generateOrder(@RequestBody OrderParam orderParam,
+//                                      @RequestHeader("memberId") Long memberId) throws BusinessException {
+//        Long orderId = portalOrderService.generateOrderId(memberId);
+//        orderParam.setOrderId(orderId);
+//        orderMessageSender.sendCreateOrderMsg(orderParam,memberId);
+////        return portalOrderService.generateOrder(orderParam,memberId);
+//        Map<String,Object> res = new HashMap<>();
+//        res.put("orderId",orderId);
+//        return CommonResult.success(res);
+//    }
 
     @ApiOperation("获取orderId，可避免重复下单")
     @GetMapping(value = "/generateOrderId")
@@ -76,17 +96,17 @@ public class OmsPortalOrderController {
         return portalOrderService.getDetailOrder(Long.valueOf(orderSn));
     }
 
-    @ApiOperation("支付成功修改订单状态")
-    @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
-            allowableValues = "1,2", paramType = "query", dataType = "integer")})
-    @RequestMapping(value = "/paySuccess/{orderId}",method = RequestMethod.POST)
-    @ResponseBody
-    public void paySuccess(@PathVariable Long orderId,Integer payType) {
-        if(payType > 2 || payType < 0){
-            throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
-        }
-        portalOrderService.paySuccess(orderId,payType);
-    }
+//    @ApiOperation("支付成功修改订单状态")
+//    @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
+//            allowableValues = "1,2", paramType = "query", dataType = "integer")})
+//    @RequestMapping(value = "/paySuccess/{orderId}",method = RequestMethod.POST)
+//    @ResponseBody
+//    public void paySuccess(@PathVariable Long orderId,Integer payType) {
+//        if(payType > 2 || payType < 0){
+//            throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
+//        }
+//        portalOrderService.paySuccess(orderId,payType);
+//    }
 
     @ApiOperation("批量检查超时订单并取消")
     @RequestMapping(value = "/cancelTimeOutOrders",method = RequestMethod.POST)
@@ -152,13 +172,6 @@ public class OmsPortalOrderController {
         return portalOrderService.findMemberOrderList(pageSize,pageNum,memberId,status);
     }
 
-    @ApiOperation("查看订单详情#杨过添加")
-    @RequestMapping(value = "/orderDetail",method = {RequestMethod.POST,RequestMethod.GET})
-    @ResponseBody
-    public CommonResult orderDetail(@RequestParam Long orderId){
-        return portalOrderService.getDetailOrder(orderId);
-    }
-
     /**
      * 订单支付逻辑：支付支持两种方式：alipay,wechat
      * @param orderId
@@ -176,6 +189,7 @@ public class OmsPortalOrderController {
         if(payType > 2 || payType < 0){
             throw new IllegalArgumentException("支付类型不正确，平台目前仅支持支付宝与微信支付");
         }
+        orderMessageSender.sendCreateOrderMsg(orderId,memberId);
         return tradeService.tradeQrCode(orderId,payType,memberId);
     }
 

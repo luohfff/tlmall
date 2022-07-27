@@ -8,7 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Created by liuyangkly on 15/6/27.
+ * Created by liuyangkly
  */
 public class Configs {
     private static Log log = LogFactory.getLog(Configs.class);
