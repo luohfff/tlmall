@@ -6,22 +6,20 @@ import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.CmsSubjectMapper;
 import com.tuling.tulingmall.mapper.PmsProductCategoryMapper;
 import com.tuling.tulingmall.mapper.PmsProductMapper;
-import com.tuling.tulingmall.mapper.SmsHomeAdvertiseMapper;
 import com.tuling.tulingmall.model.*;
 import com.tuling.tulingmall.portal.config.PromotionRedisKey;
 import com.tuling.tulingmall.portal.dao.HomeDao;
 import com.tuling.tulingmall.portal.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.portal.domain.HomeContentResult;
-import com.tuling.tulingmall.portal.feignapi.pms.PmsProductFeignApi;
 import com.tuling.tulingmall.portal.feignapi.promotion.PromotionFeignApi;
 import com.tuling.tulingmall.portal.service.HomeService;
 import com.tuling.tulingmall.portal.util.RedisOpsUtil;
+import com.tuling.tulingmall.promotion.model.SmsHomeAdvertise;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +29,12 @@ import java.util.List;
 @Slf4j
 @Service
 public class HomeServiceImpl implements HomeService {
-    @Autowired
-    private SmsHomeAdvertiseMapper advertiseMapper;
+//    @Autowired
+//    private SmsHomeAdvertiseMapper advertiseMapper;
     @Autowired
     private HomeDao homeDao;
-    @Autowired
-    private PmsProductFeignApi pmsProductFeignApi;
+//    @Autowired
+//    private PmsProductFeignApi pmsProductFeignApi;
     @Autowired
     private PmsProductMapper productMapper;
     @Autowired

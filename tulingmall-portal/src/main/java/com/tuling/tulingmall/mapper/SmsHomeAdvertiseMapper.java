@@ -1,8 +1,8 @@
 package com.tuling.tulingmall.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.tuling.tulingmall.model.SmsHomeAdvertise;
-import com.tuling.tulingmall.model.SmsHomeAdvertiseExample;
+import com.tuling.tulingmall.promotion.model.SmsHomeAdvertise;
+import com.tuling.tulingmall.promotion.model.SmsHomeAdvertiseExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
