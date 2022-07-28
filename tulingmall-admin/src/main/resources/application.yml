@@ -1,6 +1,8 @@
 server:
   port: 8081
 spring:
+  application:
+    name: tuling-admin
   datasource:
     druid:
       web-stat-filter:
@@ -42,6 +44,13 @@ spring:
 #    url: jdbc:mysql://192.168.65.71:3306/tl_mall_user?characterEncoding=utf-8&useSSL=false
 #    username: tlmall
 #    password: tlmall123
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848 #配置中心的地址
+        file-extension: yml #配置文件结尾的配置
 
 mybatis-plus:
   mapper-locations:

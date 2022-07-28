@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Import;
 @EnableFeignClients
 @EnableDiscoveryClient
 @Import(RedisConifg.class)
-public class TulingmallCouponsApplication {
+public class TulingmallPromotionApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TulingmallCouponsApplication.class, args);
+		SpringApplication.run(TulingmallPromotionApplication.class, args);
 	}
 
 }

@@ -3,6 +3,7 @@ package com.tuling.tulingmall.controller;
 import com.tuling.tulingmall.common.api.CommonPage;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.dto.*;
+import com.tuling.tulingmall.feignapi.OmsOrderApi;
 import com.tuling.tulingmall.model.OmsOrder;
 import com.tuling.tulingmall.service.OmsOrderService;
 import io.swagger.annotations.Api;
@@ -21,7 +22,7 @@ import java.util.List;
 @RequestMapping("/order")
 public class OmsOrderController {
     @Autowired
-    private OmsOrderService orderService;
+    private OmsOrderApi omsOrderApi;
 
     @ApiOperation("查询订单")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -29,71 +30,49 @@ public class OmsOrderController {
     public CommonResult<CommonPage<OmsOrder>> list(OmsOrderQueryParam queryParam,
                                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
-        List<OmsOrder> orderList = orderService.list(queryParam, pageSize, pageNum);
-        return CommonResult.success(CommonPage.restPage(orderList));
+        return omsOrderApi.list(queryParam,pageSize,pageNum);
     }
 
     @ApiOperation("批量发货")
     @RequestMapping(value = "/update/delivery", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult delivery(@RequestBody List<OmsOrderDeliveryParam> deliveryParamList) {
-        int count = orderService.delivery(deliveryParamList);
-        if (count > 0) {
-            return CommonResult.success(count);
-        }
-        return CommonResult.failed();
+        return omsOrderApi.delivery(deliveryParamList);
     }
 
     @ApiOperation("批量关闭订单")
     @RequestMapping(value = "/update/close", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult close(@RequestParam("ids") List<Long> ids, @RequestParam String note) {
-        int count = orderService.close(ids, note);
-        if (count > 0) {
-            return CommonResult.success(count);
-        }
-        return CommonResult.failed();
+        return omsOrderApi.close(ids,note);
     }
 
     @ApiOperation("批量删除订单")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult delete(@RequestParam("ids") List<Long> ids) {
-        int count = orderService.delete(ids);
-        if (count > 0) {
-            return CommonResult.success(count);
-        }
-        return CommonResult.failed();
+        return omsOrderApi.delete(ids);
     }
 
     @ApiOperation("获取订单详情:订单信息、商品信息、操作记录")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<OmsOrderDetail> detail(@PathVariable Long id) {
-        OmsOrderDetail orderDetailResult = orderService.detail(id);
-        return CommonResult.success(orderDetailResult);
+        return omsOrderApi.detail(id);
     }
 
     @ApiOperation("修改收货人信息")
     @RequestMapping(value = "/update/receiverInfo", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateReceiverInfo(@RequestBody OmsReceiverInfoParam receiverInfoParam) {
-        int count = orderService.updateReceiverInfo(receiverInfoParam);
-        if (count > 0) {
-            return CommonResult.success(count);
-        }
-        return CommonResult.failed();
+        return omsOrderApi.updateReceiverInfo(receiverInfoParam);
     }
 
     @ApiOperation("修改订单费用信息")
     @RequestMapping(value = "/update/moneyInfo", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult updateReceiverInfo(@RequestBody OmsMoneyInfoParam moneyInfoParam) {
-        int count = orderService.updateMoneyInfo(moneyInfoParam);
-        if (count > 0) {
-            return CommonResult.success(count);
-        }
-        return CommonResult.failed();
+    public CommonResult updateMoneyInfo(@RequestBody OmsMoneyInfoParam moneyInfoParam) {
+        return omsOrderApi.updatMoneyInfo(moneyInfoParam);
     }
 
     @ApiOperation("备注订单")
@@ -102,10 +81,6 @@ public class OmsOrderController {
     public CommonResult updateNote(@RequestParam("id") Long id,
                                    @RequestParam("note") String note,
                                    @RequestParam("status") Integer status) {
-        int count = orderService.updateNote(id, note, status);
-        if (count > 0) {
-            return CommonResult.success(count);
-        }
-        return CommonResult.failed();
+        return omsOrderApi.updateNote(id, note, status);
     }
 }

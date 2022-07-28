@@ -1,4 +1,4 @@
-package com.tuling.tulingmall.dto;
+package com.tuling.tulingmall.ordercurr.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

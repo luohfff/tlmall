@@ -3,6 +3,7 @@ package com.tuling.tulingmall.ordercurr.mapper;
 import com.tuling.tulingmall.ordercurr.model.OmsOrderOperateHistory;
 import com.tuling.tulingmall.ordercurr.model.OmsOrderOperateHistoryExample;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 public interface OmsOrderOperateHistoryMapper {
@@ -27,4 +28,16 @@ public interface OmsOrderOperateHistoryMapper {
     int updateByPrimaryKeySelective(OmsOrderOperateHistory record);
 
     int updateByPrimaryKey(OmsOrderOperateHistory record);
+
+    @Select("<script>" +
+            "INSERT INTO oms_order_operate_history (order_id, operate_man, create_time, order_status, note) VALUES" +
+            "        <foreach collection=\"list\" separator=\",\" item=\"item\" index=\"index\">" +
+            "            (#{item.orderId}," +
+            "            #{item.operateMan}," +
+            "            #{item.createTime,jdbcType=TIMESTAMP}," +
+            "            #{item.orderStatus}," +
+            "            #{item.note})" +
+            "        </foreach>" +
+            "</script>")
+    int insertList(@Param("list") List<OmsOrderOperateHistory> orderOperateHistoryList);
 }

@@ -1,9 +1,8 @@
-package com.tuling.tulingmall.controller;
+package com.tuling.tulingmall.ordercurr.controller;
 
 import com.tuling.tulingmall.common.api.CommonResult;
-import com.tuling.tulingmall.feignapi.OmsOrderSettingApi;
-import com.tuling.tulingmall.model.OmsOrderSetting;
-import com.tuling.tulingmall.service.OmsOrderSettingService;
+import com.tuling.tulingmall.ordercurr.model.OmsOrderSetting;
+import com.tuling.tulingmall.ordercurr.service.OmsOrderSettingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +17,25 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "OmsOrderSettingController", description = "订单设置管理")
 @RequestMapping("/orderSetting")
 public class OmsOrderSettingController {
-
     @Autowired
-    private OmsOrderSettingApi omsOrderSettingApi;
+    private OmsOrderSettingService orderSettingService;
 
     @ApiOperation("获取指定订单设置")
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = {RequestMethod.GET,RequestMethod.POST})
     @ResponseBody
     public CommonResult<OmsOrderSetting> getItem(@PathVariable Long id) {
-        return omsOrderSettingApi.getItem(id);
+        OmsOrderSetting orderSetting = orderSettingService.getItem(id);
+        return CommonResult.success(orderSetting);
     }
 
     @ApiOperation("修改指定订单设置")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult update(@PathVariable Long id, @RequestBody OmsOrderSetting orderSetting) {
-        return omsOrderSettingApi.update(id, orderSetting);
+        int count = orderSettingService.update(id,orderSetting);
+        if(count>0){
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
     }
 }
