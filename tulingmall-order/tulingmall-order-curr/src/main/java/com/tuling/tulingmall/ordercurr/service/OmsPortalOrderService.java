@@ -26,7 +26,7 @@ public interface OmsPortalOrderService {
      */
     @Transactional
     @ShardingTransactionType(TransactionType.XA)
-    CommonResult generateOrder(OrderParam orderParam,Long memberId) throws BusinessException;
+    CommonResult generateOrder(OrderParam orderParam,Long memberId);
 
     /**
      * 生成订单的orderId

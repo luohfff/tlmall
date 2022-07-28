@@ -7,6 +7,7 @@ import com.tuling.tulingmall.domain.PmsProductParam;
 import com.tuling.tulingmall.domain.StockChanges;
 import com.tuling.tulingmall.mapper.PmsSkuStockMapper;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionProductRelationMapper;
+import com.tuling.tulingmall.model.OmsOrderItem;
 import com.tuling.tulingmall.model.PmsSkuStock;
 import com.tuling.tulingmall.model.PmsSkuStockExample;
 import com.tuling.tulingmall.model.SmsFlashPromotionProductRelation;

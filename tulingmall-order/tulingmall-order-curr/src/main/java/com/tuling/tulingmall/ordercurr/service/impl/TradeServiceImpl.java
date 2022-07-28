@@ -19,10 +19,11 @@ import com.tuling.tulingmall.ordercurr.component.trade.alipay.utils.Utils;
 import com.tuling.tulingmall.ordercurr.component.trade.alipay.utils.ZxingUtils;
 import com.tuling.tulingmall.ordercurr.dao.PortalOrderDao;
 import com.tuling.tulingmall.ordercurr.domain.OmsOrderDetail;
+import com.tuling.tulingmall.ordercurr.domain.StockChanges;
+import com.tuling.tulingmall.ordercurr.feignapi.pms.PmsProductStockFeignApi;
 import com.tuling.tulingmall.ordercurr.mapper.OmsOrderMapper;
 import com.tuling.tulingmall.ordercurr.model.OmsOrder;
 import com.tuling.tulingmall.ordercurr.model.OmsOrderItem;
-import com.tuling.tulingmall.ordercurr.service.OmsPortalOrderService;
 import com.tuling.tulingmall.ordercurr.service.TradeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +38,19 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ *                  ,;,,;
+ *                ,;;'(    社
+ *      __      ,;;' ' \   会
+ *   /'  '\'~~'~' \ /'\.)  主
+ * ,;(      )    /  |.     义
+ *,;' \    /-.,,(   ) \    码
+ *     ) /       ) / )|    农
+ *     ||        ||  \)
+ *     (_\       (_\
+ * @author ：图灵学院
+ * @date ：Created in 2020/1/12 19:37
+ * @version: V1.0
+ * @slogan: 天下风云出我辈，一入代码岁月催
  * @description: 交易服务
  **/
 @Slf4j
@@ -53,10 +67,10 @@ public class TradeServiceImpl implements TradeService {
     private PortalOrderDao portalOrderDao;
 
     @Autowired
-    private OmsOrderMapper orderMapper;
+    private PmsProductStockFeignApi pmsProductStockFeignApi;
 
     @Autowired
-    private OmsPortalOrderService omsPortalOrderService;
+    private OmsOrderMapper orderMapper;
 
     static {
         /**
@@ -86,10 +100,11 @@ public class TradeServiceImpl implements TradeService {
         try {
             OmsOrderDetail detail = portalOrderDao.getDetail(orderId);
             if(StringUtils.isEmpty(detail.getQrcode())){
-                String path =  (detail.getPayType() == 1) ? aliPayQrCode(detail) : wechatPayQrCode(detail);
+//                String path =  (detail.getPayType() == 1) ? aliPayQrCode(detail) : wechatPayQrCode(detail);
+                String path =  aliPayQrCode(detail);
                 OmsOrder omsOrder = new OmsOrder();
                 omsOrder.setId(detail.getId());
-                omsOrder.setMemberId(memberId);
+//                omsOrder.setMemberId(memberId);
                 omsOrder.setQrcode(path);
                 //把二维码地址插入到订单记录中
                 orderMapper.updateByPrimaryKeySelective(omsOrder);
@@ -115,7 +130,7 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public CommonResult tradeStatusQuery(Long orderId, Integer payType) {
         OmsOrderDetail orderDetail = portalOrderDao.getDetail(orderId);
-        if(payType == OrderConstant.ORDER_PAY_TYPE_ALIPAY){//支付宝支付
+        if(payType == 1){//支付宝支付
             CommonResult result = alipayTradeQuery(orderDetail.getOrderSn());
             if(result.getCode() == 200){
                 //订单查询详情信息
@@ -124,15 +139,21 @@ public class TradeServiceImpl implements TradeService {
                  * 支付详情处理逻辑，根据需要处理
                  */
                 //更新新订单支付状态
-                if(orderDetail.getPayType() == OrderConstant.ORDER_PAY_TYPE_NO){
-//                    OmsOrder order = new OmsOrder();
-//                    order.setId(orderId);
-//                    order.setStatus(1);
-//                    order.setPayType(payType);
-//                    order.setPaymentTime(new Date());
-//                    orderMapper.updateByPrimaryKeySelective(order);
+                if(orderDetail.getPayType() == 0){
+                    OmsOrder order = new OmsOrder();
+                    order.setId(orderId);
+                    order.setStatus(1);
+                    order.setPayType(payType);
+                    order.setPaymentTime(new Date());
+                    orderMapper.updateByPrimaryKeySelective(order);
                     //恢复所有下单商品的锁定库存，扣减真实库存
-                    int count = omsPortalOrderService.paySuccess(orderId,payType);
+                    List<OmsOrderItem> orderItemList = orderDetail.getOrderItemList();
+                    List<StockChanges> orderStockChanges = new ArrayList<>();
+                    for(OmsOrderItem omsOrderItem: orderItemList){
+                        StockChanges stockChanges = new StockChanges(omsOrderItem.getProductSkuId(), omsOrderItem.getProductQuantity());
+                        orderStockChanges.add(stockChanges);
+                    }
+                    pmsProductStockFeignApi.reduceStock(orderStockChanges);
                 }
                 return CommonResult.success("订单编号："+orderDetail.getOrderSn()+":支付成功!");
             }

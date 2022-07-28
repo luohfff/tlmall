@@ -35,6 +35,8 @@ public class OrderConstant {
     public static final int ORDER_PAY_TYPE_ALIPAY = 1;
     public static final int ORDER_PAY_TYPE_WECHAT = 2;
 
+    public static final String REDIS_CREATE_ORDER = "tuling:create_order";
+
 
 
 }

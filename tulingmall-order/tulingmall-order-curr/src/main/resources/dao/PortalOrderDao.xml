@@ -15,6 +15,7 @@
         o.pay_amount,
         o.order_sn,
         o.member_id,
+        o.pay_type,
         ot.id ot_id,
         ot.product_id ot_product_id,
         ot.product_name ot_product_name,
@@ -95,4 +96,24 @@
         </if>
           ORDER BY o.create_time desc
     </select>
+
+    <update id="updateSkuStock">
+        UPDATE pms_sku_stock
+        SET
+        stock = CASE id
+        <foreach collection="itemList" item="item">
+            WHEN #{item.productSkuId} THEN stock - #{item.productQuantity}
+        </foreach>
+        END,
+        lock_stock = CASE id
+        <foreach collection="itemList" item="item">
+            WHEN #{item.productSkuId} THEN lock_stock - #{item.productQuantity}
+        </foreach>
+        END
+        WHERE
+        id IN
+        <foreach collection="itemList" item="item" separator="," open="(" close=")">
+            #{item.productSkuId}
+        </foreach>
+    </update>
 </mapper>

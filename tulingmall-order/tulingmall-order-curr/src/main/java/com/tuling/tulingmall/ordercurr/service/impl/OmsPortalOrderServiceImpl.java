@@ -149,7 +149,7 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
     @Override
     //@GlobalTransactional(name = "generateOrder",rollbackFor = Exception.class)
     @Transactional
-    public CommonResult generateOrder(OrderParam orderParam, Long memberId) throws BusinessException {
+    public CommonResult generateOrder(OrderParam orderParam, Long memberId) {
         log.debug("接受参数OrderParam：{} memberId：{}",orderParam,memberId);
         if(null == orderParam || null == memberId){
             return CommonResult.failed(ResultCode.VALIDATE_FAILED,"参数不能为空！");
@@ -288,6 +288,13 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
 
     @Override
     public Integer paySuccess(Long orderId,Integer payType) {
+        OmsOrderDetail orderDetail = portalOrderDao.getDetail(orderId);
+        //订单已经超时关闭了，这时再支付就没用了。
+        if(orderDetail.getStatus().equals(5)){
+            log.warn("订单"+orderDetail.getOrderSn()+"已经关闭，无法正常支付。请发起支付宝订单退款接口。");
+            //TODO 发起支付宝订单退款
+            return -1;
+        }
         //修改订单支付状态
         OmsOrder order = new OmsOrder();
         order.setId(orderId);
@@ -295,7 +302,7 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         order.setPayType(payType);
         order.setPaymentTime(new Date());
         omsOrderMapper.updateByPrimaryKeySelective(order);
-        OmsOrderDetail orderDetail = portalOrderDao.getDetail(orderId);
+
         List<StockChanges> stockChangesList = new ArrayList<>();
         for(OmsOrderItem omsOrderItem : orderDetail.getOrderItemList()){
             stockChangesList.add(new StockChanges(omsOrderItem.getProductSkuId(),omsOrderItem.getProductQuantity()));

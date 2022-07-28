@@ -3,7 +3,9 @@ package com.tuling.tulingmall.controller;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.domain.CartPromotionItem;
 import com.tuling.tulingmall.domain.StockChanges;
+import com.tuling.tulingmall.model.OmsOrderItem;
 import com.tuling.tulingmall.service.StockManageService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

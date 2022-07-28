@@ -47,5 +47,9 @@ public interface PortalOrderDao {
      */
     List<OmsOrderDetail> findMemberOrderList(@Param("memberId") Long memberId, @Param("status") Integer status);
 
+    /**
+     * 修改 pms_sku_stock表的锁定库存及真实库存
+     */
+    int updateSkuStock(@Param("itemList") List<OmsOrderItem> orderItemList);
 
 }

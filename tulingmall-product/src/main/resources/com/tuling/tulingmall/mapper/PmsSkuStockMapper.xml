@@ -297,7 +297,7 @@
     SET
     lock_stock = CASE id
     <foreach collection="itemList" item="item">
-      WHEN #{item.productSkuId} THEN lock_stock - #{item.productQuantity}
+      WHEN #{item.productSkuId} THEN lock_stock - #{item.changesCount}
     </foreach>
     END
     WHERE
