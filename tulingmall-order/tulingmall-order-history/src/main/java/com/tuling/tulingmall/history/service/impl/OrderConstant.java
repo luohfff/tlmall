@@ -2,6 +2,9 @@ package com.tuling.tulingmall.history.service.impl;
 
 public class OrderConstant {
 
+    public static final String OMS_ORDER_NAME_PREFIX = "oms_order_";
+    public static final String OMS_ORDER_ITEM_NAME_PREFIX = "oms_order_item_";
+
     public static final String LEAF_ORDER_ID_KEY = "order_id";
     public static final String LEAF_ORDER_ITEM_ID_KEY = "order_item_id";
 

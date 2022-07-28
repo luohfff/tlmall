@@ -82,7 +82,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
             try {
                 PageHelper.startPage(0,ConstantPromotion.HOME_RECOMMEND_PAGESIZE,"sort desc");
                 SmsHomeBrandExample example = new SmsHomeBrandExample();
-                example.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_NO);
+                example.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_YES);
                 List<Long> smsHomeBrandIds = smsHomeBrandMapper.selectBrandIdByExample(example);
 //                pmsProductFeignApi.getHomeSecKillProductList();
 //                log.info("---------------------------");
@@ -92,9 +92,9 @@ public class HomePromotionServiceImpl implements HomePromotionService {
                 redisDistrLock.unlock(promotionRedisKey.getDlBrandKey());
             }
             result.setBrandList(recommendBrandList);
-            log.debug("品牌推荐信息存入缓存，键{}" ,brandKey);
+            log.info("品牌推荐信息存入缓存，键{}" ,brandKey);
         }else{
-            log.debug("品牌推荐信息已在缓存，键{}" ,brandKey);
+            log.info("品牌推荐信息已在缓存，键{}" ,brandKey);
             result.setBrandList(recommendBrandList);
         }
     }
@@ -108,17 +108,17 @@ public class HomePromotionServiceImpl implements HomePromotionService {
             try {
                 PageHelper.startPage(0,ConstantPromotion.HOME_RECOMMEND_PAGESIZE,"sort desc");
                 SmsHomeRecommendProductExample example2 = new SmsHomeRecommendProductExample();
-                example2.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_NO);
+                example2.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_YES);
                 List<Long> recommendProductIds = smsHomeRecommendProductMapper.selectProductIdByExample(example2);
                 recommendProducts = pmsProductClientApi.getProductBatch(recommendProductIds);
                 redisOpsUtil.putListAllRight(recProductKey,recommendProducts);
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlRecProductKey());
             }
-            log.debug("人气推荐商品信息存入缓存，键{}" ,recProductKey);
+            log.info("人气推荐商品信息存入缓存，键{}" ,recProductKey);
             result.setHotProductList(recommendProducts);
         }else{
-            log.debug("人气推荐商品信息已在缓存，键{}" ,recProductKey);
+            log.info("人气推荐商品信息已在缓存，键{}" ,recProductKey);
             result.setHotProductList(recommendProducts);
         }
     }
@@ -132,17 +132,17 @@ public class HomePromotionServiceImpl implements HomePromotionService {
             try {
                 PageHelper.startPage(0,ConstantPromotion.HOME_RECOMMEND_PAGESIZE,"sort desc");
                 SmsHomeNewProductExample example = new SmsHomeNewProductExample();
-                example.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_NO);
+                example.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_YES);
                 List<Long> newProductIds = smsHomeNewProductMapper.selectProductIdByExample(example);
                 newProducts = pmsProductClientApi.getProductBatch(newProductIds);
                 redisOpsUtil.putListAllRight(newProductKey,newProducts);
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlNewProductKey());
             }
-            log.debug("新品推荐信息存入缓存，键{}" ,newProductKey);
+            log.info("新品推荐信息存入缓存，键{}" ,newProductKey);
             result.setNewProductList(newProducts);
         }else{
-            log.debug("新品推荐信息已在缓存，键{}" ,newProductKey);
+            log.info("新品推荐信息已在缓存，键{}" ,newProductKey);
             result.setNewProductList(newProducts);
         }
     }
@@ -166,10 +166,10 @@ public class HomePromotionServiceImpl implements HomePromotionService {
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlHomeAdvertiseKey());
             }
-            log.debug("轮播广告存入缓存，键{}" ,homeAdvertiseKey);
+            log.info("轮播广告存入缓存，键{}" ,homeAdvertiseKey);
             return smsHomeAdvertises;
         }else{
-            log.debug("轮播广告已在缓存，键{}" ,homeAdvertiseKey);
+            log.info("轮播广告已在缓存，键{}" ,homeAdvertiseKey);
             return smsHomeAdvertises;
         }
     }
