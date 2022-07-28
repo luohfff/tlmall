@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 public class TransactionConfig {
-    @Bean
+    @Bean("dbTransactionManager")
     public PlatformTransactionManager txManager(final DataSource dataSource){
         return new DataSourceTransactionManager(dataSource);
     }

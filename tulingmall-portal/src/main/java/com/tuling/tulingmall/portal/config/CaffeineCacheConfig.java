@@ -12,11 +12,9 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class CaffeineCacheConfig {
 
-    private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
-
     @Bean(name = "promotion")
     public Cache<String, HomeContentResult> promotionCache() {
-        int rnd = RANDOM.nextInt(10);
+        int rnd = ThreadLocalRandom.current().nextInt(10);
         return Caffeine.newBuilder()
                 // 设置最后一次写入经过固定时间过期
                 .expireAfterWrite(30 + rnd, TimeUnit.MINUTES)
@@ -30,7 +28,7 @@ public class CaffeineCacheConfig {
     /*以双缓存的形式提升首页的访问性能*/
     @Bean(name = "promotionBak")
     public Cache<String, HomeContentResult> promotionCacheBak() {
-        int rnd = RANDOM.nextInt(10);
+        int rnd = ThreadLocalRandom.current().nextInt(10);
         return Caffeine.newBuilder()
                 // 设置最后一次写入经过固定时间过期
                 .expireAfterWrite(41 + rnd, TimeUnit.MINUTES)
