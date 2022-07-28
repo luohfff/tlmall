@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
  * MyBatis配置类
  */
 @Configuration
-@MapperScan({"com.tuling.tulingmall.history.mapper","com.tuling.tulingmall.history.dao"})
+@MapperScan({/*"com.tuling.tulingmall.history.mapper",*/"com.tuling.tulingmall.history.dao"})
 public class MyBatisConfig {
 
 

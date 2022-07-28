@@ -1,0 +1,7 @@
+logging:
+  level:
+    com:
+      tuling:
+        tulingmall:
+          history:
+            dao: debug

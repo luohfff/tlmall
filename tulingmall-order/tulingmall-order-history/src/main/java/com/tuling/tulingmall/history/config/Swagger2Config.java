@@ -28,7 +28,7 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.tuling.tulingmall.ordercurr.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.tuling.tulingmall.history.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .securitySchemes(securitySchemes())
@@ -37,8 +37,8 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("tuling-mall订单系统")
-                .description("tuling-mall订单系统")
+                .title("tuling-mall历史订单系统")
+                .description("tuling-mall历史订单系统")
                 .contact("tuling")
                 .version("1.0")
                 .build();
