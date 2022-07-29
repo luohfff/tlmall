@@ -1,25 +1,18 @@
 package com.tuling.tulingmall.history.controller;
 
-import com.tuling.tulingmall.common.api.CommonResult;
-import com.tuling.tulingmall.history.domain.OmsOrderDetail;
 import com.tuling.tulingmall.history.service.MigrateCentreService;
-import com.tuling.tulingmall.history.service.OperateDbService;
+import com.tuling.tulingmall.history.service.impl.OrderConstant;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 订单迁移管理Controller
  */
 @Slf4j
-@Controller
+@RestController
 @Api(tags = "OrderMigrateController",description = "订单迁移管理")
 @RequestMapping("/order/migrate")
 public class OrderMigrateController {
@@ -29,13 +22,27 @@ public class OrderMigrateController {
 
     @ApiOperation("指定数据表执行数据迁移")
     @RequestMapping(value = "/specificTableMigrate",method = {RequestMethod.POST,RequestMethod.GET})
-    public void migrateSpecificTable(@RequestParam int tableNo){
-        migrateCentreService.migrateSingleTableOrders(tableNo);
+    public String migrateSpecificTable(@RequestParam int tableNo){
+        return migrateCentreService.migrateSingleTableOrders(tableNo);
     }
 
     @ApiOperation("全部数据表进行迁移")
     @RequestMapping(value = "/migrateTables",method = {RequestMethod.POST,RequestMethod.GET})
-    public void migrateTables(){
-        migrateCentreService.migrateTablesOrders();
+    public String migrateTables(){
+        return migrateCentreService.migrateTablesOrders();
+    }
+
+    @ApiOperation("停止迁移")
+    @RequestMapping(value = "/stopMigrate",method = {RequestMethod.POST,RequestMethod.GET})
+    public String stopRoundMigrate(){
+        migrateCentreService.stopMigrate();
+        return OrderConstant.MIGRATE_SUCCESS;
+    }
+
+    @ApiOperation("恢复迁移")
+    @RequestMapping(value = "/recoverMigrate",method = {RequestMethod.POST,RequestMethod.GET})
+    public String recoverMigrate(){
+        migrateCentreService.recoverMigrate();
+        return OrderConstant.MIGRATE_SUCCESS;
     }
 }

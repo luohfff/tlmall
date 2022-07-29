@@ -28,16 +28,15 @@ public class OperateDbServiceImpl implements OperateDbService {
     }
 
     @Override
-    public void deleteOrders(int tableCount,Date endDate,long maxOrderId) {
+    public void deleteOrders(int tableCount,long minOrderId,long maxOrderId) {
         String omsOrderTableName = OrderConstant.OMS_ORDER_NAME_PREFIX + tableCount;
         String omsOrderItemTableName = OrderConstant.OMS_ORDER_ITEM_NAME_PREFIX + tableCount;
-        int deleteCount = portalOrderDao.deleteMigrateOrdersItems(omsOrderTableName,omsOrderItemTableName,maxOrderId,
-                endDate);
-        log.info("已删除表{}中{}条数据，参数endDate={},maxOrderId={}",
-                omsOrderItemTableName,deleteCount,endDate,maxOrderId);
-        deleteCount = portalOrderDao.deleteMigrateOrders(omsOrderTableName,maxOrderId,endDate);
-        log.info("已删除表{}中{}条数据，参数endDate={},maxOrderId={}",
-                omsOrderTableName,deleteCount,endDate,maxOrderId);
+        int deleteCount = portalOrderDao.deleteMigrateOrdersItems(omsOrderItemTableName,minOrderId,maxOrderId);
+        log.info("已删除表{}中{}条数据，minOrderId={},maxOrderId={}",
+                omsOrderItemTableName,deleteCount,minOrderId,maxOrderId);
+        deleteCount = portalOrderDao.deleteMigrateOrders(omsOrderTableName,minOrderId,maxOrderId);
+        log.info("已删除表{}中{}条数据，minOrderId={},maxOrderId={}",
+                omsOrderTableName,deleteCount,minOrderId,maxOrderId);
     }
 
 }

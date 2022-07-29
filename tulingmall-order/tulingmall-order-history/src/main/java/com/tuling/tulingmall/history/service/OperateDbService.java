@@ -16,5 +16,5 @@ public interface OperateDbService {
     List<OmsOrderDetail> getOrders(long maxOrderId, int tableCount, Date endDate, int fetchRecordNumbers);
 
     @Transactional(value = "dbTransactionManager",rollbackFor = Throwable.class)
-    void deleteOrders(int tableCount,Date endDate,long maxOrderId);
+    void deleteOrders(int tableCount,long minOrderId,long maxOrderId);
 }

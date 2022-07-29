@@ -21,13 +21,12 @@ public interface PortalOrderDao {
             @Param("gmtCreate") Date gmtCreate,
             @Param("fetchRecordNumbers") int fetchRecordNumbers);
 
-    int deleteMigrateOrdersItems(@Param("orderTableName") String orderTableName,
-                                 @Param("orderItemTableName") String orderItemTableName,
-                                 @Param("orderId") Long maxOrderId,
-                                 @Param("gmtCreate") Date gmtCreate);
+    int deleteMigrateOrdersItems(@Param("orderItemTableName") String orderItemTableName,
+                                 @Param("minOrderId") Long minOrderId,
+                                 @Param("maxOrderId") Long maxOrderId);
 
     int deleteMigrateOrders(@Param("orderTableName") String orderTableName,
-                            @Param("orderId") Long maxOrderId,
-                            @Param("gmtCreate") Date gmtCreate);
+                            @Param("minOrderId") Long minOrderId,
+                            @Param("maxOrderId") Long maxOrderId);
 
 }

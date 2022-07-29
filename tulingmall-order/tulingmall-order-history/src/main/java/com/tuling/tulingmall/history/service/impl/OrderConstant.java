@@ -4,6 +4,8 @@ public class OrderConstant {
 
     public static final String OMS_ORDER_NAME_PREFIX = "oms_order_";
     public static final String OMS_ORDER_ITEM_NAME_PREFIX = "oms_order_item_";
+    public static final String MIGRATE_SUCCESS = "成功";
+    public static final String MIGRATE_FAILURE = "失败";
 
     public static final String LEAF_ORDER_ID_KEY = "order_id";
     public static final String LEAF_ORDER_ITEM_ID_KEY = "order_item_id";

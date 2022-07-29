@@ -59,7 +59,7 @@
         o.version,
         ot.id ot_id,
         ot.order_id ot_order_id,
-        ot.rder_sn ot_order_sn,
+        ot.order_sn ot_order_sn,
         ot.product_id ot_product_id,
         ot.product_pic ot_product_pic,
         ot.product_name ot_product_name,
@@ -86,19 +86,20 @@
         FROM
         ${orderTableName} o
         LEFT JOIN
-        ${orderItemTableName} ot ON o.id = ot.order_id
-        WHERE o.id > #{orderId} and o.gmt_create &gt; #{gmtCreate}
-        limit #{fetchRecordNumbers} order by o.id
+        ${orderItemTableName} ot
+        ON o.id = ot.order_id
+        WHERE o.id >= #{orderId} and o.gmt_create &lt; #{gmtCreate}
+        order by o.id limit #{fetchRecordNumbers}
     </select>
 
     <delete id="deleteMigrateOrdersItems">
-        delete ot.* from ${orderItemTableName} ot JOIN ${orderTableName} o ON o.id = ot.order_id
-        WHERE o.id > #{orderId} and o.gmt_create &gt; #{gmtCreate}
+        delete from ${orderItemTableName} ot
+        WHERE ot.order_id >= #{minOrderId} and ot.order_id &lt;= #{maxOrderId}
     </delete>
 
     <delete id="deleteMigrateOrders">
-        delete from ${orderTableName}
-        WHERE o.id > #{orderId} and o.gmt_create &gt; #{gmtCreate}
+        delete from ${orderTableName} o
+        WHERE o.id >= #{minOrderId} and o.id &lt;= #{maxOrderId}
     </delete>
 
 </mapper>

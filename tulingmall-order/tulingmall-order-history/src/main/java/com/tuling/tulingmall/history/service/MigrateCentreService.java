@@ -4,7 +4,15 @@ package com.tuling.tulingmall.history.service;
  * 订单迁移调度中心
  */
 public interface MigrateCentreService {
-    void migrateSingleTableOrders(int tableNo);
+    /*单表迁移*/
+    String migrateSingleTableOrders(int tableNo);
 
-    void migrateTablesOrders();
+    /*全部迁移*/
+    String migrateTablesOrders();
+
+    /*停止迁移*/
+    public void stopMigrate();
+
+    /*恢复迁移*/
+    public void recoverMigrate();
 }
