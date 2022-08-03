@@ -19,6 +19,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -34,8 +35,11 @@ import java.util.Map;
 @EnableConfigurationProperties(value = NotAuthUrlProperties.class)
 public class AuthorizationFilter implements GlobalFilter,Ordered,InitializingBean {
 
+//    @Autowired
+//    private TulingRestTemplate restTemplate;
+
     @Autowired
-    private TulingRestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     /**
      * 请求各个微服务 不需要用户认证的URL
