@@ -13,10 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * @author ：图灵学院
- * @date ：Created in 2020/3/9
- * @version: V1.0
- * @slogan: 天下风云出我辈，一入代码岁月催
  * @description: 反射工具类,根据column调用相关方法
  **/
 @Slf4j
