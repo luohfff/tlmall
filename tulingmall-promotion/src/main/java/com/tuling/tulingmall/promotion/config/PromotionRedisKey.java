@@ -50,6 +50,8 @@ public class PromotionRedisKey {
     private String recProductKey;
     private String homeAdvertiseKey;
 
+    private String secKillKey;
+
     @PostConstruct
     public void initKey(){
         brandKey = promotionNamespace + "." + brand;
@@ -65,6 +67,7 @@ public class PromotionRedisKey {
                 .append("] [新品推荐redis主键=").append(newProductKey)
                 .append("] [人气推荐redis主键=").append(recProductKey)
                 .append("] [轮播广告redis主键=").append(homeAdvertiseKey)
+                .append("] [秒杀redis主键=").append(secKillKey)
                 .append("] [品牌推荐redis分布式锁主键=").append(dlBrandKey)
                 .append("] [新品推荐redis分布式锁主键=").append(dlNewProductKey)
                 .append("] [人气推荐redis分布式锁主键=").append(dlRecProductKey)
@@ -87,6 +90,10 @@ public class PromotionRedisKey {
 
     public String getHomeAdvertiseKey() {
         return homeAdvertiseKey;
+    }
+
+    public String getSecKillKey() {
+        return secKillKey;
     }
 
     public String getDlBrandKey() {

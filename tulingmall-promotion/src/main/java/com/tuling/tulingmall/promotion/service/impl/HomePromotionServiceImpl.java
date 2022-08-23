@@ -5,22 +5,23 @@ import com.tuling.tulingmall.model.PmsBrand;
 import com.tuling.tulingmall.model.PmsProduct;
 import com.tuling.tulingmall.promotion.clientapi.PmsProductClientApi;
 import com.tuling.tulingmall.promotion.config.PromotionRedisKey;
+import com.tuling.tulingmall.promotion.dao.FlashPromotionProductDao;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionParam;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.promotion.domain.HomeContentResult;
-import com.tuling.tulingmall.promotion.mapper.SmsHomeAdvertiseMapper;
-import com.tuling.tulingmall.promotion.mapper.SmsHomeBrandMapper;
-import com.tuling.tulingmall.promotion.mapper.SmsHomeNewProductMapper;
-import com.tuling.tulingmall.promotion.mapper.SmsHomeRecommendProductMapper;
+import com.tuling.tulingmall.promotion.mapper.*;
 import com.tuling.tulingmall.promotion.model.*;
 import com.tuling.tulingmall.promotion.service.HomePromotionService;
 import com.tuling.tulingmall.rediscomm.util.RedisDistrLock;
 import com.tuling.tulingmall.rediscomm.util.RedisOpsUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 首页促销内容Service实现类
@@ -38,14 +39,20 @@ public class HomePromotionServiceImpl implements HomePromotionService {
     private SmsHomeRecommendProductMapper smsHomeRecommendProductMapper;
     @Autowired
     private PmsProductClientApi pmsProductClientApi;
-//    @Autowired
-//    private PmsProductFeignApi pmsProductFeignApi;
+    @Autowired
+    private FlashPromotionProductDao flashPromotionProductDao;
     @Autowired
     private PromotionRedisKey promotionRedisKey;
     @Autowired
     private RedisOpsUtil redisOpsUtil;
     @Autowired
     private RedisDistrLock redisDistrLock;
+
+    @Value("${secKillServerList}")
+    private List<String> secKillServerList;
+
+    @Autowired
+    private SmsFlashPromotionMapper smsFlashPromotionMapper;
 
     @Override
     public HomeContentResult content(int getType) {
@@ -68,9 +75,52 @@ public class HomePromotionServiceImpl implements HomePromotionService {
             //获取首页广告
             result.setAdvertiseList(getHomeAdvertiseList());
         }
-        //获取秒杀信息 首页显示
-// todo       result.setHomeFlashPromotion(pmsProductFeignApi.getHomeSecKillProductList().getData());
         return result;
+    }
+
+    /*获取秒杀内容*/
+    @Override
+    public List<FlashPromotionProduct> secKillContent(long secKillId) {
+        PageHelper.startPage(1, 8);
+        Long secKillIdL = -1 == secKillId ? null : secKillId;
+        /*获得秒杀相关的活动信息*/
+        FlashPromotionParam flashPromotionParam = flashPromotionProductDao.getFlashPromotion(secKillIdL);
+        if (flashPromotionParam == null || CollectionUtils.isEmpty(flashPromotionParam.getRelation())) {
+            return null;
+        }
+        /*获得秒杀相关的商品信息,map用来快速寻找秒杀商品的限购信息*/
+        List<Long> productIds = new ArrayList<>();
+        Map<Long,SmsFlashPromotionProductRelation> temp = new HashMap<>();
+        flashPromotionParam.getRelation().stream().forEach(item -> {
+            productIds.add(item.getProductId());
+            temp.put(item.getProductId(),item);
+        });
+        PageHelper.clearPage();
+        List<PmsProduct> secKillProducts = pmsProductClientApi.getProductBatch(productIds);
+        /*拼接前端需要的内容*/
+        List<FlashPromotionProduct> flashPromotionProducts = new ArrayList<>();
+        int loop = 0;
+        int serverSize = secKillServerList.size();
+        for(PmsProduct product : secKillProducts){
+            FlashPromotionProduct flashPromotionProduct = new FlashPromotionProduct();
+            BeanUtils.copyProperties(product,flashPromotionProduct);
+            flashPromotionProduct.setFlashPromotionCount(temp.get(product.getId()).getFlashPromotionCount());
+            flashPromotionProduct.setFlashPromotionPrice(temp.get(product.getId()).getFlashPromotionPrice());
+            flashPromotionProduct.setFlashPromotionLimit(temp.get(product.getId()).getFlashPromotionLimit());
+            flashPromotionProduct.setRelationId(temp.get(product.getId()).getId());
+            flashPromotionProduct.setFlashPromotionId(temp.get(product.getId()).getFlashPromotionId());
+            flashPromotionProduct.setSecKillServer(secKillServerList.get(loop % serverSize));
+            loop++;
+        }
+        return flashPromotionProducts;
+    }
+
+    @Override
+    public int turnOnSecKill(long secKillId) {
+        SmsFlashPromotion smsFlashPromotion = new SmsFlashPromotion();
+        smsFlashPromotion.setId(secKillId);
+        smsFlashPromotion.setStatus(1);
+        return smsFlashPromotionMapper.updateByPrimaryKeySelective(smsFlashPromotion);
     }
 
     /*获取推荐品牌*/

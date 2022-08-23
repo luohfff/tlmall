@@ -30,8 +30,6 @@ public class CanalPromotionConfig {
     @Value("${canal.promotion.destination}")
     private String destination;
 
-
-
     @Bean("promotionConnector")
     public CanalConnector newSingleConnector(){
         String userNameStr = "blank".equals(userName) ? "" : userName;

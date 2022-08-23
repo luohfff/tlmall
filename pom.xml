@@ -27,6 +27,7 @@
         <module>tulingmall-core</module>
         <module>tulingmall-unqid</module>
         <module>tulingmall-redis-comm</module>
+        <module>tulingmall-sk</module>
     </modules>
 
     <properties>

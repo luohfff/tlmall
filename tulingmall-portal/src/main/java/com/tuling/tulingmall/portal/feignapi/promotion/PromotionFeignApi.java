@@ -5,14 +5,14 @@ import com.tuling.tulingmall.model.UmsMember;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.portal.domain.HomeContentResult;
 import com.tuling.tulingmall.portal.domain.PortalMemberInfo;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
-* @vlog: 高于生活，源于生活
-* @desc: 类的描述:远程调用 会员中心获取具体收获地址
+* @desc: 类的描述:远程调用获取首页显示内容，包括推荐和秒杀等
 */
 @FeignClient(name = "tulingmall-promotion",path = "/recommend")
 public interface PromotionFeignApi {
@@ -21,4 +21,9 @@ public interface PromotionFeignApi {
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<HomeContentResult> content(@RequestParam(value = "getType") int getType);
+
+    /*获得秒杀内容*/
+    @RequestMapping(value = "/getHomeSecKillProductList", method = RequestMethod.GET)
+    @ResponseBody
+    CommonResult<List<FlashPromotionProduct>> getHomeSecKillProductList();
 }

@@ -9,7 +9,7 @@ import com.tuling.tulingmall.mapper.PmsProductMapper;
 import com.tuling.tulingmall.model.*;
 import com.tuling.tulingmall.portal.config.PromotionRedisKey;
 import com.tuling.tulingmall.portal.dao.HomeDao;
-import com.tuling.tulingmall.portal.domain.FlashPromotionProduct;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.portal.domain.HomeContentResult;
 import com.tuling.tulingmall.portal.feignapi.promotion.PromotionFeignApi;
 import com.tuling.tulingmall.portal.service.HomeService;
@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,14 @@ public class HomeServiceImpl implements HomeService {
     @Qualifier("promotionBak")
     private Cache<String, HomeContentResult> promotionCacheBak;
 
+    @Autowired
+    @Qualifier("secKill")
+    private Cache<String, List<FlashPromotionProduct>> secKillCache;
+
+    @Autowired
+    @Qualifier("secKillBak")
+    private Cache<String, List<FlashPromotionProduct>> secKillCacheBak;
+
     @Override
     public HomeContentResult cmsContent(HomeContentResult content) {
         //获取推荐专题
@@ -84,12 +93,35 @@ public class HomeServiceImpl implements HomeService {
                 promotionCacheBak.put(brandKey,result);
             }
         }
-        // fixme 增加秒杀空集合和CMS推荐空集合
-        result.setHomeFlashPromotion(new ArrayList<FlashPromotionProduct>());
+        /* 处理秒杀内容*/
+        final String secKillKey = promotionRedisKey.getSecKillKey();
+        List<FlashPromotionProduct> secKills = secKillCache.getIfPresent(secKillKey);
+        if(CollectionUtils.isEmpty(secKills)){
+            secKills = secKillCacheBak.getIfPresent(secKillKey);
+        }
+        if(CollectionUtils.isEmpty(secKills)){
+            secKills = getSecKillFromRemote();
+            if(!CollectionUtils.isEmpty(secKills)) {
+                secKillCache.put(secKillKey,secKills);
+                secKillCacheBak.put(secKillKey,secKills);
+            }else{
+                secKills = new ArrayList<FlashPromotionProduct>();
+            }
+        }
+        result.setHomeFlashPromotion(secKills);
+        // fixme CMS本次不予实现，设置空集合
         result.setSubjectList(new ArrayList<CmsSubject>());
         return result;
     }
 
+    public List<FlashPromotionProduct> getSecKillFromRemote(){
+        List<FlashPromotionProduct> result = redisOpsUtil.getListAll(promotionRedisKey.getSecKillKey(),
+                FlashPromotionProduct.class);
+        if(CollectionUtil.isEmpty(result)){
+            result = promotionFeignApi.getHomeSecKillProductList().getData();
+        }
+        return result;
+    }
     /*从远程(Redis或者对应微服务)获取推荐内容*/
     public HomeContentResult getFromRemote(){
         List<PmsBrand> recommendBrandList = null;
@@ -123,6 +155,16 @@ public class HomeServiceImpl implements HomeService {
     /*缓存预热*/
     public void preheatCache(){
         try {
+            final String secKillKey = promotionRedisKey.getSecKillKey();
+            List<FlashPromotionProduct> secKillResult = getSecKillFromRemote();
+            secKillCache.put(secKillKey,secKillResult);
+            secKillCacheBak.put(secKillKey,secKillResult);
+            log.info("秒杀数据本地缓存预热完成");
+        } catch (Exception e) {
+            log.error("秒杀数据缓存预热失败：",e);
+        }
+
+        try {
             if(promotionRedisKey.isAllowLocalCache()){
                 final String brandKey = promotionRedisKey.getBrandKey();
                 HomeContentResult result = getFromRemote();
@@ -131,13 +173,13 @@ public class HomeServiceImpl implements HomeService {
                 log.info("promotionCache 数据缓存预热完成");
             }
         } catch (Exception e) {
-            log.error("promotionCache 数据缓存预热失败：{}",e);
+            log.error("promotionCache 数据缓存预热失败：",e);
         }
     }
 
     @Override
     public List<PmsProduct> recommendProductList(Integer pageSize, Integer pageNum) {
-        // TODO: 2019/1/29 暂时默认推荐所有商品
+        // TODO: 2019/1/29 暂时默认推荐所有商品，可与推荐系统结合
         PageHelper.startPage(pageNum,pageSize);
         PmsProductExample example = new PmsProductExample();
         example.createCriteria()

@@ -85,7 +85,7 @@ public class ProductESData implements IProcessCanalData {
     }
 
     @Async
-    @Scheduled(initialDelayString = "${canal.product.initialDelay}", fixedDelayString = "${canal.product.fixedDelay}")
+    @Scheduled(initialDelayString = "${canal.product.initialDelay:5000}", fixedDelayString = "${canal.product.fixedDelay:1000}")
     @Override
     public void processData() {
         try {
@@ -100,8 +100,6 @@ public class ProductESData implements IProcessCanalData {
                     log.info("本次没有检测到商品数据更新。");
                 } else {
                     log.info("商品数据本次共有[{}]次更新需要处理", size);
-                    /*一个表在一次周期内可能会被修改多次，而对Redis缓存的处理只需要处理一次即可*/
-                    Set<String> factKeys = new HashSet<>();
                     for (CanalEntry.Entry entry : message.getEntries()) {
                         if (entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONBEGIN
                                 || entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND) {

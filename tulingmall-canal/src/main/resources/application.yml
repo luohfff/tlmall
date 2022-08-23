@@ -22,6 +22,9 @@ canal:
   promotion:
     destination: promotion
     batchSize: 1000
+  seckill:
+    destination: seckill
+    batchSize: 1000
 
 #rocketmq配置
 #rocketmq:

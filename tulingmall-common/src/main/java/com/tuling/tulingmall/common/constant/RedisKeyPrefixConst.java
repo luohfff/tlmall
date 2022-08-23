@@ -1,12 +1,5 @@
 package com.tuling.tulingmall.common.constant;
 
-/**
- * @author ：图灵学院
- * @date ：Created in 2020/2/17
- * @version: V1.0
- * @slogan: 天下风云出我辈，一入代码岁月催
- * @description:
- **/
 public interface RedisKeyPrefixConst {
     /**
      * 产品详情内容缓存前缀
@@ -39,24 +32,16 @@ public interface RedisKeyPrefixConst {
      */
     String MIAOSHA_ASYNC_WAITING_PREFIX = "miaosha:async:waiting:";
 
-    /**
-     * 当前正在进行的秒杀商品缓存hash - key
-     */
+    /*当前正在进行的秒杀商品缓存hash - key*/
     String FLASH_PROMOTION_PRODUCT_KEY = "flash:promotion:hashtable";
 
-    /**
-     * 存储在redis的hashtable当中秒杀活动信息
-     */
+    /*存储在redis的hashtable当中秒杀活动信息*/
     String ACTIVE_FLASH_PROMOTION_KEY = "flash:promotion:info";
 
-    /**
-     * 当库存减到0时,需要做一次库存同步,存在预减
-     */
+    /*当库存减到0时,需要做一次库存同步,存在预减*/
     String STOCK_REFRESHED_MESSAGE_PREFIX = "stock:refreshed:message:";
 
-    /**
-     * redis布隆过滤器key
-     */
+    /*redis布隆过滤器key*/
     String PRODUCT_REDIS_BLOOM_FILTER = "product:redis:bloom:filter";
 
 }

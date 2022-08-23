@@ -1,6 +1,7 @@
 package com.tuling.tulingmall.promotion.controller;
 
 import com.tuling.tulingmall.common.api.CommonResult;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.promotion.domain.HomeContentResult;
 import com.tuling.tulingmall.promotion.service.HomePromotionService;
 import io.swagger.annotations.Api;
@@ -9,6 +10,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 首页推荐管理Controller
@@ -29,5 +32,8 @@ public class HomeRecommendController {
         HomeContentResult contentResult = homePromotionService.content(getType);
         return CommonResult.success(contentResult);
     }
+
+
+
 
 }

@@ -34,9 +34,6 @@ public class PromotionData implements IProcessCanalData {
     private Map<String,String> tableMapKey = new HashMap<>();
 
     @Autowired
-    private CanalPromotionConfig canalPromotionConfig;
-
-    @Autowired
     @Qualifier("promotionConnector")
     private CanalConnector connector;
 
@@ -74,7 +71,7 @@ public class PromotionData implements IProcessCanalData {
     }
 
     @Async
-    @Scheduled(initialDelayString="${canal.promotion.initialDelay}",fixedDelayString = "${canal.promotion.fixedDelay}")
+    @Scheduled(initialDelayString="${canal.promotion.initialDelay:5000}",fixedDelayString = "${canal.promotion.fixedDelay:1000}")
     @Override
     public void processData() {
         try {
