@@ -1,5 +1,8 @@
 package com.tuling.tulingmall.controller;
 
+import com.ramostear.captcha.HappyCaptcha;
+import com.ramostear.captcha.support.CaptchaStyle;
+import com.ramostear.captcha.support.CaptchaType;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.api.TokenInfo;
 import com.tuling.tulingmall.model.UmsMember;
@@ -10,12 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,11 +47,24 @@ public class UmsMemberController {
         return memberService.register(username, password, telephone, authCode);
     }
 
+    @GetMapping("/verifyCode")
+    public void generateImg(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HappyCaptcha.require(req,resp)
+                .style(CaptchaStyle.ANIM) //动画 or 图片
+                .type(CaptchaType.ARITHMETIC_ZH) // 中文简体加、减、乘、除
+                .build().finish();
+    }
+
     @ApiOperation("会员登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult login(@RequestParam String username,
-                              @RequestParam String password) {
+                              @RequestParam String password,
+                              @RequestParam String verifyCode,
+                              HttpServletRequest request) {
+        if(!HappyCaptcha.verification(request, verifyCode, true)){
+            return CommonResult.failed("请填入正确的验证码");
+        }
         TokenInfo tokenInfo = memberService.login(username, password);
         if (tokenInfo == null) {
             return CommonResult.validateFailed("用户名或密码错误");
