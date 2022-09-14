@@ -1,12 +1,13 @@
 package com.tuling.tulingmall.generator;
 
-import ch.qos.logback.core.db.dialect.DBUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -69,12 +70,6 @@ public class EntityGeneratorTest {
 
         // 拼凑参数
         Map<String, Object> paramMap = getCommonParam(TABLENAME);
-//        if(StringUtils.isNotBlank(PropLoader.getPlanProp("db.orderby"))) {
-//            paramMap.put("table_order_by", PropLoader.getPlanProp("db.orderby"));
-//        }
-//        if(StringUtils.isNotBlank(PropLoader.getPlanProp("db.order"))) {
-//            paramMap.put("table_order", PropLoader.getPlanProp("db.order"));
-//        }
         String pojoName = paramMap.get("pojo_name").toString();
 
         addTableInfo(paramMap, TABLENAME);
