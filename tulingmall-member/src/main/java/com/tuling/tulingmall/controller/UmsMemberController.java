@@ -5,7 +5,13 @@ import com.ramostear.captcha.support.CaptchaStyle;
 import com.ramostear.captcha.support.CaptchaType;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.api.TokenInfo;
+import com.tuling.tulingmall.common.constant.RedisMemberPrefix;
+import com.tuling.tulingmall.domain.PortalMemberInfo;
 import com.tuling.tulingmall.model.UmsMember;
+import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
+import com.tuling.tulingmall.service.UmsMemberCenterService;
+import com.tuling.tulingmall.service.UmsMemberReceiveAddressService;
 import com.tuling.tulingmall.service.UmsMemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,11 +25,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 会员登录注册管理Controller
- * Created by macro on 2018/8/3.
  */
 @Controller
 @Api(tags = "UmsMemberController", description = "会员登录注册管理")
@@ -36,6 +43,15 @@ public class UmsMemberController {
     private String tokenHead;
     @Autowired
     private UmsMemberService memberService;
+
+    @Autowired
+    private UmsMemberCenterService umsMemberCenterService;
+
+    @Autowired
+    private UmsMemberReceiveAddressService memberReceiveAddressService;
+
+    @Autowired
+    private RedisOpsExtUtil redisOpsUtil;
 
     @ApiOperation("会员注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -73,8 +89,18 @@ public class UmsMemberController {
         tokenMap.put("token", tokenInfo.getAccess_token());
         tokenMap.put("tokenHead", tokenHead);
         tokenMap.put("refreshToken",tokenInfo.getRefresh_token());
-        tokenMap.put("memberId",tokenInfo.getAdditionalInfo().get("memberId"));
+        String memberIdStr = tokenInfo.getAdditionalInfo().get("memberId");
+        tokenMap.put("memberId",memberIdStr);
         tokenMap.put("nickName",username);
+
+        /*用户登录成功后，将用户相关信息存入Redis，12小时后过期*/
+        Long memberId = Long.valueOf(memberIdStr);
+        UmsMember memberInfo = umsMemberCenterService.getMemberInfo(Long.valueOf(memberId));
+        redisOpsUtil.set(RedisMemberPrefix.MEMBER_INFO_PREFIX+memberIdStr,memberInfo,60*60*12, TimeUnit.SECONDS);
+        List<UmsMemberReceiveAddress> addressList = memberReceiveAddressService.list(memberId);
+        redisOpsUtil.putListAllRight(RedisMemberPrefix.MEMBER_ADDRESS_PREFIX+memberIdStr,addressList);
+        redisOpsUtil.expire(RedisMemberPrefix.MEMBER_ADDRESS_PREFIX+memberIdStr,60*60*12, TimeUnit.SECONDS);
+
         return CommonResult.success(tokenMap);
     }
 

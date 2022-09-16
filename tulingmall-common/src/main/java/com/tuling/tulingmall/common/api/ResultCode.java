@@ -8,6 +8,7 @@ package com.tuling.tulingmall.common.api;
 public enum ResultCode implements IErrorCode {
     SUCCESS(200, "操作成功"),
     FAILED(500, "操作失败"),
+    ACCEPTED(202, "操作进行中"),
     VALIDATE_FAILED(404, "参数检验失败"),
     UNAUTHORIZED(401, "暂未登录或token已经过期"),
     AUTHORIZATION_HEADER_IS_EMPTY(600,"请求头中的token为空"),

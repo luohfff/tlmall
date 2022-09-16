@@ -17,7 +17,7 @@ public interface HomePromotionService {
     /*秒杀产品*/
     List<FlashPromotionProduct> secKillContent(long secKillId);
 
-    int turnOnSecKill(long secKillId);
+    int turnOnSecKill(long secKillId,int status);
 
 //    /**
 //     * 首页商品推荐

@@ -54,8 +54,6 @@ public interface SecKillOrderService {
      */
     FlashPromotionProduct getProductInfo(Long flashPromotionId,Long productId);
 
-    Long generateOrderId(Long memberId);
-
     void failSendMessage(long productId, Map<String,Object> result);
 
 }

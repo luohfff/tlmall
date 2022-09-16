@@ -33,13 +33,11 @@ public class SecKillOrderController {
         return secKillOrderService.generateSecKillOrder(secKillOrderParam,memberId,null,1);
     }
 
-    @ApiOperation("获取秒杀订单，可避免重复下单")
-    @GetMapping(value = "/generateOrderId")
+    @ApiOperation("查询秒杀订单是否生成")
+    @RequestMapping(value = "/checkOrder",method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult generateOrderId(@RequestHeader("memberId") Long memberId) throws BusinessException {
-        Long orderId = secKillOrderService.generateOrderId(memberId);
-        return CommonResult.success(orderId);
+    public CommonResult checkOrder(@RequestParam("orderId") Long orderId) throws BusinessException {
+        return checkOrder(orderId);
     }
-
 
 }

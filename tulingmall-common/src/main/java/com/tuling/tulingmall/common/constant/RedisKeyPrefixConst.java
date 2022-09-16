@@ -44,4 +44,6 @@ public interface RedisKeyPrefixConst {
     /*redis布隆过滤器key*/
     String PRODUCT_REDIS_BLOOM_FILTER = "product:redis:bloom:filter";
 
+    String SECKILL_PRODUCT_PREFIX = "sk:prdt:";
+
 }

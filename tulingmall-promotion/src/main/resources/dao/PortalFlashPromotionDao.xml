@@ -40,7 +40,7 @@
         sms_flash_promotion sp
         LEFT JOIN sms_flash_promotion_product_relation sfp ON sfp.flash_promotion_id=sp.id
         WHERE NOW()>=sp.start_date AND sp.end_date>NOW() and status=1
-        <if test="pid != null">
+        <if test="spid != null">
             AND sp.id=#{spid}
         </if>
         ORDER BY sfp.sort DESC

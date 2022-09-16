@@ -49,4 +49,12 @@ public class ConstantPromotion {
     public final static int HOME_GET_TYPE_HOT = 3;
     public final static int HOME_GET_TYPE_AD = 4;
 
+    /*秒杀状态：0->下线；1->上线*/
+    public final static int SECKILL_CLOSE = 0;
+    public final static int SECKILL_OPEN = 1;
+
+    /*秒杀静态页处理结果：0->成功；-1->失败*/
+    public final static int STATIC_HTML_SUCCESS = 0;
+    public final static int STATIC_HTML_FAILURE = -1;
+
 }

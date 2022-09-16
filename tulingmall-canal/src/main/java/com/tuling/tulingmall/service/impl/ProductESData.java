@@ -33,7 +33,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
-@Service
+/**
+ * 演示异构数据库下的实时数据同步，
+ * 商品数据的变化从MySQL同步到ElasticSearch，本类未经测试，仅供参考
+ * 同时商品数据的变化从业务上来说，也应该同步一份到Redis，本次课程略过具体实现
+ */
+//@Service
 @Slf4j
 public class ProductESData implements IProcessCanalData {
 

@@ -25,7 +25,7 @@ public class OrderMessageSender {
 //    @Value("${rocketmq.tulingmall.transTopic}")
 //    private String transTopic;
 
-    @Value("${rocketmq.tulingmall.asyncOrderTopic}")
+    @Value("${rocketmq.tulingmall.asyncOrderTopicSk}")
     private String asyncOrderTopic;
 
     @Autowired

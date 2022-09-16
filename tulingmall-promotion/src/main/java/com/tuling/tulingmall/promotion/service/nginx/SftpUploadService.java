@@ -13,36 +13,8 @@ import java.util.Properties;
 @Service
 public class SftpUploadService {
 
-    @Value("${secKillServerList}")
-    private List<String> secKillServerList;
-
-    /**sftp服务器ip地址*/
-    @Value("${ftp.host}")
-    private String host;
-
-    /**端口*/
-    @Value("${seckill.sftp.port}")
-    private static int port;
-
-    /**用户名*/
-    @Value("${seckill.sftp.userName}")
-    private static String userName;
-
-    /**密码*/
-    @Value("${seckill.sftp.password}")
-    private static String password;
-
-    /**存放图片的根目录*/
-    @Value("${seckill.sftp.rootPath}")
-    private static String rootPath;
-
-    /**存放图片的路径*/
-    @Value("${seckill.sftp.img.url}")
-    private static String imgUrl;
-
-
     /** 获取连接 */
-    private ChannelSftp getChannel() throws Exception{
+    public ChannelSftp getChannel(String host,String userName,int port,String password) throws Exception{
         JSch jsch = new JSch();
         //->ssh root@host:port
         Session sshSession = jsch.getSession(userName,host,port);
@@ -54,38 +26,32 @@ public class SftpUploadService {
         sshSession.connect();
         Channel channel = sshSession.openChannel("sftp");
         channel.connect();
+        log.info("已连接服务器：{}，准备上传....",host);
         return (ChannelSftp) channel;
     }
+
     /**
-     * ftp上传图片
-     * @param inputStream 图片io流
-     * @param imagePath 路径，不存在就创建目录
-     * @param imagesName 图片名称
-     * @return urlStr 图片的存放路径
+     * sftp上传文件
+     * @param sftp
+     * @param inputStream
+     * @param fileName 服务器上存放的文件名
      */
-    public String putImages(InputStream inputStream, String imagePath, String imagesName){
+    public void putFile(ChannelSftp sftp,InputStream inputStream, String path, String fileName){
         try {
-            ChannelSftp sftp = getChannel();
-            String path = rootPath + imagePath + "/";
-            createDir(path,sftp);
             //上传文件
-            sftp.put(inputStream, path + imagesName);
-            log.info("上传成功！");
-            sftp.quit();
-            sftp.exit();
-            //处理返回的路径
-            String resultFile;
-            resultFile = imgUrl + imagePath + imagesName;
-            return resultFile;
+            log.info("准备上传{}.....",path + fileName);
+            sftp.put(inputStream, path + fileName);
+            log.info("上传{}成功！",path + fileName);
+
         } catch (Exception e) {
-            log.error("上传失败：" + e.getMessage());
+            log.error("上传{}失败：",path + fileName,e);
         }
-        return "";
     }
+
     /**
      * 创建目录
      */
-    private static void createDir(String path,ChannelSftp sftp) throws SftpException {
+    public static void createDir(String path,ChannelSftp sftp) throws SftpException {
         String[] folders = path.split("/");
         sftp.cd("/");
         for ( String folder : folders ) {

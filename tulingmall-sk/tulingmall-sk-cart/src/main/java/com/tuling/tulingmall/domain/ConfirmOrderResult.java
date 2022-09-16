@@ -6,9 +6,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 确认单信息封装
+ * 秒杀确认单信息封装
  */
 public class ConfirmOrderResult {
+    /*订单防重*/
+    private Long orderId;
     //包含优惠信息的购物车信息
     private List<CartPromotionItem> cartPromotionItemList;
     //用户收货地址列表
@@ -39,6 +41,14 @@ public class ConfirmOrderResult {
 
     public void setCalcAmount(CalcAmount calcAmount) {
         this.calcAmount = calcAmount;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public static class CalcAmount{

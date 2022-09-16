@@ -32,6 +32,10 @@
             <artifactId>tulingmall-common</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.tuling</groupId>
+            <artifactId>tulingmall-redis-comm</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
             <exclusions>

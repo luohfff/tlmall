@@ -1,6 +1,6 @@
 spring:
   application:
-    name: tulingmall-cart
+    name: tulingmall-sk-cart
   cloud:
     nacos:
       config:
@@ -16,9 +16,10 @@ spring:
           data-id: tulingmall-db-common.yml
           group: DEFAULT_GROUP
           refresh: true
+      discovery:
+        server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848
   profiles:
     active: dev
-
 
 logging:
   level:

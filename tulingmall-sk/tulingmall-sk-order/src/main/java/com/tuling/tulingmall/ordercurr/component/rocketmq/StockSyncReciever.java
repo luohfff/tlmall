@@ -2,7 +2,7 @@ package com.tuling.tulingmall.ordercurr.component.rocketmq;
 
 import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.ordercurr.feignapi.pms.PmsProductFeignApi;
-import com.tuling.tulingmall.ordercurr.util.RedisOpsUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
@@ -12,14 +12,15 @@ import org.springframework.stereotype.Component;
 
 /**
  * @description: 消息消费，解决数据库和redis库存不一致的问题
+ * 本类其实已无必要
  **/
 @Slf4j
-@Component
+//@Component
 //@RocketMQMessageListener(topic = "${rocketmq.tulingmall.stocksync}",consumerGroup = "stock-sync-worker")
 public class StockSyncReciever implements RocketMQListener<String> {
 
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsUtil;
 
     @Autowired
     private PmsProductFeignApi stockManageFeignApi;
@@ -40,10 +41,10 @@ public class StockSyncReciever implements RocketMQListener<String> {
          */
         if(redisOpsUtil.hasKey(RedisKeyPrefixConst.STOCK_REFRESHED_MESSAGE_PREFIX + promotionId)){
             log.info("start sync mysql stock to redis");
-            //error mark注：这里的同步是没有必要的，有可能造成超卖的情况，动作一是直接从数据库读取
+            //error mark注：这里的同步是没有必要的，而且有可能造成超卖的情况，动作一是直接从数据库读取
             // 或是远程调用获得当前库存，动作二是在获取后再更改redis缓存中的库存值，这中间是有个时间段的，
             // 因此在并发情况下，不管是否有NPC问题，完全有可能出现在这两个动作之间出现了新的DB库存扣减操作
-            // 在V5版本中已经改成所有的库存扣减只从Redis中操作，然后从redis中异步写回到DB中
+            // 在V5版本中已经改成所有的库存扣减只从Redis中操作，然后从MQ中异步写回到DB中
             //todo 同步一下库存到缓存当中
             Integer stock = stockManageFeignApi.selectStock(productID,promotionId).getData();
             if(stock > 0){

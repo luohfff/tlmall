@@ -1,7 +1,6 @@
 package com.tuling.tulingmall.feignapi.pms;
 
 import com.tuling.tulingmall.common.api.CommonResult;
-import com.tuling.tulingmall.domain.CartProduct;
 import com.tuling.tulingmall.domain.CartPromotionItem;
 import com.tuling.tulingmall.domain.PmsProductParam;
 import com.tuling.tulingmall.domain.PromotionProduct;
@@ -15,10 +14,6 @@ import java.util.List;
 */
 @FeignClient(name = "tulingmall-product")
 public interface PmsProductFeignApi {
-
-    @RequestMapping(value = "/pms/cartProduct/{productId}", method = RequestMethod.GET)
-    @ResponseBody
-    CommonResult<CartProduct> getCartProduct(@PathVariable("productId") Long productId);
 
     @RequestMapping(value = "/pms/getPromotionProductList", method = RequestMethod.GET)
     CommonResult<List<PromotionProduct>> getPromotionProductList(@RequestParam("productIds") List<Long> ids);

@@ -1,9 +1,6 @@
 server:
   port: 8855
 spring:
-  datasource:
-    dynamic:
-      primary: cart
   redis:
     cluster:
       nodes: 192.168.65.153:6379,192.168.65.222:6379,192.168.65.218:6379,192.168.65.186:6379,192.168.65.111:6379,192.168.65.162:6379
@@ -15,19 +12,16 @@ spring:
         min-idle: 0 # 连接池中的最小空闲连接
       timeout: 3000ms # 连接超时时间（毫秒）
     password: tlmall
-mybatis:
-  mapper-locations:
-    - classpath:dao/*.xml
-    - classpath*:com/**/mapper/*.xml
-
-#zk配置
-zk:
- curator:
-   retryCount: 5 #重试次数
-   elapsedTimeMs: 5000 #
-   connectUrl: tlshop.com:2181 #zk地址
-   sessionTimeOutMs: 60000 #会话超时时间
-   connectionTimeOutMs: 5000 #连接超时时间
+  redisStock:
+    host: 192.168.65.190
+    port: 6379
+    lettuce:
+      pool:
+        max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 8 # 连接池中的最大空闲连接
+        min-idle: 0 # 连接池中的最小空闲连接
+      timeout: 3000ms # 连接超时时间（毫秒）
 
 rocketmq:
   producer:

@@ -170,7 +170,7 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         /*一次获取多个OrderItem的id，但是可能获取的数量少于订单详情数*/
         List<String> omsOrderItemIDList = unqidFeignApi.getSegmentIdList(OrderConstant.LEAF_ORDER_ITEM_ID_KEY,
                 itemSize);
-        log.debug("获得订单详情的ID：{}" ,omsOrderItemIDList);
+        log.debug("获得订单详情的ID：{}，需求{}个，实际{}个" ,omsOrderItemIDList,itemSize,omsOrderItemIDList.size());
         int itemListIndex = 0;
         for (CartPromotionItem cartPromotionItem : cartPromotionItemList) {
             //生成下单商品信息

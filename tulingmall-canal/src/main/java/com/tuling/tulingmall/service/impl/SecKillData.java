@@ -4,13 +4,12 @@ import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
-import com.tuling.tulingmall.config.CanalPromotionConfig;
 import com.tuling.tulingmall.config.PromotionRedisKey;
-import com.tuling.tulingmall.domain.ProductESVo;
 import com.tuling.tulingmall.feignapi.promotion.PromotionFeignApi;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
-import com.tuling.tulingmall.rediscomm.util.RedisOpsUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import com.tuling.tulingmall.service.IProcessCanalData;
+import com.tuling.tulingmall.util.RedisStockUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -32,8 +32,6 @@ public class SecKillData implements IProcessCanalData {
     private final static int ON_SECKILL_STATUS = 1;
     private final static int OFF_SECKILL_STATUS = 0;
 
-    private final static String SECKILL_PRODUCT_PREFIX = "sk:prdt:";
-
     @Autowired
     @Qualifier("secKillConnector")
     private CanalConnector connector;
@@ -42,7 +40,10 @@ public class SecKillData implements IProcessCanalData {
     private PromotionRedisKey promotionRedisKey;
 
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsExtUtil;
+
+    @Autowired
+    private RedisStockUtil redisStockUtil;
 
     @Value("${canal.seckill.subscribe:server}")
     private String subscribe;
@@ -85,9 +86,9 @@ public class SecKillData implements IProcessCanalData {
                 long batchId = message.getId();
                 int size = message.getEntries().size();
                 if (batchId == -1 || size == 0) {
-                    log.info("本次没有检测到秒杀数据更新。");
+                    log.info("本次[{}]没有检测到秒杀数据更新。",batchId);
                 }else{
-                    log.info("秒杀数据本次共有[{}]次更新需要处理",size);
+                    log.info("本次[{}]秒杀数据本次共有[{}]次更新需要处理",batchId,size);
                     for(CanalEntry.Entry entry : message.getEntries()){
                         if (entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONBEGIN
                                 || entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND) {
@@ -143,9 +144,9 @@ public class SecKillData implements IProcessCanalData {
                                 }
                             }
                         }
-
                     }
                     connector.ack(batchId); // 提交确认
+                    log.info("本次[{}]处理秒杀Canal同步数据完成",batchId);
                 }
             }
         } catch (Exception e) {
@@ -157,32 +158,38 @@ public class SecKillData implements IProcessCanalData {
     /* PO 本方法可以用pipeline优化*/
     private void secKillOnRedis(long secKillId){
         final String secKillKey = promotionRedisKey.getSecKillKey();
-        redisOpsUtil.delete(secKillKey);
+        redisOpsExtUtil.delete(secKillKey);
         List<FlashPromotionProduct> result =
                 promotionFeignApi.getHomeSecKillProductList(secKillId).getData();
-        /*首页显示需要*/
-        redisOpsUtil.putListAllRight(secKillKey,result);
+        long homeShowDuration = result.get(0).getFlashPromotionEndDate().getTime() - System.currentTimeMillis();
+        if(homeShowDuration > 0){
+            /*首页显示需要*/
+            redisOpsExtUtil.putListAllRight(secKillKey,result);
+            redisOpsExtUtil.expire(secKillKey,homeShowDuration, TimeUnit.MILLISECONDS);
+        }
         /*秒杀服务需要*/
         for(FlashPromotionProduct product : result){
-            String productKey = SECKILL_PRODUCT_PREFIX + product.getFlashPromotionId()
+            String productKey = RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + product.getFlashPromotionId()
                     + ":" + product.getId();
             String productCountKey = RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + product.getId();
-            redisOpsUtil.delete(productKey);
-            redisOpsUtil.delete(productCountKey);
-            redisOpsUtil.set(productKey,product);
-            redisOpsUtil.set(productCountKey,product.getFlashPromotionCount());
+            redisOpsExtUtil.delete(productKey);
+            redisStockUtil.delete(productCountKey);
+            if(homeShowDuration > 0){
+                redisOpsExtUtil.set(productKey,product,homeShowDuration, TimeUnit.MILLISECONDS);
+                redisStockUtil.set(productCountKey,product.getFlashPromotionCount(),homeShowDuration, TimeUnit.MILLISECONDS);
+            }
         }
     }
 
     /* PO 本方法可以用pipeline优化*/
     private void secKillOffRedis(List<FlashPromotionProduct> products){
         final String secKillKey = promotionRedisKey.getSecKillKey();
-        redisOpsUtil.delete(secKillKey);
+        redisOpsExtUtil.delete(secKillKey);
         /*秒杀服务需要*/
         for(FlashPromotionProduct product : products){
-            redisOpsUtil.delete(SECKILL_PRODUCT_PREFIX + product.getFlashPromotionId()
+            redisOpsExtUtil.delete(RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + product.getFlashPromotionId()
                     + ":" + product.getId());
-            redisOpsUtil.delete(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + product.getId());
+            redisStockUtil.delete(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + product.getId());
         }
     }
 }

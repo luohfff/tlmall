@@ -7,10 +7,7 @@ import com.tuling.tulingmall.common.exception.BusinessException;
 import com.tuling.tulingmall.ordercurr.component.LocalCache;
 import com.tuling.tulingmall.ordercurr.component.rocketmq.OrderMessageSender;
 import com.tuling.tulingmall.ordercurr.domain.*;
-import com.tuling.tulingmall.ordercurr.feignapi.pms.PmsProductFeignApi;
 import com.tuling.tulingmall.ordercurr.feignapi.promotion.PromotionFeignApi;
-import com.tuling.tulingmall.ordercurr.feignapi.ums.UmsMemberFeignApi;
-import com.tuling.tulingmall.ordercurr.feignapi.unqid.UnqidFeignApi;
 import com.tuling.tulingmall.ordercurr.mapper.OmsOrderItemMapper;
 import com.tuling.tulingmall.ordercurr.mapper.OmsOrderMapper;
 import com.tuling.tulingmall.ordercurr.model.OmsOrder;
@@ -18,9 +15,10 @@ import com.tuling.tulingmall.ordercurr.model.OmsOrder;
 import com.tuling.tulingmall.ordercurr.model.OmsOrderItem;
 import com.tuling.tulingmall.ordercurr.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.ordercurr.service.SecKillOrderService;
-import com.tuling.tulingmall.ordercurr.util.RedisOpsUtil;
+import com.tuling.tulingmall.ordercurr.util.RedisStockUtil;
 import com.tuling.tulingmall.ordercurr.util.RocksDBUtil;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.rocksdb.RocksDBException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,16 +36,10 @@ import java.util.concurrent.*;
 @Service
 public class SecKillOrderServiceImpl implements SecKillOrderService {
 
-    private final static String SECKILL_PRODUCT_PREFIX = "sk:prdt:";
-
     @Autowired
-    private UnqidFeignApi unqidFeignApi;
+    private RedisOpsExtUtil redisOpsUtil;
     @Autowired
-    private UmsMemberFeignApi umsMemberFeignApi;
-    @Autowired
-    private RedisOpsUtil redisOpsUtil;
-    @Autowired
-    private PmsProductFeignApi pmsProductFeignApi;
+    private RedisStockUtil redisStockUtil;
     @Autowired
     private OmsOrderMapper orderMapper;
     @Autowired
@@ -59,25 +51,34 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     @Autowired
     private PromotionFeignApi promotionFeignApi;
 
+    public CommonResult checkOrder(Long orderId){
+        if(null != orderMapper.selectByPrimaryKey(orderId)){
+            return CommonResult.success("success");
+        }else{
+            return CommonResult.doing();
+        }
+    }
+
     /**
      * 秒杀订单下单，采用Redis缓存中直接扣减库存，
-     * 线程池和MQ异步保存到DB下单模式，应对高并发进行削峰
+     * MQ异步保存到DB下单模式，应对高并发进行削峰，
+     * 如果发送消息到MQ也成为性能瓶颈，可以引入线程池，将消息改为异步发送
      * 但存在着Redis宕机和本服务同时宕机的可能，会造成数据的丢失，
      * 需要快速持久化扣减记录，采用WAL机制实现，保存到本地RockDB数据库
      */
     @Override
     public CommonResult<Map<String,Object>> generateSecKillOrder(SecKillOrderParam secKillOrderParam, Long memberId,
                                                                  String token,Integer stockCount) throws BusinessException {
-        Long productId = secKillOrderParam.getItemIds().get(0);
+        Long productId = secKillOrderParam.getProductId();
         CommonResult commonResult = confirmCheck(productId,memberId,token);
         if(commonResult.getCode() == 500){
             return commonResult;
         }
         Long orderId = secKillOrderParam.getOrderId();
-        if(null == orderId){
-            orderId = generateOrderId(memberId);
+        Long orderItemId = secKillOrderParam.getOrderItemId();
+        if(null == orderId || null == orderItemId){
+            throw new BusinessException("缺失订单编号，请重试!");
         }
-        String orderSn = orderId.toString();
 
         //【2】 从缓存中获取产品信息
         FlashPromotionProduct product = getProductInfo(secKillOrderParam.getFlashPromotionId(),productId);
@@ -85,11 +86,6 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
         if(!volidateMiaoShaTime(product)){
             return CommonResult.failed("秒杀活动未开始或已结束！");
         }
-        // PO : 用户的相关信息，应该存入缓存避免每次都从用户微服务中获取
-        //【4】 调用会员服务获取会员信息
-        //UmsMember member = umsMemberFeignApi.getMemberById().getData();
-        //【5】 通过Feign远程调用 会员地址服务
-        UmsMemberReceiveAddress address = umsMemberFeignApi.getItem(secKillOrderParam.getMemberReceiveAddressId()).getData();
 
         /*在本地持久化扣减记录*/
         String cfName = OrderConstant.RD_CFNAME_PREFIX + secKillOrderParam.getFlashPromotionId();
@@ -109,7 +105,9 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
 
         //准备创建订单
         //生成下单商品信息
+        String orderSn = orderId.toString();
         OmsOrderItem orderItem = new OmsOrderItem();
+        orderItem.setId(orderItemId);
         orderItem.setProductId(product.getId());
         orderItem.setProductName(product.getName());
         orderItem.setProductPic(product.getPic());
@@ -129,8 +127,6 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
         BigDecimal payAmount = product.getFlashPromotionPrice().multiply(new BigDecimal(1));
         //优惠价格
         orderItem.setRealAmount(payAmount);
-
-        orderItem.setId(Long.valueOf(unqidFeignApi.getSegmentId(OrderConstant.LEAF_ORDER_ITEM_ID_KEY)));
         orderItem.setOrderSn(orderSn);
 
         OmsOrder order = new OmsOrder();
@@ -155,6 +151,7 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
         //订单类型：0->正常订单；1->秒杀订单
         order.setOrderType(OrderConstant.ORDER_TYPE_SECKILL);
         //用户收货信息
+        UmsMemberReceiveAddress address = secKillOrderParam.getMemberReceiveAddress();
         order.setReceiverName(address.getName());
         order.setReceiverPhone(address.getPhoneNumber());
         order.setReceiverPostCode(address.getPostCode());
@@ -188,7 +185,7 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
             boolean sendStatus = orderMessageSender.sendCreateOrderMsg(orderMessage);
             if(sendStatus){
                 /*打上排队的标记*/
-                redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId + ":" + productId
+                redisStockUtil.set(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId + ":" + productId
                         ,Integer.toString(1),60, TimeUnit.SECONDS);
                 /*下单方式0->同步下单,1->异步下单排队中,-1->秒杀失败*/
                 result.put("orderStatus",OrderConstant.ORDER_SECKILL_ORDER_TYPE_ASYN);
@@ -212,18 +209,19 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
         cache.remove(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId);
         /*通知秒杀订单服务群,清除本地售罄标记缓存*/
         if(shouldPublishCleanMsg(productId)){
-            redisOpsUtil.publish(OrderConstant.REDIS_CLEAN_NO_STOCK_CHANNEL,productId);
+            redisStockUtil.publish(OrderConstant.REDIS_CLEAN_NO_STOCK_CHANNEL,productId);
         }
         if(null != result){
             result.put("orderStatus",OrderConstant.ORDER_SECKILL_ORDER_TYPE_FAILURE);
         }
     }
 
-    /*供消息消费者扣减库存和保存订单的api，
-    此处应该使用分布式事务，基于seata或者mq事务消息都可以*/
+    /* 供消息消费者扣减库存和保存订单的api，
+    其实变为独立服务或者将消费者直接移到订单微服务更好
+    todo 此处应该使用分布式事务，基于seata或者mq事务消息都可以*/
     @Transactional
     public Long asyncCreateOrder(OmsOrder order,OmsOrderItem orderItem,Long flashPromotionRelationId) {
-        //减库存
+        //从数据库中扣减库存
         Integer result = promotionFeignApi.descStock(flashPromotionRelationId, 1);
         if (result <= 0) {
             throw new RuntimeException("没抢到！");
@@ -236,9 +234,7 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
         orderItem.setOrderSn(order.getOrderSn());
         //插入orderItem
         orderItemMapper.insertSelective(orderItem);
-        /*
-         * 如果订单创建成功,需要发送定时消息,20min后如果没有支付,则取消当前订单,释放库存
-         */
+        /*如果订单创建成功,需要发送定时消息,20min后如果没有支付,则取消当前订单,释放库存*/
         try {
             boolean sendStatus = orderMessageSender.sendTimeOutOrderMessage(order.getId() + ":" + flashPromotionRelationId + ":" + orderItem.getProductId());
             if (!sendStatus) {
@@ -252,13 +248,15 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
 
     /*Redis中扣减库存*/
     private boolean preDecrRedisStock(Long productId) {
-        Long stock = redisOpsUtil.decr(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId);
+        Long stock = redisStockUtil.decr(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId);
         if (stock < 0) {
             /* 还原缓存里的库存，主要是 当stock < 0时，有订单取消之类回滚库存的操作时，
             会导致增加的库存数量比实际的少，产生这个问题的主要原因是在扣减时未检查库存的数量，
             但是检查库存的数量，又容易导致库存超卖，库存超卖的问题主要是由两个原因引起的，
-            一个是查询和扣减不是原子操作，另一个是并发引起的请求无序，所以解决这个问题可以采用执行Lua脚本的方法：
+            一个是查询和扣减不是原子操作，另一个是并发引起的请求无序，
+            所以解决这个问题可以采用执行Lua脚本的方法进行库存扣减：
             PO: Lua脚本参考如下，以一行注释一行代码形式呈现：
+            -- -------------------Lua脚本代码开始***************************
             -- 调用Redis的get指令，查询活动库存，其中KEYS[1]为传入的参数1，即库存key
             local c_s = redis.call('get', KEYS[1])
             -- 判断活动库存是否充足，其中KEYS[2]为传入的参数2，即当前抢购数量
@@ -267,7 +265,8 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
             end
             -- 如果活动库存充足，则进行扣减操作。其中KEYS[2]为传入的参数2，即当前抢购数量
             redis.call('decrby',KEYS[1], KEYS[2])
-            当然还可以将上面的脚本进行脚本预加载，预加载机制之一可以参考tulingmall-redis-comm中分布式锁的实现
+            -- -------------------Lua脚本代码结束***********************
+            当然还可以将上面的脚本进行脚本预加载，预加载机制之一可以参考tulingmall-promotion中分布式锁的实现
             */
             incrRedisStock(productId);
             //error 并不需要V4版本中下面这一步，具体原因看 StockSyncReciever.java中的注释
@@ -275,11 +274,11 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
 //             * notify:<strong>千万注意这里一定不能用setNX,一旦使用,可能出现如果jvm在消息发出去前挂掉了
 //             * ,那也就意味着当前产品库存没有办法在卖完后跟DB做同步.</strong>
 //             */
-//            if(!redisOpsUtil.hasKey(RedisKeyPrefixConst.STOCK_REFRESHED_MESSAGE_PREFIX + promotionId)){
+//            if(!redisStockUtil.hasKey(RedisKeyPrefixConst.STOCK_REFRESHED_MESSAGE_PREFIX + promotionId)){
 //                /*这里这么做的目的非常重要：确保不会发生少卖现象
 //                 * 发延时消息,60s后,同步一次库存; 高并发下可能发送多条延时消息，但是没关系，可以容忍*/
 //                if(orderMessageSender.sendStockSyncMessage(productId,promotionId)){
-//                    redisOpsUtil.set(RedisKeyPrefixConst.STOCK_REFRESHED_MESSAGE_PREFIX + promotionId,0);
+//                    redisStockUtil.set(RedisKeyPrefixConst.STOCK_REFRESHED_MESSAGE_PREFIX + promotionId,0);
 //                }
 //            }
             return false;
@@ -289,8 +288,8 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
 
     //还原库存
     public void incrRedisStock(Long productId){
-        if(redisOpsUtil.hasKey(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId)){
-            redisOpsUtil.incr(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId);
+        if(redisStockUtil.hasKey(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId)){
+            redisStockUtil.incr(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId);
         }
     }
 
@@ -305,13 +304,13 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
         /*
          *2、 校验是否有权限购买token TODO 楼兰
          */
-      /*  String redisToken = redisOpsUtil.get(RedisKeyPrefixConst.MIAOSHA_TOKEN_PREFIX + memberId + ":" + productId);
+      /*  String redisToken = redisStockUtil.get(RedisKeyPrefixConst.MIAOSHA_TOKEN_PREFIX + memberId + ":" + productId);
         if(StringUtils.isEmpty(redisToken) || !redisToken.equals(token)){
             return CommonResult.failed("非法请求,token无效!");
         }*/
 
         //3、从redis缓存当中取出当前要购买的商品库存
-        Integer stock = redisOpsUtil.get(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId,Integer.class);
+        Integer stock = redisStockUtil.get(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId,Integer.class);
 
         if(stock == null || stock <= 0){
             /*设置标记，如果售罄了在本地cache中设置为true*/
@@ -319,7 +318,7 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
             return CommonResult.failed("商品已经售罄,请购买其它商品!");
         }
 
-        String async = redisOpsUtil.get(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId + ":" + productId);
+        String async = redisStockUtil.get(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId + ":" + productId);
         if(async != null && async.equals("1")){
             Map<String,Object> result = new HashMap<>();
             result.put("orderStatus","1");//下单方式0->同步下单,1->异步下单排队中,-1->秒杀失败,>1->秒杀成功(返回订单号)
@@ -329,38 +328,16 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     }
 
     public boolean shouldPublishCleanMsg(Long productId){
-        Integer stock = redisOpsUtil.get(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId,Integer.class);
+        Integer stock = redisStockUtil.get(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId,Integer.class);
         return (stock == null || stock <= 0);
     }
 
-    /**
-     * 生成订单的orderId
-     * @param memberId 用户ID
-     */
-    public Long generateOrderId(Long memberId){
-        String leafOrderId = unqidFeignApi.getSegmentId(OrderConstant.LEAF_ORDER_ID_KEY);
-        String strMemberId = memberId.toString();
-        String OrderIdTail = memberId < 10 ? "0" + strMemberId
-                : strMemberId.substring(strMemberId.length() - 2);
-        log.debug("生成订单的orderId，组成元素为：{},{}",leafOrderId,OrderIdTail);
-        return Long.valueOf(leafOrderId + OrderIdTail);
-    }
-
-
-//    /**
-//     * 获取产品信息,http调用产品服务
-//     */
-//    public PmsProductParam getProductInfo(Long productId){
-//        //获取商品信息,判断当前商品是否为秒杀商品
-//        CommonResult<PmsProductParam> commonResult = pmsProductFeignApi.getProductInfo(productId);
-//        return commonResult.getData();
-//    }
 
     /**
      * 从缓存中获得秒杀的产品信息
      */
     public FlashPromotionProduct getProductInfo(Long flashPromotionId,Long productId){
-        String productKey = SECKILL_PRODUCT_PREFIX + flashPromotionId
+        String productKey = RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + flashPromotionId
                 + ":" + productId;
         return redisOpsUtil.get(productKey,FlashPromotionProduct.class);
     }

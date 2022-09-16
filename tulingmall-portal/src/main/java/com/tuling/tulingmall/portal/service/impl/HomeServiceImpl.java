@@ -13,8 +13,8 @@ import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.portal.domain.HomeContentResult;
 import com.tuling.tulingmall.portal.feignapi.promotion.PromotionFeignApi;
 import com.tuling.tulingmall.portal.service.HomeService;
-import com.tuling.tulingmall.portal.util.RedisOpsUtil;
 import com.tuling.tulingmall.promotion.model.SmsHomeAdvertise;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +47,7 @@ public class HomeServiceImpl implements HomeService {
     @Autowired
     private PromotionRedisKey promotionRedisKey;
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsUtil;
 
     @Autowired
     @Qualifier("promotion")
@@ -100,11 +100,16 @@ public class HomeServiceImpl implements HomeService {
             secKills = secKillCacheBak.getIfPresent(secKillKey);
         }
         if(CollectionUtils.isEmpty(secKills)){
+            /*极小的概率出现本地两个缓存同时失效的问题，
+            从远程获取时，只从Redis缓存中获取，不从营销微服务中获取，
+            避免秒杀的流量冲垮营销微服务*/
             secKills = getSecKillFromRemote();
             if(!CollectionUtils.isEmpty(secKills)) {
                 secKillCache.put(secKillKey,secKills);
                 secKillCacheBak.put(secKillKey,secKills);
             }else{
+                /*Redis缓存中也没有秒杀活动信息，此处用一个空List代替，
+                * 其实可以用固定的图片或信息，作为降级和兜底方案*/
                 secKills = new ArrayList<FlashPromotionProduct>();
             }
         }
@@ -117,9 +122,9 @@ public class HomeServiceImpl implements HomeService {
     public List<FlashPromotionProduct> getSecKillFromRemote(){
         List<FlashPromotionProduct> result = redisOpsUtil.getListAll(promotionRedisKey.getSecKillKey(),
                 FlashPromotionProduct.class);
-        if(CollectionUtil.isEmpty(result)){
-            result = promotionFeignApi.getHomeSecKillProductList().getData();
-        }
+//        if(CollectionUtil.isEmpty(result)){
+//            result = promotionFeignApi.getHomeSecKillProductList().getData();
+//        }
         return result;
     }
     /*从远程(Redis或者对应微服务)获取推荐内容*/

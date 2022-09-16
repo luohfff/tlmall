@@ -1,5 +1,7 @@
 package com.tuling.tulingmall.ordercurr.domain;
 
+import com.tuling.tulingmall.ordercurr.model.UmsMemberReceiveAddress;
+
 import java.util.List;
 
 /**
@@ -9,16 +11,33 @@ public class SecKillOrderParam {
 
     /*可用于避免重复生成订单*/
     private Long orderId;
+    private Long orderItemId;
 
     /*秒杀活动的ID*/
     private Long flashPromotionId;
 
-    //收货地址id
-    private Long memberReceiveAddressId;
+    //收货地址
+    private UmsMemberReceiveAddress memberReceiveAddress;
     //支付方式
     private Integer payType;
-    //选择购买的购物车商品
-    private List<Long> itemIds;
+    //选择购买的秒杀商品
+    private Long productId;
+
+    public Long getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
     public Long getOrderId() {
         return orderId;
@@ -28,22 +47,13 @@ public class SecKillOrderParam {
         this.orderId = orderId;
     }
 
-    public List<Long> getItemIds() {
-        return itemIds;
+    public UmsMemberReceiveAddress getMemberReceiveAddress() {
+        return memberReceiveAddress;
     }
 
-    public void setItemIds(List<Long> itemIds) {
-        this.itemIds = itemIds;
+    public void setMemberReceiveAddress(UmsMemberReceiveAddress memberReceiveAddress) {
+        this.memberReceiveAddress = memberReceiveAddress;
     }
-
-    public Long getMemberReceiveAddressId() {
-        return memberReceiveAddressId;
-    }
-
-    public void setMemberReceiveAddressId(Long memberReceiveAddressId) {
-        this.memberReceiveAddressId = memberReceiveAddressId;
-    }
-
 
     public Integer getPayType() {
         return payType;
@@ -65,10 +75,10 @@ public class SecKillOrderParam {
     public String toString() {
         return "SecKillOrderParam{" +
                 "orderId=" + orderId +
+                ", orderItemId=" + orderItemId +
                 ", flashPromotionId=" + flashPromotionId +
-                ", memberReceiveAddressId=" + memberReceiveAddressId +
                 ", payType=" + payType +
-                ", itemIds=" + itemIds +
+                ", productId=" + productId +
                 '}';
     }
 }
