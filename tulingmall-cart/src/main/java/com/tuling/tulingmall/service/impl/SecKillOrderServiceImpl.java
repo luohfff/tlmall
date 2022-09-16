@@ -16,8 +16,8 @@ import com.tuling.tulingmall.mapper.OmsOrderMapper;
 import com.tuling.tulingmall.model.OmsOrder;
 import com.tuling.tulingmall.model.UmsMember;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import com.tuling.tulingmall.service.SecKillOrderService;
-import com.tuling.tulingmall.util.RedisOpsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +40,7 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     @Autowired
     private UmsMemberFeignApi umsMemberFeignApi;
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsUtil;
     @Autowired
     private PmsProductFeignApi pmsProductFeignApi;
     @Autowired

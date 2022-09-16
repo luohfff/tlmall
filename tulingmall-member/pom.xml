@@ -21,6 +21,12 @@
 			<groupId>com.tuling</groupId>
 			<artifactId>tulingmall-common</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>com.tuling</groupId>
+			<artifactId>tulingmall-redis-comm</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>dynamic-datasource-spring-boot-starter</artifactId>
@@ -88,6 +94,13 @@
 			<groupId>com.ramostear</groupId>
 			<artifactId>Happy-Captcha</artifactId>
 			<version>1.0.1</version>
+		</dependency>
+
+		<!--加入redisson-->
+		<dependency>
+			<groupId>org.redisson</groupId>
+			<artifactId>redisson</artifactId>
+			<version>3.6.5</version>
 		</dependency>
 
 		<dependency>

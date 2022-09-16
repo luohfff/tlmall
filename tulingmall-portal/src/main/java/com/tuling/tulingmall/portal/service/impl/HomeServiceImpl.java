@@ -9,16 +9,17 @@ import com.tuling.tulingmall.mapper.PmsProductMapper;
 import com.tuling.tulingmall.model.*;
 import com.tuling.tulingmall.portal.config.PromotionRedisKey;
 import com.tuling.tulingmall.portal.dao.HomeDao;
-import com.tuling.tulingmall.portal.domain.FlashPromotionProduct;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.portal.domain.HomeContentResult;
 import com.tuling.tulingmall.portal.feignapi.promotion.PromotionFeignApi;
 import com.tuling.tulingmall.portal.service.HomeService;
-import com.tuling.tulingmall.portal.util.RedisOpsUtil;
 import com.tuling.tulingmall.promotion.model.SmsHomeAdvertise;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class HomeServiceImpl implements HomeService {
     @Autowired
     private PromotionRedisKey promotionRedisKey;
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsUtil;
 
     @Autowired
     @Qualifier("promotion")
@@ -55,6 +56,14 @@ public class HomeServiceImpl implements HomeService {
     @Autowired
     @Qualifier("promotionBak")
     private Cache<String, HomeContentResult> promotionCacheBak;
+
+    @Autowired
+    @Qualifier("secKill")
+    private Cache<String, List<FlashPromotionProduct>> secKillCache;
+
+    @Autowired
+    @Qualifier("secKillBak")
+    private Cache<String, List<FlashPromotionProduct>> secKillCacheBak;
 
     @Override
     public HomeContentResult cmsContent(HomeContentResult content) {
@@ -84,12 +93,40 @@ public class HomeServiceImpl implements HomeService {
                 promotionCacheBak.put(brandKey,result);
             }
         }
-        // fixme 增加秒杀空集合和CMS推荐空集合
-        result.setHomeFlashPromotion(new ArrayList<FlashPromotionProduct>());
+        /* 处理秒杀内容*/
+        final String secKillKey = promotionRedisKey.getSecKillKey();
+        List<FlashPromotionProduct> secKills = secKillCache.getIfPresent(secKillKey);
+        if(CollectionUtils.isEmpty(secKills)){
+            secKills = secKillCacheBak.getIfPresent(secKillKey);
+        }
+        if(CollectionUtils.isEmpty(secKills)){
+            /*极小的概率出现本地两个缓存同时失效的问题，
+            从远程获取时，只从Redis缓存中获取，不从营销微服务中获取，
+            避免秒杀的流量冲垮营销微服务*/
+            secKills = getSecKillFromRemote();
+            if(!CollectionUtils.isEmpty(secKills)) {
+                secKillCache.put(secKillKey,secKills);
+                secKillCacheBak.put(secKillKey,secKills);
+            }else{
+                /*Redis缓存中也没有秒杀活动信息，此处用一个空List代替，
+                * 其实可以用固定的图片或信息，作为降级和兜底方案*/
+                secKills = new ArrayList<FlashPromotionProduct>();
+            }
+        }
+        result.setHomeFlashPromotion(secKills);
+        // fixme CMS本次不予实现，设置空集合
         result.setSubjectList(new ArrayList<CmsSubject>());
         return result;
     }
 
+    public List<FlashPromotionProduct> getSecKillFromRemote(){
+        List<FlashPromotionProduct> result = redisOpsUtil.getListAll(promotionRedisKey.getSecKillKey(),
+                FlashPromotionProduct.class);
+//        if(CollectionUtil.isEmpty(result)){
+//            result = promotionFeignApi.getHomeSecKillProductList().getData();
+//        }
+        return result;
+    }
     /*从远程(Redis或者对应微服务)获取推荐内容*/
     public HomeContentResult getFromRemote(){
         List<PmsBrand> recommendBrandList = null;
@@ -123,6 +160,16 @@ public class HomeServiceImpl implements HomeService {
     /*缓存预热*/
     public void preheatCache(){
         try {
+            final String secKillKey = promotionRedisKey.getSecKillKey();
+            List<FlashPromotionProduct> secKillResult = getSecKillFromRemote();
+            secKillCache.put(secKillKey,secKillResult);
+            secKillCacheBak.put(secKillKey,secKillResult);
+            log.info("秒杀数据本地缓存预热完成");
+        } catch (Exception e) {
+            log.error("秒杀数据缓存预热失败：",e);
+        }
+
+        try {
             if(promotionRedisKey.isAllowLocalCache()){
                 final String brandKey = promotionRedisKey.getBrandKey();
                 HomeContentResult result = getFromRemote();
@@ -131,13 +178,13 @@ public class HomeServiceImpl implements HomeService {
                 log.info("promotionCache 数据缓存预热完成");
             }
         } catch (Exception e) {
-            log.error("promotionCache 数据缓存预热失败：{}",e);
+            log.error("promotionCache 数据缓存预热失败：",e);
         }
     }
 
     @Override
     public List<PmsProduct> recommendProductList(Integer pageSize, Integer pageNum) {
-        // TODO: 2019/1/29 暂时默认推荐所有商品
+        // TODO: 2019/1/29 暂时默认推荐所有商品，可与推荐系统结合
         PageHelper.startPage(pageNum,pageSize);
         PmsProductExample example = new PmsProductExample();
         example.createCriteria()

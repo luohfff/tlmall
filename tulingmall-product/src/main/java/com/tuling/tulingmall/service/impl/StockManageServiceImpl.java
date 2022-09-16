@@ -11,9 +11,9 @@ import com.tuling.tulingmall.model.OmsOrderItem;
 import com.tuling.tulingmall.model.PmsSkuStock;
 import com.tuling.tulingmall.model.PmsSkuStockExample;
 import com.tuling.tulingmall.model.SmsFlashPromotionProductRelation;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import com.tuling.tulingmall.service.PmsProductService;
 import com.tuling.tulingmall.service.StockManageService;
-import com.tuling.tulingmall.util.RedisOpsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class StockManageServiceImpl implements StockManageService {
     private PmsProductService productService;
 
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsUtil;
 
     @Override
     public Integer incrStock(Long productId, Long skuId, Integer quanlity, Integer miaosha, Long flashPromotionRelationId) {

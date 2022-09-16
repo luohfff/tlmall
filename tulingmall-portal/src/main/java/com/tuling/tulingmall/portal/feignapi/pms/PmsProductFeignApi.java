@@ -1,7 +1,7 @@
 package com.tuling.tulingmall.portal.feignapi.pms;
 
 import com.tuling.tulingmall.common.api.CommonResult;
-import com.tuling.tulingmall.portal.domain.FlashPromotionProduct;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
