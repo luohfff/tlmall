@@ -104,12 +104,15 @@ public class HomePromotionServiceImpl implements HomePromotionService {
             FlashPromotionProduct flashPromotionProduct = new FlashPromotionProduct();
             BeanUtils.copyProperties(product,flashPromotionProduct);
             Long productId = product.getId();
-            flashPromotionProduct.setFlashPromotionCount(temp.get(productId).getFlashPromotionCount());
-            flashPromotionProduct.setFlashPromotionPrice(temp.get(productId).getFlashPromotionPrice());
-            flashPromotionProduct.setFlashPromotionLimit(temp.get(productId).getFlashPromotionLimit());
-            flashPromotionProduct.setRelationId(temp.get(productId).getId());
-            Long flashPromotionId = temp.get(productId).getFlashPromotionId();
+            SmsFlashPromotionProductRelation item = temp.get(productId);
+            flashPromotionProduct.setFlashPromotionCount(item.getFlashPromotionCount());
+            flashPromotionProduct.setFlashPromotionPrice(item.getFlashPromotionPrice());
+            flashPromotionProduct.setFlashPromotionLimit(item.getFlashPromotionLimit());
+            flashPromotionProduct.setRelationId(item.getId());
+            Long flashPromotionId = item.getFlashPromotionId();
             flashPromotionProduct.setFlashPromotionId(flashPromotionId);
+            flashPromotionProduct.setFlashPromotionStartDate(flashPromotionParam.getStartDate());
+            flashPromotionProduct.setFlashPromotionEndDate(flashPromotionParam.getEndDate());
             String url = secKillServerList.get(loop % serverSize)+"/product?"+"flashPromotionId="+flashPromotionId
                     +"&promotionProductId="+productId;
             flashPromotionProduct.setSecKillServer(url);

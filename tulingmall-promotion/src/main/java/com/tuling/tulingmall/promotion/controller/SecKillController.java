@@ -48,7 +48,6 @@ public class SecKillController {
     }
 
     @ApiOperation("开启秒杀")
-    @ApiImplicitParam(name = "secKillId", value = "秒杀活动ID")
     @RequestMapping(value = "/openSecKill", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<Integer> turnOnSecKill(@RequestParam long secKillId){
