@@ -2,6 +2,8 @@ package com.tuling.tulingmall.rediscomm.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 
@@ -12,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisOpsExtUtil {
 
     @Autowired
+    @Qualifier("redisCluster")
     private RedisTemplate redisTemplate;
 
     public void set(String key,Object value){
