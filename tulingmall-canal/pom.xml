@@ -71,7 +71,7 @@
 		</dependency>-->
         <dependency>
             <groupId>com.tuling</groupId>
-            <artifactId>tulingmall-redis-comm</artifactId>
+            <artifactId>tulingmall-redis-multi</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

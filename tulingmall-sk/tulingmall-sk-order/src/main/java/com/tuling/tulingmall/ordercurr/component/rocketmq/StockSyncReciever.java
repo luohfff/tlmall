@@ -2,12 +2,10 @@ package com.tuling.tulingmall.ordercurr.component.rocketmq;
 
 import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.ordercurr.feignapi.pms.PmsProductFeignApi;
-import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 
 /**
@@ -20,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class StockSyncReciever implements RocketMQListener<String> {
 
     @Autowired
-    private RedisOpsExtUtil redisOpsUtil;
+    private RedisClusterUtil redisOpsUtil;
 
     @Autowired
     private PmsProductFeignApi stockManageFeignApi;

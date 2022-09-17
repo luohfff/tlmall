@@ -27,6 +27,7 @@
         <module>tulingmall-core</module>
         <module>tulingmall-unqid</module>
         <module>tulingmall-redis-comm</module>
+        <module>tulingmall-redis-multi</module>
         <module>tulingmall-sk</module>
     </modules>
 
@@ -62,6 +63,7 @@
         <tulingmall-core.version>${project.version}</tulingmall-core.version>
         <tulingmall-security.version>${project.version}</tulingmall-security.version>
         <tulingmall-redis-comm.version>${project.version}</tulingmall-redis-comm.version>
+        <tulingmall-redis-multi.version>${project.version}</tulingmall-redis-multi.version>
 
         <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
@@ -123,6 +125,11 @@
                 <groupId>com.tuling</groupId>
                 <artifactId>tulingmall-redis-comm</artifactId>
                 <version>${tulingmall-redis-comm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tuling</groupId>
+                <artifactId>tulingmall-redis-multi</artifactId>
+                <version>${tulingmall-redis-multi.version}</version>
             </dependency>
             <!--MyBatis分页插件starter-->
             <dependency>

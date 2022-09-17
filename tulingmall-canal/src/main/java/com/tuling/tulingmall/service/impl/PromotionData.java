@@ -4,7 +4,7 @@ import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.tuling.tulingmall.config.PromotionRedisKey;
-import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
 import com.tuling.tulingmall.service.IProcessCanalData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +41,7 @@ public class PromotionData implements IProcessCanalData {
     private PromotionRedisKey promotionRedisKey;
 
     @Autowired
-    private RedisOpsExtUtil redisOpsExtUtil;
+    private RedisClusterUtil redisOpsExtUtil;
 
     @Value("${canal.promotion.subscribe:server}")
     private String subscribe;

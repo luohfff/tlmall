@@ -4,14 +4,13 @@ import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.ordercurr.component.LocalCache;
 import com.tuling.tulingmall.ordercurr.domain.OrderMessage;
 import com.tuling.tulingmall.ordercurr.service.SecKillOrderService;
-import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,7 +27,7 @@ public class AscynCreateOrderReciever implements RocketMQListener<OrderMessage> 
     private SecKillOrderService secKillOrderService;
 
     @Autowired
-    private RedisOpsExtUtil redisOpsUtil;
+    private RedisClusterUtil redisOpsUtil;
 
     @Autowired
     private LocalCache<Object> cache;

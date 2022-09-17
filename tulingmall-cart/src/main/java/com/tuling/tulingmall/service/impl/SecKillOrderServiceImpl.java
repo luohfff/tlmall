@@ -13,18 +13,15 @@ import com.tuling.tulingmall.feignapi.pms.PmsProductFeignApi;
 import com.tuling.tulingmall.feignapi.ums.UmsMemberFeignApi;
 import com.tuling.tulingmall.mapper.OmsOrderItemMapper;
 import com.tuling.tulingmall.mapper.OmsOrderMapper;
-import com.tuling.tulingmall.model.OmsOrder;
 import com.tuling.tulingmall.model.UmsMember;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import com.tuling.tulingmall.service.SecKillOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**

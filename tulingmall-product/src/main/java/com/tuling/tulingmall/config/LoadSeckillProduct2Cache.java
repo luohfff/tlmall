@@ -1,19 +1,10 @@
 package com.tuling.tulingmall.config;
 
-import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.dao.FlashPromotionProductDao;
-import com.tuling.tulingmall.domain.FlashPromotionParam;
-import com.tuling.tulingmall.model.SmsFlashPromotion;
 import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.util.ObjectUtils;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author ：图灵学院

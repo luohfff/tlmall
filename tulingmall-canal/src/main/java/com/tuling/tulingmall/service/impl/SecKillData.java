@@ -7,9 +7,9 @@ import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.config.PromotionRedisKey;
 import com.tuling.tulingmall.feignapi.promotion.PromotionFeignApi;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
-import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisSingleUtil;
 import com.tuling.tulingmall.service.IProcessCanalData;
-import com.tuling.tulingmall.util.RedisStockUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,10 +41,10 @@ public class SecKillData implements IProcessCanalData {
     private PromotionRedisKey promotionRedisKey;
 
     @Autowired
-    private RedisOpsExtUtil homeRedisOpsExtUtil;
+    private RedisClusterUtil homeRedisOpsExtUtil;
 
     @Autowired
-    private RedisStockUtil secKillStockUtil;
+    private RedisSingleUtil secKillStockUtil;
 
     @Value("${canal.seckill.subscribe:server}")
     private String subscribe;

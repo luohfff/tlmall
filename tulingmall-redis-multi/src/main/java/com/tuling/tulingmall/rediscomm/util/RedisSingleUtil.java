@@ -1,20 +1,31 @@
-package com.tuling.tulingmall.util;
+package com.tuling.tulingmall.rediscomm.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class RedisStockUtil {
+public class RedisSingleUtil {
 
     @Autowired
-    @Qualifier("redisTemplateStock")
+    @Qualifier("redisSingleTemplate")
     private RedisTemplate redisTemplate;
+
+    @PostConstruct
+    public void init(){
+        RedisConnectionFactory factory = redisTemplate.getConnectionFactory();
+        RedisConnection conn = RedisConnectionUtils.getConnection(factory);
+        log.info("Redis服务器信息：{}",conn.info().toString());
+    }
 
     public void set(String key,Object value){
         redisTemplate.opsForValue().set(key,value);

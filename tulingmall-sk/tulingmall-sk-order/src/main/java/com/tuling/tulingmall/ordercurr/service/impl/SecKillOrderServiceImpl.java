@@ -18,7 +18,7 @@ import com.tuling.tulingmall.ordercurr.service.SecKillOrderService;
 import com.tuling.tulingmall.ordercurr.util.RedisStockUtil;
 import com.tuling.tulingmall.ordercurr.util.RocksDBUtil;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
-import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.rocksdb.RocksDBException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ import java.util.concurrent.*;
 public class SecKillOrderServiceImpl implements SecKillOrderService {
 
     @Autowired
-    private RedisOpsExtUtil redisOpsUtil;
+    private RedisClusterUtil redisOpsUtil;
     @Autowired
     private RedisStockUtil redisStockUtil;
     @Autowired

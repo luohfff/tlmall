@@ -11,13 +11,12 @@ import com.tuling.tulingmall.feignapi.unqid.UnqidFeignApi;
 import com.tuling.tulingmall.model.UmsMember;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
-import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
 import com.tuling.tulingmall.service.SecKillConfirmOrderService;
 import com.tuling.tulingmall.util.RedisStockUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -35,7 +34,7 @@ import static com.tuling.tulingmall.service.impl.RefreshIdListTask.LEAF_ORDER_IT
 @Service
 public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderService {
     @Autowired
-    private RedisOpsExtUtil redisOpsUtil;
+    private RedisClusterUtil redisOpsUtil;
     @Autowired
     private RedisStockUtil redisStockUtil;
     @Autowired

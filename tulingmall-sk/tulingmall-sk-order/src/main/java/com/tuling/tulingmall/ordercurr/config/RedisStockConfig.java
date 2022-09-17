@@ -17,7 +17,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
@@ -58,8 +57,8 @@ public class RedisStockConfig {
 
     @Bean("redisFactoryStock")
     public LettuceConnectionFactory redisFactoryStock(
-            @Qualifier("redisPoolStock") GenericObjectPoolConfig config,
-            @Qualifier("redisConfigStock") RedisStandaloneConfiguration redisConfig) {
+            @Qualifier("redisPoolSingle") GenericObjectPoolConfig config,
+            @Qualifier("redisConfigSingle") RedisStandaloneConfiguration redisConfig) {
         //注意传入的对象名和类型RedisStandaloneConfiguration
         LettuceClientConfiguration clientConfiguration =
                 LettucePoolingClientConfiguration.builder().poolConfig(config).build();

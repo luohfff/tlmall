@@ -6,7 +6,6 @@ import com.ramostear.captcha.support.CaptchaType;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.api.TokenInfo;
 import com.tuling.tulingmall.common.constant.RedisMemberPrefix;
-import com.tuling.tulingmall.domain.PortalMemberInfo;
 import com.tuling.tulingmall.model.UmsMember;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
