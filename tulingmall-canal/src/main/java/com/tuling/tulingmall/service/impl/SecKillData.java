@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -164,6 +165,10 @@ public class SecKillData implements IProcessCanalData {
         redisOpsExtUtil.delete(secKillKey);
         List<FlashPromotionProduct> result =
                 promotionFeignApi.getHomeSecKillProductList(secKillId,STATUS_ON).getData();
+        if(CollectionUtils.isEmpty(result)){
+            log.warn("开启了秒杀，但是没有找到秒杀对应产品，请检查！");
+            return;
+        }
         long homeShowDuration = result.get(0).getFlashPromotionEndDate().getTime() - System.currentTimeMillis();
         if(homeShowDuration > 0){
             /*首页显示需要*/
@@ -186,6 +191,10 @@ public class SecKillData implements IProcessCanalData {
 
     /* PO 本方法可以用pipeline优化*/
     private void secKillOffRedis(List<FlashPromotionProduct> products){
+        if(CollectionUtils.isEmpty(products)){
+            log.warn("关闭秒杀，但是没有找到秒杀对应产品，请检查！");
+            return;
+        }
         final String secKillKey = promotionRedisKey.getSecKillKey();
         redisOpsExtUtil.delete(secKillKey);
         /*秒杀服务需要*/
