@@ -79,11 +79,11 @@ public class HomePromotionServiceImpl implements HomePromotionService {
 
     /*获取秒杀内容*/
     @Override
-    public List<FlashPromotionProduct> secKillContent(long secKillId) {
+    public List<FlashPromotionProduct> secKillContent(long secKillId,int status) {
         PageHelper.startPage(1, 8);
         Long secKillIdL = -1 == secKillId ? null : secKillId;
         /*获得秒杀相关的活动信息*/
-        FlashPromotionParam flashPromotionParam = flashPromotionProductDao.getFlashPromotion(secKillIdL);
+        FlashPromotionParam flashPromotionParam = flashPromotionProductDao.getFlashPromotion(secKillIdL,status);
         if (flashPromotionParam == null || CollectionUtils.isEmpty(flashPromotionParam.getRelation())) {
             return null;
         }

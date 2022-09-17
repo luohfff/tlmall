@@ -107,7 +107,8 @@ public class SecKillStaticHtmlServiceImpl implements ISecKillStaticHtmlService {
     public List<String> makeStaticHtml(long secKillId) throws TemplateException, IOException {
         log.info("本地模板目录：{}，本地html目录：{}",templateDir,htmlDir);
         //查询秒杀商品信息
-        List<FlashPromotionProduct> flashPromotionProducts = homePromotionService.secKillContent(secKillId);
+        List<FlashPromotionProduct> flashPromotionProducts =
+                homePromotionService.secKillContent(secKillId,ConstantPromotion.SECKILL_OPEN);
         List<String> result = new ArrayList<>();
         if(CollectionUtils.isEmpty(flashPromotionProducts)){
             log.warn("没有秒杀活动{[]}对应的产品信息，请检查DB中的秒杀数据",secKillId);

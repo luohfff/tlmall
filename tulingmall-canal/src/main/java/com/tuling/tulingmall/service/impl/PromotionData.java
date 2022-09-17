@@ -71,7 +71,7 @@ public class PromotionData implements IProcessCanalData {
     }
 
     @Async
-    @Scheduled(initialDelayString="${canal.promotion.initialDelay:5000}",fixedDelayString = "${canal.promotion.fixedDelay:1000}")
+    @Scheduled(initialDelayString="${canal.promotion.initialDelay:5000}",fixedDelayString = "${canal.promotion.fixedDelay:5000}")
     @Override
     public void processData() {
         try {

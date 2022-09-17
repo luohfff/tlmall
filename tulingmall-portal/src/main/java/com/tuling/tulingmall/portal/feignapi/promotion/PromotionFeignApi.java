@@ -22,8 +22,4 @@ public interface PromotionFeignApi {
     @ResponseBody
     public CommonResult<HomeContentResult> content(@RequestParam(value = "getType") int getType);
 
-    /*获得秒杀内容*/
-    @RequestMapping(value = "/getHomeSecKillProductList", method = RequestMethod.GET)
-    @ResponseBody
-    CommonResult<List<FlashPromotionProduct>> getHomeSecKillProductList();
 }

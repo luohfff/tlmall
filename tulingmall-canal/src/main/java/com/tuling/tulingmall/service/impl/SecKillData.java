@@ -74,7 +74,7 @@ public class SecKillData implements IProcessCanalData {
     }
 
     @Async
-    @Scheduled(initialDelayString="${canal.seckill.initialDelay:5000}",fixedDelayString = "${canal.seckill.fixedDelay:1000}")
+    @Scheduled(initialDelayString="${canal.seckill.initialDelay:5000}",fixedDelayString = "${canal.seckill.fixedDelay:5000}")
     @Override
     public void processData() {
         try {
@@ -113,7 +113,7 @@ public class SecKillData implements IProcessCanalData {
                                         break;
                                     }
                                 }
-                                secKillOffRedis(promotionFeignApi.getHomeSecKillProductList(secKillId).getData());
+                                secKillOffRedis(promotionFeignApi.getHomeSecKillProductList(secKillId,STATUS_OFF).getData());
                             } else if (eventType == CanalEntry.EventType.INSERT) { /*新增秒杀活动*/
                                 for (CanalEntry.Column column : columns) {
                                     if(column.getName().equals(SECKILL_STATUS)) {
@@ -140,7 +140,7 @@ public class SecKillData implements IProcessCanalData {
                                 if(ON_SECKILL_STATUS == secKillStatus){
                                     secKillOnRedis(secKillId);
                                 }else{/*秒杀活动关闭*/
-                                    secKillOffRedis(promotionFeignApi.getHomeSecKillProductList(secKillId).getData());
+                                    secKillOffRedis(promotionFeignApi.getHomeSecKillProductList(secKillId,STATUS_OFF).getData());
                                 }
                             }
                         }
@@ -155,12 +155,15 @@ public class SecKillData implements IProcessCanalData {
 
     }
 
+    private static final int STATUS_ON = 1;
+    private static final int STATUS_OFF = 0;
+
     /* PO 本方法可以用pipeline优化*/
     private void secKillOnRedis(long secKillId){
         final String secKillKey = promotionRedisKey.getSecKillKey();
         redisOpsExtUtil.delete(secKillKey);
         List<FlashPromotionProduct> result =
-                promotionFeignApi.getHomeSecKillProductList(secKillId).getData();
+                promotionFeignApi.getHomeSecKillProductList(secKillId,STATUS_ON).getData();
         long homeShowDuration = result.get(0).getFlashPromotionEndDate().getTime() - System.currentTimeMillis();
         if(homeShowDuration > 0){
             /*首页显示需要*/

@@ -15,7 +15,7 @@ public interface HomePromotionService {
     HomeContentResult content(int getType);
 
     /*秒杀产品*/
-    List<FlashPromotionProduct> secKillContent(long secKillId);
+    List<FlashPromotionProduct> secKillContent(long secKillId,int status);
 
     int turnOnSecKill(long secKillId,int status);
 

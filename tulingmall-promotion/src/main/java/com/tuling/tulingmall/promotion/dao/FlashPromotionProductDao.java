@@ -15,5 +15,5 @@ public interface FlashPromotionProductDao {
      * 查找所有的秒杀活动商品
      * @return
      */
-    FlashPromotionParam getFlashPromotion(@Param("spid") Long spid);
+    FlashPromotionParam getFlashPromotion(@Param("spid") Long spid,@Param("status") Integer status);
 }

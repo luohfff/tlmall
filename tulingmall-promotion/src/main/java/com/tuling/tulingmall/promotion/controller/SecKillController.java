@@ -41,8 +41,9 @@ public class SecKillController {
     @RequestMapping(value = "/getHomeSecKillProductList", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<List<FlashPromotionProduct>> getHomeSecKillProductList(
-            @RequestParam(required = false,defaultValue = "-1") long secKillId){
-        List<FlashPromotionProduct> result = homePromotionService.secKillContent(secKillId);
+            @RequestParam(required = false,defaultValue = "-1") long secKillId,
+            @RequestParam(required = false,defaultValue = "1") int status){
+        List<FlashPromotionProduct> result = homePromotionService.secKillContent(secKillId,status);
         return CommonResult.success(result);
     }
 
