@@ -13,9 +13,9 @@ import java.util.List;
 @FeignClient(name = "tulingmall-member",path = "/member")
 public interface UmsMemberFeignApi {
 
-    @RequestMapping(value = "/address/{id}", method = RequestMethod.GET)
-    @ResponseBody
-    CommonResult<UmsMemberReceiveAddress> getItem(@PathVariable(value = "id") Long id);
+//    @RequestMapping(value = "/address/{id}", method = RequestMethod.GET)
+//    @ResponseBody
+//    CommonResult<UmsMemberReceiveAddress> getItem(@PathVariable(value = "id") Long id);
 
 //    @RequestMapping(value = "/center/updateUmsMember",method = RequestMethod.POST)
 //    CommonResult<String> updateUmsMember(@RequestBody UmsMember umsMember);

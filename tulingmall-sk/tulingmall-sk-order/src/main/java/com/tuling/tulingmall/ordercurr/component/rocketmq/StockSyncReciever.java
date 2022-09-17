@@ -46,13 +46,13 @@ public class StockSyncReciever implements RocketMQListener<String> {
             // 因此在并发情况下，不管是否有NPC问题，完全有可能出现在这两个动作之间出现了新的DB库存扣减操作
             // 在V5版本中已经改成所有的库存扣减只从Redis中操作，然后从MQ中异步写回到DB中
             //todo 同步一下库存到缓存当中
-            Integer stock = stockManageFeignApi.selectStock(productID,promotionId).getData();
-            if(stock > 0){
-                //重置库存
-                redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productID,stock);
-                //删除同步标记
-                redisOpsUtil.delete(RedisKeyPrefixConst.STOCK_REFRESHED_MESSAGE_PREFIX + promotionId);
-            }
+//            Integer stock = stockManageFeignApi.selectStock(productID,promotionId).getData();
+//            if(stock > 0){
+//                //重置库存
+//                redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productID,stock);
+//                //删除同步标记
+//                redisOpsUtil.delete(RedisKeyPrefixConst.STOCK_REFRESHED_MESSAGE_PREFIX + promotionId);
+//            }
         }
     }
 
