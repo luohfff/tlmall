@@ -180,10 +180,10 @@ public class SecKillData implements IProcessCanalData {
             String productKey = RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + product.getFlashPromotionId()
                     + ":" + product.getId();
             String productCountKey = RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + product.getId();
-            homeRedisOpsExtUtil.delete(productKey);
+            secKillStockUtil.delete(productKey);
             secKillStockUtil.delete(productCountKey);
             if(homeShowDuration > 0){
-                homeRedisOpsExtUtil.set(productKey,product,homeShowDuration, TimeUnit.MILLISECONDS);
+                secKillStockUtil.set(productKey,product,homeShowDuration, TimeUnit.MILLISECONDS);
                 secKillStockUtil.set(productCountKey,product.getFlashPromotionCount(),homeShowDuration, TimeUnit.MILLISECONDS);
             }
         }
@@ -199,7 +199,7 @@ public class SecKillData implements IProcessCanalData {
         homeRedisOpsExtUtil.delete(secKillKey);
         /*秒杀服务需要*/
         for(FlashPromotionProduct product : products){
-            homeRedisOpsExtUtil.delete(RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + product.getFlashPromotionId()
+            secKillStockUtil.delete(RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + product.getFlashPromotionId()
                     + ":" + product.getId());
             secKillStockUtil.delete(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + product.getId());
         }

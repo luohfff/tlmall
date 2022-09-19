@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.service.impl;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.common.constant.RedisMemberPrefix;
@@ -16,6 +17,7 @@ import com.tuling.tulingmall.service.SecKillConfirmOrderService;
 import com.tuling.tulingmall.util.RedisStockUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -41,6 +43,9 @@ public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderServic
     private LocalCache<Boolean> cache;
     @Autowired
     private UnqidFeignApi unqidFeignApi;
+
+    @Autowired
+    private Cache<String, FlashPromotionProduct> localCache;
 
     /*存放预制orderId的list，同时也可限流每秒允许个数，在更高并发的请求下，
     可以使用Disruptor代替 https://github.com/LMAX-Exchange/disruptor/wiki */
@@ -85,8 +90,7 @@ public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderServic
         UmsMember member = redisOpsUtil.get(RedisMemberPrefix.MEMBER_INFO_PREFIX+memberId,UmsMember.class);
 
         // 【3】从缓存中获得秒杀的产品信息
-        FlashPromotionProduct product = redisOpsUtil.get(RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + flashPromotionId
-                + ":" + productId,FlashPromotionProduct.class);
+        FlashPromotionProduct product = getProductInfo(flashPromotionId,productId);
 
         if(product == null){
             return CommonResult.failed("无效的商品！");
@@ -132,6 +136,20 @@ public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderServic
         ConfirmOrderResult.CalcAmount calcAmount = calcCartAmount(product);
         result.setCalcAmount(calcAmount);
         return CommonResult.success(result);
+    }
+
+    /*从缓存中获得秒杀的产品信息*/
+    public FlashPromotionProduct getProductInfo(Long flashPromotionId,Long productId){
+
+        String productKey = RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + flashPromotionId
+                + ":" + productId;
+        FlashPromotionProduct result = localCache.getIfPresent(productKey);
+        if(null == result){
+            result = redisStockUtil.get(productKey,FlashPromotionProduct.class);
+            if(null == result) return null;
+            localCache.put(productKey,result);
+        }
+        return result;
     }
 
     /**

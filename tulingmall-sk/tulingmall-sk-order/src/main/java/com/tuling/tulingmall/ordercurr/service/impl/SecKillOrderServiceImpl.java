@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.ordercurr.service.impl;//package com.tuling.tulingmall.service.impl;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.common.exception.BusinessException;
@@ -50,6 +51,9 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     private OrderMessageSender orderMessageSender;
     @Autowired
     private PromotionFeignApi promotionFeignApi;
+
+    @Autowired
+    private Cache<String, FlashPromotionProduct> localCache;
 
     public CommonResult checkOrder(Long orderId){
         if(null != orderMapper.selectByPrimaryKey(orderId)){
@@ -339,7 +343,13 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     public FlashPromotionProduct getProductInfo(Long flashPromotionId,Long productId){
         String productKey = RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + flashPromotionId
                 + ":" + productId;
-        return redisOpsUtil.get(productKey,FlashPromotionProduct.class);
+        FlashPromotionProduct result = localCache.getIfPresent(productKey);
+        if(null == result){
+            result = redisStockUtil.get(productKey,FlashPromotionProduct.class);
+            if(null == result) return null;
+            localCache.put(productKey,result);
+        }
+        return result;
     }
 
     //验证秒杀时间
