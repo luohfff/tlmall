@@ -247,8 +247,8 @@
       }
 
       function showVerifyCode(){
-        $("verifyCodeImg").src="cart/verifyCode";
-        $("verifyCodeArea").style.visibility = "visible";
+        $("#verifyCodeImg").src="cart/verifyCode";
+        $("#verifyCodeArea").style.visibility = "visible";
       }
 
       function getProductStock(){

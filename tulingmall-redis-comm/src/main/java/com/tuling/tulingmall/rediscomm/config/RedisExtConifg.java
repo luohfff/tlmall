@@ -21,11 +21,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisExtConifg {
 
-//    @Value("${spring.redis.cluster.nodes}")
-//    String redisNodes;
-//
-//    @Value("${spring.redis.password}")
-//    String redisPass;
+    @Value("${spring.redis.cluster.nodes}")
+    String redisNodes;
+
+    @Value("${spring.redis.password}")
+    String redisPass;
 
     @Autowired
     private RedisConnectionFactory connectionFactory;
@@ -59,15 +59,15 @@ public class RedisExtConifg {
         return new RedisOpsExtUtil();
     }
 
-//    @Bean
-//    public RedissonClient redissonClient(){
-//        Config config = new Config();
-//        ClusterServersConfig clusterServersConfig = config.useClusterServers();
-//        for (String node: redisNodes.split(",")){
-//            clusterServersConfig.addNodeAddress("redis://"+node);
-//        }
-//        clusterServersConfig.setPassword(redisPass);
-//        return Redisson.create(config);
-//    }
+    @Bean
+    public RedissonClient redissonClient(){
+        Config config = new Config();
+        ClusterServersConfig clusterServersConfig = config.useClusterServers();
+        for (String node: redisNodes.split(",")){
+            clusterServersConfig.addNodeAddress("redis://"+node);
+        }
+        clusterServersConfig.setPassword(redisPass);
+        return Redisson.create(config);
+    }
 
 }

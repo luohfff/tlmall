@@ -33,7 +33,7 @@ function read_data(key, expire)
 end
 
 -- 获取请求参数中的productId，也可以使用ngx.req.get_uri_args["productId"]，req.get_uri_args在productId有多个时，会返回一个table
-local product_id = ngx.req.arg_productId
+local product_id = ngx.var.arg_productId
 
 -- 查询库存信息
 local stock = read_data("miaosha:stock:cache:"..product_id, 3600)

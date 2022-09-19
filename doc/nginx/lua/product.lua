@@ -1,8 +1,8 @@
 -- 导入lua-resty-template函数库
 local template = require('resty.template')
-local flashPromotionId = ngx.req.arg_flashPromotionId
+local flashPromotionId = ngx.var.arg_flashPromotionId
 ngx.log(ngx.ERR, "秒杀活动ID: ", flashPromotionId)
-local promotionProductId = ngx.req.arg_promotionProductId
+local promotionProductId = ngx.var.arg_promotionProductId
 ngx.log(ngx.ERR, "秒杀产品ID: ", promotionProductId)
 local templateName = "seckill_"..flashPromotionId.."_"..promotionProductId..".html"
 ngx.log(ngx.ERR, "秒杀产品模板文件: ", templateName)
