@@ -9,6 +9,7 @@ import com.tuling.tulingmall.component.LocalCache;
 import com.tuling.tulingmall.domain.CartPromotionItem;
 import com.tuling.tulingmall.domain.ConfirmOrderResult;
 import com.tuling.tulingmall.feignapi.unqid.UnqidFeignApi;
+import com.tuling.tulingmall.model.PortalMemberInfo;
 import com.tuling.tulingmall.model.UmsMember;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
@@ -87,7 +88,11 @@ public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderServic
             return commonResult;
         }
         // 【2】从缓存中获得用户信息
-        UmsMember member = redisOpsUtil.get(RedisMemberPrefix.MEMBER_INFO_PREFIX+memberId,UmsMember.class);
+        PortalMemberInfo member = redisOpsUtil.get(RedisMemberPrefix.MEMBER_INFO_PREFIX+memberId,UmsMember.class);
+        if(null == member){
+            log.error("用户[{}}]还未登录，请检查",memberId);
+            return CommonResult.failed("你还未登录，请重新登录！");
+        }
 
         // 【3】从缓存中获得秒杀的产品信息
         FlashPromotionProduct product = getProductInfo(flashPromotionId,productId);

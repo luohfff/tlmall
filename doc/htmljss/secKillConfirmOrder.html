@@ -55,13 +55,13 @@
         $.ajax({
           type: "post",
           headers: {"memberId": memberId},//设置请求头
-          url: "seckillOrder/generateOrder",
+          url: "/seckillOrder/generateOrder",
           dataType: "application/json",
           data: JSON.stringify(data),
           success: function(result){
             if(result.code==200){
               console.log("下订单成功！");
-              window.location.href = "secKillPay.html";
+              window.location.href = "static/secKillPay.html";
             }else{
               alert("下订单失败！");
             }
@@ -80,9 +80,9 @@
         $.ajax({
           type: "post",
           headers:{"memberId": lMemberId},//设置请求头
-          url:"seckillOrder/generateConfirmOrder?" +
-                  "productId="+productId
-                  +"&flashPromotionId="+flashPromotionId,
+          url:"/skcart/generateConfirmOrder?" +
+                  "productId="+lProductId
+                  +"&flashPromotionId="+lFlashPromotionId,
           dataType:'text',
           success:function(commonresult){
             if(commonresult.code==200){

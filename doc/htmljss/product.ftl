@@ -6,9 +6,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
     <link rel="icon" href="http://localhost:8081/favicon.ico">
     <title>图灵商城商品详情页</title>
-    <link rel="stylesheet" type="text/css" href="product.css">
+    <link rel="stylesheet" type="text/css" href="static/product.css">
   </head>
 
   <body>
@@ -169,7 +170,7 @@
       <input id="flashPromotionId" type="hidden" value="{* flashPromotionId *}">
     </div>
 
-    <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="static/jquery-1.9.1.min.js"></script>
     <script type="text/javascript">
       function secKill(){
         if ($("#verifyCodeText").val() == "") {
@@ -183,7 +184,7 @@
               localStorage.setItem("productId", $("#productId").val());
               localStorage.setItem("flashPromotionId", $("#flashPromotionId").val());
               localStorage.setItem("memberId", $("#memberId").val());
-              window.location.href = "secKillConfirmOrder.html";
+              window.location.href = "static/secKillConfirmOrder.html";
             }else{
               alert("验证码不正确！");
               $("#verifyCodeText").val("");
