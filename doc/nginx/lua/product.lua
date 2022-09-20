@@ -5,7 +5,10 @@ ngx.log(ngx.ERR, "秒杀活动ID: ", flashPromotionId)
 local promotionProductId = ngx.var.arg_promotionProductId
 ngx.log(ngx.ERR, "秒杀产品ID: ", promotionProductId)
 local templateName = "seckill_"..flashPromotionId.."_"..promotionProductId..".html"
-ngx.log(ngx.ERR, "秒杀产品模板文件: ", templateName)
-local memberId = ngx.req.get_headers()["memberId"]
-ngx.log(ngx.ERR, "渲染页面输出，获得当前用户ID: ", memberId)
-template.render(templateName, memberId)
+local context = {
+    memberId = ngx.var.arg_memberId,
+    productId = promotionProductId,
+    flashPromotionId = flashPromotionId
+}
+ngx.log(ngx.ERR, "渲染页面输出，获得当前用户ID: ", context.memberId)
+template.render(templateName, context)

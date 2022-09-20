@@ -25,7 +25,7 @@ function read_data(key, expire)
         end
     end
     -- 查询成功，把数据写入本地缓存,expire秒后过期
-    if val <= 0 then
+    if tonumber(val) <= 0 then
         item_cache:set(key, val, expire)
     end
     -- 返回数据
