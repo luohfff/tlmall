@@ -210,6 +210,7 @@ public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderServic
             return CommonResult.failed("商品已经售罄,请购买其它商品!");
         }
 
+        /*"1" 的含义参见 OrderConstant ORDER_SECKILL_ORDER_TYPE_ASYN*/
         String async = redisStockUtil.get(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId + ":" + productId);
         if(async != null && async.equals("1")){
             Map<String,Object> result = new HashMap<>();

@@ -4,7 +4,7 @@ import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.ordercurr.component.LocalCache;
 import com.tuling.tulingmall.ordercurr.domain.OrderMessage;
 import com.tuling.tulingmall.ordercurr.service.SecKillOrderService;
-import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisSingleUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
@@ -27,7 +27,7 @@ public class AscynCreateOrderReciever implements RocketMQListener<OrderMessage> 
     private SecKillOrderService secKillOrderService;
 
     @Autowired
-    private RedisClusterUtil redisOpsUtil;
+    private RedisSingleUtil redisStockUtil;
 
     @Autowired
     private LocalCache<Object> cache;
@@ -47,7 +47,7 @@ public class AscynCreateOrderReciever implements RocketMQListener<OrderMessage> 
             secKillOrderService.asyncCreateOrder(orderMessage.getOrder(),orderMessage.getOrderItem(),orderMessage.getFlashPromotionRelationId());
 
             //更改排队标记状态,代表已经下单成功,ID设置为snowflake后,用ID作为状态标记
-            redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId
+            redisStockUtil.set(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId
                     + ":" + productId,orderId.toString(),60L, TimeUnit.SECONDS);
 
             /*
@@ -70,7 +70,7 @@ public class AscynCreateOrderReciever implements RocketMQListener<OrderMessage> 
         catch (Exception e) {
             log.error("消费异步下单消息异常：",e);
             /*下单失败*/
-            redisOpsUtil.set(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId
+            redisStockUtil.set(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId
                     + ":" + productId,Integer.toString(-1),60L, TimeUnit.SECONDS);
             secKillOrderService.failSendMessage(productId,null);
         }

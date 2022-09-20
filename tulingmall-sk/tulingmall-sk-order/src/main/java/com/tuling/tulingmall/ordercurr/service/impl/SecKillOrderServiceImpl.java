@@ -55,6 +55,10 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     @Autowired
     private Cache<String, FlashPromotionProduct> localCache;
 
+    /*fixme 此处从Redis缓存中获得订单状态，可以应对更高并发，订单的保存状态在Redis中有记录：
+    * key ：RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId
+                    + ":" + productId
+     而且 消息消费者在数据库中生成订单后，修改了这个状态，参见：AscynCreateOrderReciever*/
     public CommonResult checkOrder(Long orderId){
         if(null != orderMapper.selectByPrimaryKey(orderId)){
             return CommonResult.success("success");
@@ -191,7 +195,6 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
                 /*打上排队的标记*/
                 redisStockUtil.set(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId + ":" + productId
                         ,Integer.toString(1),60, TimeUnit.SECONDS);
-                /*下单方式0->同步下单,1->异步下单排队中,-1->秒杀失败*/
                 result.put("orderStatus",OrderConstant.ORDER_SECKILL_ORDER_TYPE_ASYN);
             }else{
                 failSendMessage(productId,result);

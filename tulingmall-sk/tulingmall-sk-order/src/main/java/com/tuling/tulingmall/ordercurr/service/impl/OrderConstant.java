@@ -30,10 +30,11 @@ public class OrderConstant {
     public static final int ORDER_TYPE_SECKILL = 1;
 
 
-    /*下单方式0->同步下单,1->异步下单排队中,-1->秒杀失败*/
+    /*下单方式0->同步下单,1->异步下单排队中,-1->秒杀失败, 2->下单成功*/
     public static final int ORDER_SECKILL_ORDER_TYPE_SYN = 0;
-    public static final int ORDER_SECKILL_ORDER_TYPE_ASYN = 1;
+    public static final String ORDER_SECKILL_ORDER_TYPE_ASYN = "1";
     public static final int ORDER_SECKILL_ORDER_TYPE_FAILURE = -1;
+    public static final int ORDER_SECKILL_ORDER_TYPE_SUCCESS = 2;
 
     public static final String REDIS_CLEAN_NO_STOCK_CHANNEL = "cleanNoStockCache";
 
