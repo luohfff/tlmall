@@ -16,10 +16,10 @@ import com.tuling.tulingmall.ordercurr.model.OmsOrder;
 import com.tuling.tulingmall.ordercurr.model.OmsOrderItem;
 import com.tuling.tulingmall.ordercurr.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.ordercurr.service.SecKillOrderService;
-import com.tuling.tulingmall.ordercurr.util.RedisStockUtil;
 import com.tuling.tulingmall.ordercurr.util.RocksDBUtil;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisSingleUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.rocksdb.RocksDBException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +37,10 @@ import java.util.concurrent.*;
 @Service
 public class SecKillOrderServiceImpl implements SecKillOrderService {
 
+//    @Autowired
+//    private RedisClusterUtil redisOpsUtil;
     @Autowired
-    private RedisClusterUtil redisOpsUtil;
-    @Autowired
-    private RedisStockUtil redisStockUtil;
+    private RedisSingleUtil redisStockUtil;
     @Autowired
     private OmsOrderMapper orderMapper;
     @Autowired
@@ -91,6 +91,11 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
             return CommonResult.failed("秒杀活动未开始或已结束！");
         }
 
+
+        /*在缓存中扣减库存，应对秒杀高并发*/
+        if(!preDecrRedisStock(productId)){
+            return CommonResult.failed("已经抢购完了，感谢参与本次活动");
+        }
         /*在本地持久化扣减记录*/
         String cfName = OrderConstant.RD_CFNAME_PREFIX + secKillOrderParam.getFlashPromotionId();
         String key = OrderConstant.RD_PRODUCT_PREFIX + productId + OrderConstant.RD_MEMEBER_PREFIX + memberId;
@@ -99,11 +104,6 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
             RocksDBUtil.put(cfName,key,value);
         } catch (RocksDBException e) {
             log.error("本地持久化异常： ",e);
-            return CommonResult.failed("已经抢购完了，感谢参与本次活动");
-        }
-
-        /*在缓存中扣减库存，应对秒杀高并发*/
-        if(!preDecrRedisStock(productId)){
             return CommonResult.failed("已经抢购完了，感谢参与本次活动");
         }
 

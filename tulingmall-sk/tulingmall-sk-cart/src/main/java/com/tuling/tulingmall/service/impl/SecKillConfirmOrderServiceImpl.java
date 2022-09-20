@@ -13,8 +13,8 @@ import com.tuling.tulingmall.model.UmsMember;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
+import com.tuling.tulingmall.rediscomm.util.RedisSingleUtil;
 import com.tuling.tulingmall.service.SecKillConfirmOrderService;
-import com.tuling.tulingmall.util.RedisStockUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,7 +38,7 @@ public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderServic
     @Autowired
     private RedisClusterUtil redisOpsUtil;
     @Autowired
-    private RedisStockUtil redisStockUtil;
+    private RedisSingleUtil redisStockUtil;
     @Autowired
     private LocalCache<Boolean> cache;
     @Autowired
