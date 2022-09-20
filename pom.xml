@@ -27,6 +27,8 @@
         <module>tulingmall-core</module>
         <module>tulingmall-unqid</module>
         <module>tulingmall-redis-comm</module>
+        <module>tulingmall-redis-multi</module>
+        <module>tulingmall-sk</module>
     </modules>
 
     <properties>
@@ -50,6 +52,7 @@
         <dynamic-datasource.version>3.3.2</dynamic-datasource.version>
         <mysql-connector.version>8.0.15</mysql-connector.version>
         <commons-pool2.version>2.4.3</commons-pool2.version>
+        <dungproxy-client.version>0.0.4</dungproxy-client.version>
         <rocketmq-spring-boot-starter.version>2.2.1</rocketmq-spring-boot-starter.version>
         <mongodb-spring-boot-starter.version>2.3.2.RELEASE</mongodb-spring-boot-starter.version>
         <jjwt.version>0.9.0</jjwt.version>
@@ -60,6 +63,7 @@
         <tulingmall-core.version>${project.version}</tulingmall-core.version>
         <tulingmall-security.version>${project.version}</tulingmall-security.version>
         <tulingmall-redis-comm.version>${project.version}</tulingmall-redis-comm.version>
+        <tulingmall-redis-multi.version>${project.version}</tulingmall-redis-multi.version>
 
         <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
@@ -121,6 +125,11 @@
                 <groupId>com.tuling</groupId>
                 <artifactId>tulingmall-redis-comm</artifactId>
                 <version>${tulingmall-redis-comm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tuling</groupId>
+                <artifactId>tulingmall-redis-multi</artifactId>
+                <version>${tulingmall-redis-multi.version}</version>
             </dependency>
             <!--MyBatis分页插件starter-->
             <dependency>
@@ -222,6 +231,12 @@
                 <artifactId>rocketmq-spring-boot-starter</artifactId>
                 <version>${rocketmq-spring-boot-starter.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.virjar</groupId>
+                <artifactId>dungproxy-client</artifactId>
+                <version>${dungproxy-client.version}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>

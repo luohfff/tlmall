@@ -2,7 +2,6 @@ package com.tuling.tulingmall.service.impl;
 
 
 import com.tuling.tulingmall.common.api.CommonResult;
-import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.domain.PmsProductParam;
 import com.tuling.tulingmall.mapper.PmsSkuStockMapper;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionProductRelationMapper;
@@ -10,9 +9,9 @@ import com.tuling.tulingmall.model.PmsSkuStock;
 import com.tuling.tulingmall.dao.FlashPromotionProductDao;
 import com.tuling.tulingmall.domain.CartPromotionItem;
 import com.tuling.tulingmall.model.SmsFlashPromotionProductRelation;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import com.tuling.tulingmall.service.PmsProductService;
 import com.tuling.tulingmall.service.StockManageService;
-import com.tuling.tulingmall.util.RedisOpsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -48,7 +46,7 @@ public class StockManageServiceImpl implements StockManageService {
     private PmsProductService productService;
 
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsUtil;
 
     @Override
     public Integer incrStock(Long productId, Long skuId, Integer quanlity, Integer miaosha, Long flashPromotionRelationId) {

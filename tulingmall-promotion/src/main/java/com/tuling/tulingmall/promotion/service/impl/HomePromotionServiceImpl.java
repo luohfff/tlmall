@@ -5,22 +5,23 @@ import com.tuling.tulingmall.model.PmsBrand;
 import com.tuling.tulingmall.model.PmsProduct;
 import com.tuling.tulingmall.promotion.clientapi.PmsProductClientApi;
 import com.tuling.tulingmall.promotion.config.PromotionRedisKey;
+import com.tuling.tulingmall.promotion.dao.FlashPromotionProductDao;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionParam;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.promotion.domain.HomeContentResult;
-import com.tuling.tulingmall.promotion.mapper.SmsHomeAdvertiseMapper;
-import com.tuling.tulingmall.promotion.mapper.SmsHomeBrandMapper;
-import com.tuling.tulingmall.promotion.mapper.SmsHomeNewProductMapper;
-import com.tuling.tulingmall.promotion.mapper.SmsHomeRecommendProductMapper;
+import com.tuling.tulingmall.promotion.mapper.*;
 import com.tuling.tulingmall.promotion.model.*;
 import com.tuling.tulingmall.promotion.service.HomePromotionService;
-import com.tuling.tulingmall.rediscomm.util.RedisDistrLock;
-import com.tuling.tulingmall.rediscomm.util.RedisOpsUtil;
+import com.tuling.tulingmall.promotion.util.RedisDistrLock;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 首页促销内容Service实现类
@@ -38,14 +39,19 @@ public class HomePromotionServiceImpl implements HomePromotionService {
     private SmsHomeRecommendProductMapper smsHomeRecommendProductMapper;
     @Autowired
     private PmsProductClientApi pmsProductClientApi;
-//    @Autowired
-//    private PmsProductFeignApi pmsProductFeignApi;
+    @Autowired
+    private FlashPromotionProductDao flashPromotionProductDao;
     @Autowired
     private PromotionRedisKey promotionRedisKey;
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsExtUtil;
     @Autowired
     private RedisDistrLock redisDistrLock;
+    @Autowired
+    private SmsFlashPromotionMapper smsFlashPromotionMapper;
+
+    @Value("#{'${secKillServerList}'.split(',')}")
+    private List<String> secKillServerList;
 
     @Override
     public HomeContentResult content(int getType) {
@@ -68,15 +74,66 @@ public class HomePromotionServiceImpl implements HomePromotionService {
             //获取首页广告
             result.setAdvertiseList(getHomeAdvertiseList());
         }
-        //获取秒杀信息 首页显示
-// todo       result.setHomeFlashPromotion(pmsProductFeignApi.getHomeSecKillProductList().getData());
         return result;
+    }
+
+    /*获取秒杀内容*/
+    @Override
+    public List<FlashPromotionProduct> secKillContent(long secKillId,int status) {
+        PageHelper.startPage(1, 8);
+        Long secKillIdL = -1 == secKillId ? null : secKillId;
+        /*获得秒杀相关的活动信息*/
+        FlashPromotionParam flashPromotionParam = flashPromotionProductDao.getFlashPromotion(secKillIdL,status);
+        if (flashPromotionParam == null || CollectionUtils.isEmpty(flashPromotionParam.getRelation())) {
+            return null;
+        }
+        /*获得秒杀相关的商品信息,map用来快速寻找秒杀商品的限购信息*/
+        List<Long> productIds = new ArrayList<>();
+        Map<Long,SmsFlashPromotionProductRelation> temp = new HashMap<>();
+        flashPromotionParam.getRelation().stream().forEach(item -> {
+            productIds.add(item.getProductId());
+            temp.put(item.getProductId(),item);
+        });
+        PageHelper.clearPage();
+        List<PmsProduct> secKillProducts = pmsProductClientApi.getProductBatch(productIds);
+        /*拼接前端需要的内容*/
+        List<FlashPromotionProduct> flashPromotionProducts = new ArrayList<>();
+        int loop = 0;
+        int serverSize = secKillServerList.size();
+        for(PmsProduct product : secKillProducts){
+            FlashPromotionProduct flashPromotionProduct = new FlashPromotionProduct();
+            BeanUtils.copyProperties(product,flashPromotionProduct);
+            Long productId = product.getId();
+            SmsFlashPromotionProductRelation item = temp.get(productId);
+            flashPromotionProduct.setFlashPromotionCount(item.getFlashPromotionCount());
+            flashPromotionProduct.setFlashPromotionPrice(item.getFlashPromotionPrice());
+            flashPromotionProduct.setFlashPromotionLimit(item.getFlashPromotionLimit());
+            flashPromotionProduct.setRelationId(item.getId());
+            Long flashPromotionId = item.getFlashPromotionId();
+            flashPromotionProduct.setFlashPromotionId(flashPromotionId);
+            flashPromotionProduct.setFlashPromotionStartDate(flashPromotionParam.getStartDate());
+            flashPromotionProduct.setFlashPromotionEndDate(flashPromotionParam.getEndDate());
+            String url = secKillServerList.get(loop % serverSize)+"/product?"+"flashPromotionId="+flashPromotionId
+                    +"&promotionProductId="+productId;
+            flashPromotionProduct.setSecKillServer(url);
+            flashPromotionProducts.add(flashPromotionProduct);
+            loop++;
+        }
+        return flashPromotionProducts;
+    }
+
+    @Override
+    public int turnOnSecKill(long secKillId,int status) {
+        SmsFlashPromotion smsFlashPromotion = new SmsFlashPromotion();
+        smsFlashPromotion.setId(secKillId);
+        smsFlashPromotion.setStatus(status);
+        return smsFlashPromotionMapper.updateByPrimaryKeySelective(smsFlashPromotion);
     }
 
     /*获取推荐品牌*/
     private void getRecommendBrand(HomeContentResult result){
         final String brandKey = promotionRedisKey.getBrandKey();
-        List<PmsBrand> recommendBrandList = redisOpsUtil.getListAll(brandKey, PmsBrand.class);
+        List<PmsBrand> recommendBrandList = redisOpsExtUtil.getListAll(brandKey, PmsBrand.class);
         if(CollectionUtils.isEmpty(recommendBrandList)){
             redisDistrLock.lock(promotionRedisKey.getDlBrandKey(),promotionRedisKey.getDlTimeout());
             try {
@@ -87,7 +144,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
 //                pmsProductFeignApi.getHomeSecKillProductList();
 //                log.info("---------------------------");
                 recommendBrandList = pmsProductClientApi.getRecommandBrandList(smsHomeBrandIds);
-                redisOpsUtil.putListAllRight(brandKey,recommendBrandList);
+                redisOpsExtUtil.putListAllRight(brandKey,recommendBrandList);
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlBrandKey());
             }
@@ -102,7 +159,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
     /*获取人气推荐产品*/
     private void getRecommendProducts(HomeContentResult result){
         final String recProductKey = promotionRedisKey.getRecProductKey();
-        List<PmsProduct> recommendProducts = redisOpsUtil.getListAll(recProductKey, PmsProduct.class);
+        List<PmsProduct> recommendProducts = redisOpsExtUtil.getListAll(recProductKey, PmsProduct.class);
         if(CollectionUtils.isEmpty(recommendProducts)){
             redisDistrLock.lock(promotionRedisKey.getDlRecProductKey(),promotionRedisKey.getDlTimeout());
             try {
@@ -111,7 +168,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
                 example2.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_YES);
                 List<Long> recommendProductIds = smsHomeRecommendProductMapper.selectProductIdByExample(example2);
                 recommendProducts = pmsProductClientApi.getProductBatch(recommendProductIds);
-                redisOpsUtil.putListAllRight(recProductKey,recommendProducts);
+                redisOpsExtUtil.putListAllRight(recProductKey,recommendProducts);
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlRecProductKey());
             }
@@ -126,7 +183,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
     /*获取新品推荐产品*/
     private void getHotProducts(HomeContentResult result){
         final String newProductKey = promotionRedisKey.getNewProductKey();
-        List<PmsProduct> newProducts = redisOpsUtil.getListAll(newProductKey, PmsProduct.class);
+        List<PmsProduct> newProducts = redisOpsExtUtil.getListAll(newProductKey, PmsProduct.class);
         if(CollectionUtils.isEmpty(newProducts)){
             redisDistrLock.lock(promotionRedisKey.getDlNewProductKey(),promotionRedisKey.getDlTimeout());
             try {
@@ -135,7 +192,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
                 example.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_YES);
                 List<Long> newProductIds = smsHomeNewProductMapper.selectProductIdByExample(example);
                 newProducts = pmsProductClientApi.getProductBatch(newProductIds);
-                redisOpsUtil.putListAllRight(newProductKey,newProducts);
+                redisOpsExtUtil.putListAllRight(newProductKey,newProducts);
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlNewProductKey());
             }
@@ -151,7 +208,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
     private List<SmsHomeAdvertise> getHomeAdvertiseList() {
         final String homeAdvertiseKey = promotionRedisKey.getHomeAdvertiseKey();
         List<SmsHomeAdvertise> smsHomeAdvertises =
-                redisOpsUtil.getListAll(homeAdvertiseKey, SmsHomeAdvertise.class);
+                redisOpsExtUtil.getListAll(homeAdvertiseKey, SmsHomeAdvertise.class);
         if(CollectionUtils.isEmpty(smsHomeAdvertises)){
             redisDistrLock.lock(promotionRedisKey.getDlHomeAdvertiseKey(),promotionRedisKey.getDlTimeout());
             try {
@@ -162,7 +219,7 @@ public class HomePromotionServiceImpl implements HomePromotionService {
                         .andStartTimeLessThan(now).andEndTimeGreaterThan(now);
                 example.setOrderByClause("sort desc");
                 smsHomeAdvertises = advertiseMapper.selectByExample(example);
-                redisOpsUtil.putListAllRight(homeAdvertiseKey,smsHomeAdvertises);
+                redisOpsExtUtil.putListAllRight(homeAdvertiseKey,smsHomeAdvertises);
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlHomeAdvertiseKey());
             }

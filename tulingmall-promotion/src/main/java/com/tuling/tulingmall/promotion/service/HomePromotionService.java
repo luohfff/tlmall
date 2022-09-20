@@ -1,17 +1,23 @@
 package com.tuling.tulingmall.promotion.service;
 
 
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.promotion.domain.HomeContentResult;
+
+import java.util.List;
 
 /**
  * 首页内容管理Service
  */
 public interface HomePromotionService {
 
-    /**
-     * 获取首页内容
-     */
+    /* 获取首页推荐品牌和产品*/
     HomeContentResult content(int getType);
+
+    /*秒杀产品*/
+    List<FlashPromotionProduct> secKillContent(long secKillId,int status);
+
+    int turnOnSecKill(long secKillId,int status);
 
 //    /**
 //     * 首页商品推荐

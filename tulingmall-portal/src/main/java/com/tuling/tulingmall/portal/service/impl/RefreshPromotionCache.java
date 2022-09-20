@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.tuling.tulingmall.portal.config.PromotionRedisKey;
 import com.tuling.tulingmall.portal.domain.HomeContentResult;
 import com.tuling.tulingmall.portal.service.HomeService;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,6 +13,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /*
 * 异步刷新促销信息在本地的缓存*/
@@ -29,6 +32,14 @@ public class RefreshPromotionCache {
     @Autowired
     @Qualifier("promotionBak")
     private Cache<String, HomeContentResult> promotionCacheBak;
+
+    @Autowired
+    @Qualifier("secKill")
+    private Cache<String, List<FlashPromotionProduct>> secKillCache;
+
+    @Autowired
+    @Qualifier("secKillBak")
+    private Cache<String, List<FlashPromotionProduct>> secKillCacheBak;
 
     @Autowired
     private PromotionRedisKey promotionRedisKey;
@@ -58,4 +69,22 @@ public class RefreshPromotionCache {
         }
     }
 
+    @Async
+    @Scheduled(initialDelay=30,fixedDelay = 30)
+    public void refreshSecKillCache(){
+        final String secKillKey = promotionRedisKey.getSecKillKey();
+        if(null == secKillCache.getIfPresent(secKillKey)||null == secKillCacheBak.getIfPresent(secKillKey)){
+            List<FlashPromotionProduct> secKills = homeService.getSecKillFromRemote();
+            if(null != secKills){
+                if(null == secKillCache.getIfPresent(secKillKey)) {
+                    secKillCache.put(secKillKey,secKills);
+                }
+                if(null == secKillCacheBak.getIfPresent(secKillKey)) {
+                    secKillCacheBak.put(secKillKey,secKills);
+                }
+            }else{
+                log.warn("从远程获得[SecKillCache] 数据失败");
+            }
+        }
+    }
 }

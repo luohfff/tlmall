@@ -45,6 +45,9 @@ public class CommonResult<T> {
         return new CommonResult<T>(errorCode.getCode(), errorCode.getMessage(), null);
     }
 
+    public static <T> CommonResult<T> doing() {
+        return new CommonResult<T>(ResultCode.ACCEPTED.getCode(), ResultCode.ACCEPTED.getMessage(), null);
+    }
 
     /**
      * 失败返回结果

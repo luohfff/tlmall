@@ -4,6 +4,7 @@ import com.tuling.tulingmall.model.CmsSubject;
 import com.tuling.tulingmall.model.PmsProduct;
 import com.tuling.tulingmall.model.PmsProductCategory;
 import com.tuling.tulingmall.portal.domain.HomeContentResult;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public interface HomeService {
     HomeContentResult recommendContent();
 
     HomeContentResult getFromRemote();
+
+    List<FlashPromotionProduct> getSecKillFromRemote();
 
     void preheatCache();
 

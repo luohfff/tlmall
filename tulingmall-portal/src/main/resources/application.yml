@@ -20,4 +20,3 @@ promotion:
   demo:
     allowLocalCache: true
     allowRemoteCache: true
-

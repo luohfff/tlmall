@@ -3,6 +3,7 @@ package com.tuling.tulingmall.portal.domain;
 import com.tuling.tulingmall.model.CmsSubject;
 import com.tuling.tulingmall.model.PmsBrand;
 import com.tuling.tulingmall.model.PmsProduct;
+import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
 import com.tuling.tulingmall.promotion.model.SmsHomeAdvertise;
 import lombok.Getter;
 import lombok.Setter;

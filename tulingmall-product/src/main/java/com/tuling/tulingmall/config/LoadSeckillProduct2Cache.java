@@ -1,19 +1,10 @@
 package com.tuling.tulingmall.config;
 
-import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.dao.FlashPromotionProductDao;
-import com.tuling.tulingmall.domain.FlashPromotionParam;
-import com.tuling.tulingmall.model.SmsFlashPromotion;
-import com.tuling.tulingmall.util.RedisOpsUtil;
-import org.springframework.beans.BeanUtils;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.util.ObjectUtils;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author ：图灵学院
@@ -29,28 +20,28 @@ public class LoadSeckillProduct2Cache implements InitializingBean {
     private FlashPromotionProductDao flashPromotionProductDao;
 
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsUtil;
 
-    /**
-     * 将秒杀活动信息load到redis，暂时不用#{yangguo}
-     */
-    public void loadFlashPromotion2Cache(){
-
-        FlashPromotionParam promotion = flashPromotionProductDao.getFlashPromotion(null);
-        if (null==promotion){
-            return;
-        }
-        Date now = new Date();
-        Date endDate = promotion.getEndDate();//结束时间
-        final Long expired = endDate.getTime()-now.getTime();//剩余时间
-        //秒杀商品库存缓存到redis
-        promotion.getRelation().stream().forEach((item)->{
-            redisOpsUtil.setIfAbsent(
-                    RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + item.getProductId()
-                    , item.getFlashPromotionCount()
-                    , expired
-                    , TimeUnit.MILLISECONDS);
-        });
+//    /**
+//     * 将秒杀活动信息load到redis，暂时不用#{yangguo}
+//     */
+//    public void loadFlashPromotion2Cache(){
+//
+//        FlashPromotionParam promotion = flashPromotionProductDao.getFlashPromotion(null);
+//        if (null==promotion){
+//            return;
+//        }
+//        Date now = new Date();
+//        Date endDate = promotion.getEndDate();//结束时间
+//        final Long expired = endDate.getTime()-now.getTime();//剩余时间
+//        //秒杀商品库存缓存到redis
+//        promotion.getRelation().stream().forEach((item)->{
+//            redisOpsUtil.setIfAbsent(
+//                    RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + item.getProductId()
+//                    , item.getFlashPromotionCount()
+//                    , expired
+//                    , TimeUnit.MILLISECONDS);
+//        });
 
 //        /*
 //         * 将秒杀商品读取到缓存
@@ -76,10 +67,10 @@ public class LoadSeckillProduct2Cache implements InitializingBean {
 //                redisTemplate.expire(RedisKeyPrefixConst.FLASH_PROMOTION_PRODUCT_KEY,timeout, TimeUnit.MILLISECONDS);
 //            }
 //        }
-    }
+//    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        loadFlashPromotion2Cache();
+        //loadFlashPromotion2Cache();
     }
 }

@@ -12,9 +12,9 @@ import com.tuling.tulingmall.mapper.PmsProductMapper;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionMapper;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionSessionMapper;
 import com.tuling.tulingmall.model.*;
+import com.tuling.tulingmall.rediscomm.util.RedisOpsExtUtil;
 import com.tuling.tulingmall.service.PmsProductService;
 import com.tuling.tulingmall.util.DateUtil;
-import com.tuling.tulingmall.util.RedisOpsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -71,7 +71,7 @@ public class PmsProductServiceImpl implements PmsProductService {
     private SmsFlashPromotionSessionMapper promotionSessionMapper;
 
     @Autowired
-    private RedisOpsUtil redisOpsUtil;
+    private RedisOpsExtUtil redisOpsUtil;
 
     private Map<String, PmsProductParam> cacheMap = new ConcurrentHashMap<>();
 

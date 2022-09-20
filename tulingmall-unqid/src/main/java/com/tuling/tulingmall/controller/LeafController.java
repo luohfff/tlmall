@@ -30,7 +30,7 @@ public class LeafController {
 
     @RequestMapping(value = "/api/segment/getlist/{key}")
     public List<String> getSegmentIdList(@PathVariable("key") String key,@RequestParam int keyNumber) {
-        if (keyNumber == 0 || keyNumber > 1000) keyNumber = 1000;
+        if (keyNumber == 0 || keyNumber > 5000) keyNumber = 5000;
         return getList(key, segmentService.getIds(key,keyNumber));
     }
 
