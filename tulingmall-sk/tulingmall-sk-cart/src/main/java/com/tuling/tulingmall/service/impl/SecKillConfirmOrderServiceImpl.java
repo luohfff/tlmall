@@ -9,7 +9,7 @@ import com.tuling.tulingmall.component.LocalCache;
 import com.tuling.tulingmall.domain.CartPromotionItem;
 import com.tuling.tulingmall.domain.ConfirmOrderResult;
 import com.tuling.tulingmall.feignapi.unqid.UnqidFeignApi;
-import com.tuling.tulingmall.model.PortalMemberInfo;
+import com.tuling.tulingmall.domain.PortalMemberInfo;
 import com.tuling.tulingmall.model.UmsMember;
 import com.tuling.tulingmall.model.UmsMemberReceiveAddress;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
@@ -18,7 +18,6 @@ import com.tuling.tulingmall.rediscomm.util.RedisSingleUtil;
 import com.tuling.tulingmall.service.SecKillConfirmOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
