@@ -30,20 +30,20 @@
 
       function checkOrder(){
         if(checkCount == 10){
-          alert("检查秒杀订单生成情况已达最大次数，请稍候再试！");
+          alert("检查秒杀订单生成情况已达最大次数，请稍后再试！");
           clearInterval(timer);
           return;
         }
 
         $.ajax({
-          type: "get",
+          type: "post",
           headers:{"memberId": lMemberId},//设置请求头
-          url:"seckillOrder/checkOrder?" + "orderId="+orderId,
+          url:"/seckillOrder/checkOrder?" + "orderId="+orderId,
           success:function(commonresult){
             if(commonresult.code==200){
               console.log("秒杀订单已生成！");
-              $("payImage").style.visibility = "visible";
-              $("showProgress").style.visibility = "hidden";
+              $("payImage").attr("hidden",false);
+              $("showProgress").attr("hidden",true);
             }else if(commonresult.code==202){
               console.log("秒杀订单还未生成，继续检查！");
               checkCount++;

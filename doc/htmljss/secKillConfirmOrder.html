@@ -17,13 +17,13 @@
         </div>
         <div>
           <span><em>购买商品：</em></span>
-          <input id="cartPromotionItemList" type="textarea" readonly>
+          <input id="cartPromotionItemList" type="textarea" readonly  autoHeight="true">
           <span><em>订单详情ID：</em></span>
           <input id="orderItemId" type="text" readonly>
         </div>
         <div>
           <span><em>用户地址：</em></span>
-          <input id="memberReceiveAddressList" type="textarea" readonly>
+          <input id="memberReceiveAddressList" type="textarea" readonly autoHeight="true">
           <span><em>实际使用用户地址：</em></span>
           <input id="factAddress" type="text" readonly>
         </div>
@@ -42,26 +42,28 @@
       var lProductId="";
       var lFlashPromotionId="";
       var lMemberId="";
+      var lmemberReceiveAddress;
 
       function submitOrder(){
         var data = {
           orderId: $("#orderId").val(),
           orderItemId: $("#orderItemId").val(),
           flashPromotionId: lFlashPromotionId,
-          memberReceiveAddress: $("#factAddress").val(),
+          memberReceiveAddress: lmemberReceiveAddress,
           payType: "1",
           productId: lProductId
         };
         $.ajax({
           type: "post",
-          headers: {"memberId": memberId},//设置请求头
+          headers: {"memberId": lMemberId},//设置请求头
           url: "/seckillOrder/generateOrder",
-          dataType: "application/json",
+          contentType:"application/json",
+          dataType: "json",
           data: JSON.stringify(data),
           success: function(result){
             if(result.code==200){
               console.log("下订单成功！");
-              window.location.href = "static/secKillPay.html";
+              window.location.href = "secKillPay.html";
             }else{
               alert("下订单失败！");
             }
@@ -83,29 +85,37 @@
           url:"/skcart/generateConfirmOrder?" +
                   "productId="+lProductId
                   +"&flashPromotionId="+lFlashPromotionId,
-          dataType:'text',
           success:function(commonresult){
-            if(commonresult.code==200){
+            if(commonresult.code == 200){
               console.log("成功获得秒杀确认单！");
               var data = commonresult.data;
+              console.log(commonresult);
               $("#orderId").val(data.orderId);
-              localStorage.setItem("orderId",orderId);
-              $("#calcAmount").val(data.calcAmount);
+              localStorage.setItem("orderId",data.orderId);
+              var calcAmount = data.calcAmount;
+              $("#calcAmount").val(calcAmount.totalAmount);
               var cartPromotionItem = data.cartPromotionItemList;
+              var productN = "";
               $.each(cartPromotionItem,function (i,item) {
-                $("#cartPromotionItemList").val($("#cartPromotionItemList").val + item + " \n ");
+                productN = productN + item.productName + "&&";
                 $("#orderItemId").val(item.orderItemId);
               });
+              $("#cartPromotionItemList").val(productN);
               var umsMemberReceiveAddress = data.memberReceiveAddressList;
+              var addrs = "";
               $.each(umsMemberReceiveAddress,function (i,item) {
-                $("#memberReceiveAddressList").val($("#memberReceiveAddressList").val + item.detailAddress + " \n ");
+                addrs = addrs + item.detailAddress + "&&";
+                lmemberReceiveAddress = item;
                 $("#factAddress").val(item.detailAddress);
               });
+              $("#memberReceiveAddressList").val(addrs);
             }else{
+              console.log(commonresult);
               alert("获得秒杀确认单失败！");
             }
           },
           error:function(data){
+            console.log(data);
             alert("获得秒杀确认单异常！");
           }
         });

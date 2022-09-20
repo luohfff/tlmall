@@ -37,7 +37,7 @@ public class SecKillOrderController {
     @RequestMapping(value = "/checkOrder",method = RequestMethod.POST)
     @ResponseBody
     public CommonResult checkOrder(@RequestParam("orderId") Long orderId) throws BusinessException {
-        return checkOrder(orderId);
+        return secKillOrderService.checkOrder(orderId);
     }
 
 }

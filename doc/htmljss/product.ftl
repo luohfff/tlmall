@@ -98,8 +98,8 @@
                   <span>
                     <em>库存数量</em>
                   </span>
-                  <span id="flashPromotionCount">
-                    <em>${fpp.flashPromotionCount}</em>
+                  <span>
+                    <input id="flashPromotionCount" type="text" readonly value="${fpp.flashPromotionCount}">
                   </span>
                 </div>
                 <div class="input" id="verifyCodeArea" hidden="true">

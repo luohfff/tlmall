@@ -15,6 +15,8 @@ import java.util.Map;
  **/
 public interface SecKillOrderService {
 
+    CommonResult checkOrder(Long orderId);
+
 
     /**
      * 秒杀订单下单
