@@ -28,13 +28,13 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848
-  data:
-    elasticsearch:
-      rest:
-        #uris: 192.168.21.110:9300,192.168.21.113:9300,192.168.21.219:9300
-        uris: 192.168.21.219:9300
-        username: elastic
-        password: 123456
+#  data:
+#    elasticsearch:
+#      rest:
+#        #uris: 192.168.21.110:9300,192.168.21.113:9300,192.168.21.219:9300
+#        uris: 192.168.21.219:9300
+#        username: elastic
+#        password: 123456
 
 
 mybatis:

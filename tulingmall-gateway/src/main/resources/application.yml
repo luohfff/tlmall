@@ -18,10 +18,14 @@ server:
 #          uri: lb://tulingmall-member
 #          predicates:
 #            - Path=/sso/**,/member/**
-#        - id: tulingmall-order
-#          uri: lb://tulingmall-order
+#        - id: tulingmall-order-curr
+#          uri: lb://tulingmall-order-curr
 #          predicates:
-#            - Path=/cart/**,/order/**
+#            - Path=/order/**
+#        - id: tulingmall-cart
+#          uri: lb://tulingmall-cart
+#          predicates:
+#            - Path=/cart/**
 #        - id: tulingmall-product
 #          uri: lb://tulingmall-product
 #          predicates:
