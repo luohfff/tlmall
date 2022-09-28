@@ -6,8 +6,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-    <link rel="icon" href="http://localhost:8081/favicon.ico">
     <title>图灵商城商品详情页</title>
     <link rel="stylesheet" type="text/css" href="static/product.css">
   </head>
@@ -96,7 +94,7 @@
                   <a href="javascript:;" class="btn btn-huge fl" onclick="secKill()" disabled="true" id="secKillbtn">立即秒杀</a></div>
                 <div class="btn-group">
                   <span>
-                    <em>库存数量</em>
+                    <em class="item-price">库存数量</em>
                   </span>
                   <span>
                     <input id="flashPromotionCount" type="text" readonly value="${fpp.flashPromotionCount}">
