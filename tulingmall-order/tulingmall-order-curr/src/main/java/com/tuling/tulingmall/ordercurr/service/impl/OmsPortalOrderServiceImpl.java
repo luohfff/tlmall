@@ -157,6 +157,9 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         Long orderId = orderParam.getOrderId();
         if(null == orderId){
             orderId = generateOrderId(memberId);
+            log.debug("前端页面未传递orderId，临时生成：{}",orderId);
+        }else{
+            log.debug("前端页面传递orderId[{}]",orderId);
         }
         /*这里我们对OrderSn简单处理，在实际业务时可以根据情况做变化，比如添加前缀或可逆加密，
         只要保证可以从OrderSn中解析出orderId即可*/

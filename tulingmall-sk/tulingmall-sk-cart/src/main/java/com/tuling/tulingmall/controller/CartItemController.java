@@ -44,16 +44,18 @@ public class CartItemController {
 
     /* PO:
         1、从session共享角度来说，验证码应该放入Redis才是正确的，
+        直接参考商城系统中接入spring session解决验证码共享存储的问题
+        2、或者生成完然后从session取出来自行放到redis即可
         怎么获得HappyCaptcha生成的验证码呢？HappyCaptcha是放到session的，
-        生成完然后从session取出来自行放到redis即可，然后再删除掉session中的验证码。
         怎么从session中获得呢，看看HappyCaptcha.verification()就知道答案：
         " String captcha = (String)request.getSession().getAttribute(SESSION_KEY); "
-        2、验证码放入主Redis后，如果选择从Nginx直接读取从Redis的方式，需要注意
+        ，获得后然后再删除掉session中的验证码。
+        3、验证码放入主Redis后，如果选择从Nginx直接读取从Redis的方式，需要注意
         Redis主从同步的延迟问题，解决方案可以在Lua脚本中引入以下两者之一：
          a.休眠后重试”os.execute("sleep " .. n)”
          b.读从Redis未果，则读主Redis
-        3、验证码本身也可以独立为一个微服务
-        4、当生成验证码本身成为性能瓶颈，可以 验证码微服务集群化 或者 预生成批量验证码并缓存，
+        4、验证码本身也可以独立为一个微服务
+        5、当生成验证码本身成为性能瓶颈，可以 验证码微服务集群化 或者 预生成批量验证码并缓存，
         但是缓存的内容除了验证码的文字结果外，验证图片也要缓存
     */
     @ApiOperation("生成验证码-限流")
