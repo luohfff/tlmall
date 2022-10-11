@@ -370,6 +370,8 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         if (cancelOrder != null) {
             //修改订单状态为取消
             cancelOrder.setStatus(OrderConstant.ORDER_STATUS_CLOSE);
+            /*MemberId为分片键，不能修改*/
+            cancelOrder.setMemberId(null);
             omsOrderMapper.updateByPrimaryKeySelective(cancelOrder);
             OmsOrderItemExample orderItemExample = new OmsOrderItemExample();
             orderItemExample.createCriteria().andOrderIdEqualTo(orderId);
