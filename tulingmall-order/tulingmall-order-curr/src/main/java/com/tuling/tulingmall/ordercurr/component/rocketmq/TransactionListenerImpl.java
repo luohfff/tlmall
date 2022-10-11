@@ -3,7 +3,9 @@ package com.tuling.tulingmall.ordercurr.component.rocketmq;//package com.tuling.
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.api.ResultCode;
 import com.tuling.tulingmall.ordercurr.mapper.OmsOrderMapper;
+import com.tuling.tulingmall.ordercurr.mapper.OmsOrderSettingMapper;
 import com.tuling.tulingmall.ordercurr.model.OmsOrder;
+import com.tuling.tulingmall.ordercurr.model.OmsOrderSetting;
 import com.tuling.tulingmall.ordercurr.service.TradeService;
 import com.tuling.tulingmall.ordercurr.service.impl.OrderConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.apache.rocketmq.spring.annotation.RocketMQTransactionListener;
 import org.apache.rocketmq.spring.core.RocketMQLocalTransactionListener;
 import org.apache.rocketmq.spring.core.RocketMQLocalTransactionState;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.Message;
@@ -27,7 +30,8 @@ import java.util.Date;
 public class TransactionListenerImpl implements RocketMQLocalTransactionListener {
     //由于要做微服务负载均衡，检查次数就不能在本地记录了。
 //    private ConcurrentHashMap<String, Integer> localTrans = new ConcurrentHashMap<>();
-    //回查5次，每次间隔默认6秒。 ==30秒等待支付时间。
+    //回查次数可以根据订单超时事件定制。普通订单超时时间来自于oms_order_settings表的normal_order_overtime表。
+    //这里用5次做模拟。
     private static int maxTryMums = 5;
 
     @Autowired
@@ -53,9 +57,7 @@ public class TransactionListenerImpl implements RocketMQLocalTransactionListener
             String transId = (String)msg.getHeaders().get(RocketMQHeaders.PREFIX + RocketMQHeaders.TRANSACTION_ID);
             log.info("------------RocketMQ执行本地订单创建 transId: "+transId+"-------------");
             /**
-             *
-             * 写你的本地事务执行逻辑
-             *
+             * 订单已提前生成，这里就不用记录本地订单了。
              * */
             String orderId = String.valueOf(arg);
             redisTemplate.opsForHash().put(OrderConstant.REDIS_CREATE_ORDER,orderId,0);
