@@ -91,7 +91,11 @@ public class OmsOrderShardingAlgorithm implements ComplexKeysShardingAlgorithm<S
     /*转换成String*/
     private List<String> ids2String(Collection<?> ids) {
         List<String> result = new ArrayList<>(ids.size());
-        ids.forEach(id -> result.add(Objects.toString(id)));
+        for(Object id : ids){
+            String strId = Objects.toString(id);
+            String idFact = strId.length()==1 ? "0"+strId : strId;
+            result.add(idFact);
+        }
         return result;
     }
 }
