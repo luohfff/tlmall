@@ -402,7 +402,7 @@
   <update id="updateByExample" parameterType="map">
     update oms_order_item
     set id = #{record.id,jdbcType=BIGINT},
-      order_id = #{record.orderId,jdbcType=BIGINT},
+      <!--order_id = #{record.orderId,jdbcType=BIGINT},-->
       order_sn = #{record.orderSn,jdbcType=VARCHAR},
       product_id = #{record.productId,jdbcType=BIGINT},
       product_pic = #{record.productPic,jdbcType=VARCHAR},
@@ -434,9 +434,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.tuling.tulingmall.ordercurr.model.OmsOrderItem">
     update oms_order_item
     <set>
-      <if test="orderId != null">
+      <!--<if test="orderId != null">
         order_id = #{orderId,jdbcType=BIGINT},
-      </if>
+      </if>-->
       <if test="orderSn != null">
         order_sn = #{orderSn,jdbcType=VARCHAR},
       </if>
@@ -514,7 +514,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.tuling.tulingmall.ordercurr.model.OmsOrderItem">
     update oms_order_item
-    set order_id = #{orderId,jdbcType=BIGINT},
+    set <!--order_id = #{orderId,jdbcType=BIGINT},-->
       order_sn = #{orderSn,jdbcType=VARCHAR},
       product_id = #{productId,jdbcType=BIGINT},
       product_pic = #{productPic,jdbcType=VARCHAR},

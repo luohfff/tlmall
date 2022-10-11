@@ -499,12 +499,12 @@
     <update id="updateByExampleSelective" parameterType="map">
         update oms_order
         <set>
-            <if test="record.id != null">
+<!--            <if test="record.id != null">
                 id = #{record.id,jdbcType=BIGINT},
-            </if>
-            <if test="record.memberId != null">
+            </if>-->
+<!--            <if test="record.memberId != null">
                 member_id = #{record.memberId,jdbcType=BIGINT},
-            </if>
+            </if>-->
             <if test="record.couponId != null">
                 coupon_id = #{record.couponId,jdbcType=BIGINT},
             </if>
@@ -650,8 +650,8 @@
     </update>
     <update id="updateByExample" parameterType="map">
         update oms_order
-        set id = #{record.id,jdbcType=BIGINT},
-        member_id = #{record.memberId,jdbcType=BIGINT},
+        set <!--id = #{record.id,jdbcType=BIGINT},
+        member_id = #{record.memberId,jdbcType=BIGINT},-->
         coupon_id = #{record.couponId,jdbcType=BIGINT},
         order_sn = #{record.orderSn,jdbcType=VARCHAR},
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -705,9 +705,9 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.tuling.tulingmall.ordercurr.model.OmsOrder">
         update oms_order
         <set>
-            <if test="memberId != null">
+<!--            <if test="memberId != null">
                 member_id = #{memberId,jdbcType=BIGINT},
-            </if>
+            </if>-->
             <if test="couponId != null">
                 coupon_id = #{couponId,jdbcType=BIGINT},
             </if>
@@ -851,7 +851,7 @@
     </update>
     <update id="updateByPrimaryKey" parameterType="com.tuling.tulingmall.ordercurr.model.OmsOrder">
         update oms_order
-        set member_id               = #{memberId,jdbcType=BIGINT},
+        set <!--member_id               = #{memberId,jdbcType=BIGINT},-->
             coupon_id               = #{couponId,jdbcType=BIGINT},
             order_sn                = #{orderSn,jdbcType=VARCHAR},
             create_time             = #{createTime,jdbcType=TIMESTAMP},
